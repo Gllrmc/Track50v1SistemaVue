@@ -25,8 +25,9 @@
                 </template>
             </v-snackbar>
         </template>
-        <v-col cols="12" md="12" sm="6">
+        <v-col cols="12" md="8" sm="6">
             <v-data-table
+            dense
             :headers="headers"
             :items="empresas"
             :search="search"
@@ -58,57 +59,56 @@
                         <v-card-text>
                             <v-container grid-list-md>
                                 <v-row dense>
-                                    <v-col cols="12" sm="9" md="9">
+                                    <v-col cols="12" sm="12" md="12">
                                         <v-text-field v-model="nombre" label="Empresa">
                                         </v-text-field>
+                                        <v-switch dense v-model="aceptacargadiaria"
+                                        flat
+                                        label="Permite Carga diaria?"
+                                        ></v-switch>                                    
+                                        <v-switch dense v-model="aceptacargasemanal"
+                                        flat
+                                        label="Permite Carga semanal?"
+                                        ></v-switch>                                    
+                                        <v-switch dense v-model="facturabledefault"
+                                        flat
+                                        label="Es Facturable por omision?"
+                                        ></v-switch>                                    
                                     </v-col>
-                                    <v-col cols="12" sm="3" md="3">
-                                        <v-text-field v-model="cuit" label="CUIT">
+                                    <v-col cols="12" sm="12" md="12">
+                                        <v-switch dense v-model="reservadodefault"
+                                        flat
+                                        label="Es Privado por omision?"
+                                        ></v-switch>                                    
+                                    </v-col>
+                                    <v-col cols="12" sm="3" md="6">
+                                        <v-text-field v-model="tarifadefault" type="number" label="Tarifa por omision">
                                         </v-text-field>
                                     </v-col>
-                                    <v-col cols="12" sm="9" md="9">
-                                        <v-text-field v-model="direccion" label="Dirección">
-                                        </v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="3" md="3">
-                                        <v-text-field v-model="localidad" label="Localidad">
-                                        </v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="5" md="5">
-                                        <v-autocomplete 
-                                            v-model="paisId"
-                                            clearable
-                                            :items = "paises"
-                                            :search-input.sync="searchpa"
-                                            @change="filterProvincias()"
-                                            label = "País">
-                                        </v-autocomplete>
-                                    </v-col>
-                                    <v-col cols="12" sm="5" md="5">
-                                        <v-autocomplete 
-                                            v-model="provinciaId"
-                                            clearable
-                                            :items = "provinciasf" 
-                                            :search-input.sync="searchpr"                                    
-                                            @change="asignaPais()"                                   
-                                            label = "Provincia">
-                                        </v-autocomplete>
+                                    <v-col cols="12" sm="3" md="6">
+                                        <v-select v-model="monedadefault" :items="monedas" attach label="Moneda">
+                                        </v-select>
                                     </v-col>
                                     <v-col cols="12" sm="2" md="2">
-                                        <v-text-field v-model="cpostal" label="C.P.">
-                                        </v-text-field>
+                                        <v-layout column>
+                                            <v-avatar  size=60>
+                                                <img :src="imageUrl" aspect-ratio="2" contain>
+                                            </v-avatar>
+                                            <input v-show="false" ref="inputUpload1" type="file" @change="onFilePicked" >
+                                            <div class="subheading">Logo</div>
+                                        </v-layout>
                                     </v-col>
                                     <v-col cols="12" sm="4" md="4">
-                                        <v-text-field v-model="telefono" label="telefono">
-                                        </v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="4" md="4">
-                                        <v-text-field v-model="email" label="eMail">
-                                        </v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="4" md="4">
-                                        <v-text-field v-model="webpage" label="Web Page">
-                                        </v-text-field>
+                                        <v-btn class="mx-2" small fab color="primary" @click="$refs.inputUpload1.click()">
+                                            <v-icon dark>
+                                                mdi-plus
+                                            </v-icon>    
+                                        </v-btn>
+                                        <v-btn class="mx-2" small fab color="primary" @click="clearImagen">
+                                            <v-icon dark>
+                                                mdi-delete
+                                            </v-icon>    
+                                        </v-btn>
                                     </v-col>
                                     <v-col cols="12" sm="12" md="12" v-show="valida">
                                         <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v">
@@ -171,38 +171,135 @@
                 </v-toolbar>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
-                <v-icon
-                class="mr-2"
-                @click="editItem(item)"
-                >
-                mdi-pencil
-                </v-icon>
-                <v-icon
-                @click="deleteItem(item)"
-                >
-                mdi-delete
-                </v-icon>
-                    <template v-if="item.activo">
-                        <v-icon
-                        @click="activarDesactivarMostrar(2,item)"
-                        >
-                        block
-                        </v-icon>
-                    </template>
-                    <template v-else>
-                        <v-icon
-                        @click="activarDesactivarMostrar(1,item)"
-                        >
-                        check
-                        </v-icon>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            class="mr-2"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="editItem(item)"
+                            >
+                            mdi-pencil
+                            </v-icon>
+                        </template>
+                        <span>Editar</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            class="mr-2"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="deleteItem(item)"
+                            >
+                            mdi-delete
+                            </v-icon>
+                        </template>
+                        <span>Borrar</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <template v-if="item.activo">
+                                <v-icon
+                                class="mr-2"
+                                v-bind="attrs"
+                                v-on="on"
+                                @click="activarDesactivarMostrar(2,item)"
+                                >
+                                mdi-eye-off
+                                </v-icon>
+                            </template>
+                            <template v-else>
+                                <v-icon
+                                class="mr-2"
+                                v-bind="attrs"
+                                v-on="on"
+                                @click="activarDesactivarMostrar(1,item)"
+                                >
+                                mdi-eye
+                                </v-icon>
+                            </template>
+                        </template>
+                        <span>Act/Blo</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            class="mr-2"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="infoItem(item)"
+                            small
+                            >
+                            mdi-information-outline
+                            </v-icon>
+                        </template>
+                        <span>Info</span>
+                    </v-tooltip>
+            </template>
+            <template v-slot:[`item.nombre`]="{ item }">
+                        <v-chip class="ma-2" large>{{item.nombre}}</v-chip>
+            </template>
+                <template v-slot:[`item.logo`]="{ item }">
+                    <td>
+                        <div v-if="item.logo">
+                            <v-avatar size=60>
+                                <img :src="item.logo" aspect-ratio="2" contain>
+                            </v-avatar>
+                        </div>
+                        <div v-else>
+                            <v-avatar  size=60>
+                                <span style="color:black">n/d</span>
+                            </v-avatar>
+                        </div>
+                    </td>
                 </template>
-                <v-icon
-                class="mr-2"
-                @click="infoItem(item)"
-                small
-                >
-                mdi-information-outline
-                </v-icon>
+
+            <template v-slot:[`item.aceptacargadiaria`]="{ item }">
+                <td>
+                    <div v-if="item.aceptacargadiaria">
+                        <v-chip class="ma-2" color="primary" text-color="white">Si</v-chip>
+                    </div>
+                    <div v-else>
+                        <v-chip class="ma-2">No</v-chip>
+                    </div>
+                </td>
+            </template>
+            <template v-slot:[`item.aceptacargasemanal`]="{ item }">
+                <td>
+                    <div v-if="item.aceptacargasemanal">
+                        <v-chip class="ma-2" color="primary" text-color="white">Si</v-chip>
+                    </div>
+                    <div v-else>
+                        <v-chip class="ma-2">No</v-chip>
+                    </div>
+                </td>
+            </template>
+            <template v-slot:[`item.facturabledefault`]="{ item }">
+                <td>
+                    <div v-if="item.facturabledefault">
+                        <v-chip class="ma-2" color="primary" text-color="white">Si</v-chip>
+                    </div>
+                    <div v-else>
+                        <v-chip class="ma-2">No</v-chip>
+                    </div>
+                </td>
+            </template>
+            <template v-slot:[`item.reservadodefault`]="{ item }">
+                <td>
+                    <div v-if="item.reservadodefault">
+                        <v-chip class="ma-2" color="primary" text-color="white">Si</v-chip>
+                    </div>
+                    <div v-else>
+                        <v-chip class="ma-2">No</v-chip>
+                    </div>
+                </td>
+            </template>
+            <template v-slot:[`item.tarifadefault`]="{ item }">
+                        <v-chip class="ma-2">{{formatPrice(item.tarifadefault)}}</v-chip>
+            </template>
+            <template v-slot:[`item.monedadefault`]="{ item }">
+                        <v-chip class="ma-2">{{item.monedadefault}}</v-chip>
             </template>
             <template v-slot:[`item.activo`]="{ item }">
                 <td>
@@ -242,23 +339,20 @@
         usuarios: [],
         empresas:[],
         paises: [],
-        provincias: [],               
-        provinciasf: [],
+        monedas: ["ARS","USD","EUR","GBP"],
+        imageUrl: '',
         dialog: false,
         headers: [
             { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
+            { text: 'Logo', value: 'logo', align: 'start', sortable: true  },
             { text: 'Razon Social', value: 'nombre', align: 'start', sortable: true },
-            { text: 'CUIT', value: 'cuit', align: 'start', sortable: true },
-            { text: 'Direccion', value: 'direccion', align: 'start', sortable: true },
-            { text: 'Localidad', value: 'localidad', align: 'start', sortable: true },
-            { text: 'C.P.', value: 'cpostal', align: 'start', sortable: true },
-            { text: 'Provincia', value: 'provincia', align: 'start', sortable: true  },
-            { text: 'Pais', value: 'pais', align: 'start', sortable: true  },
-            { text: 'Telefono', value: 'telefono', align: 'start', sortable: true  },
-            { text: 'eMail', value: 'email', align: 'start', sortable: true  },
-            { text: 'Web Page', value: 'webpage', align: 'start', sortable: true  },
-            { text: 'Teléfono', value: 'telefono', align: 'start', sortable: true },
-            { text: 'Estado', value: 'activo', align: 'center', sortable: true  },
+            { text: 'Carga diaria', value: 'aceptacargadiaria', align: 'start', sortable: true },
+            { text: 'Carga semanal', value: 'aceptacargasemanal', align: 'start', sortable: true },
+            { text: 'Facturable?', value: 'facturabledefault', align: 'start', sortable: true },
+            { text: 'Privados?', value: 'reservadodefault', align: 'start', sortable: true },
+            { text: 'Tarifa base', value: 'tarifadefault', align: 'start', sortable: true  },
+            { text: 'Moneda', value: 'monedadefault', align: 'start', sortable: true  },
+            { text: 'Estado', value: 'activo', align: 'start', sortable: true  },
             //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
             //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
             //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
@@ -269,16 +363,14 @@
         searchpr: '',
         editedIndex: -1,
         id: '',
-        paisId:'',
-        provinciaId:'',
         nombre: '',
-        cuit: '',
-        direccion: '',
-        localidad: '',
-        cpostal:'',
-        email: '',
-        telefono: '',
-        webpage: '',
+        aceptacargadiaria: false,
+        aceptacargasemanal: false,
+        facturabledefault: false,
+        reservadodefault: false,
+        tarifadefault: 0,
+        monedadefault: '',
+        logo: '',
         iduseralta:'',
         fecalta:'',
         iduserumod:'',
@@ -310,18 +402,42 @@
     },
 
     methods: {
+        pickFile () {
+            this.$refs.image.click ()
+        },
+        onFilePicked (e) {
+            const files = e.target.files
+            if (files[0] !== undefined) {
+                this.imageName = files[0].name
+                if (this.imageName.lastIndexOf('.') <= 0) {
+                return
+                }
+                const fr = new FileReader ()
+                fr.readAsDataURL(files[0])
+                fr.addEventListener('load', () => {
+                    this.imageUrl = fr.result
+                    this.imageFile = files[0] // this is an image file that can be sent to server...
+                    this.logo = this.imageUrl;
+                })
+            } else {
+                this.imageName = ''
+                this.imageFile = ''
+                this.imageUrl = ''
+            }
+        },
+        clearImagen(){
+            this.imageUrl = ''
+            this.logo = ''
+        },
         crearPDF(){
             var columns = [
                     {title: "Razon Social", dataKey: "nombre"},
-                    {title: "CUIT", dataKey: "cuit"},
-                    {title: "Dirección", dataKey: "direccion"}, 
-                    {title: "Localidad", dataKey: "localidad"}, 
-                    {title: "C.P.", dataKey: "cpostal"},
-                    {title: "Provincia", dataKey: "provincia"}, 
-                    {title: "Pais", dataKey: "pais"}, 
-                    {title: "Teléfono", dataKey: "telefono"}, 
-                    {title: "eMail", dataKey: "email"}, 
-                    {title: "Web Page", dataKey: "webpage"},
+                    {title: "Carga diaria", dataKey: "aceptacargadiaria"},
+                    {title: "Carga semanal", dataKey: "aceptacargasemanal"}, 
+                    {title: "Facturable?", dataKey: "facturabledefault"}, 
+                    {title: "Privados?", dataKey: "reservadodefault"},
+                    {title: "Tarifa base", dataKey: "tarifadefault"}, 
+                    {title: "Moneda", dataKey: "monedadefault"}, 
                     {title: "Activo", dataKey: "activo"}
             ];
             var rows = [];
@@ -341,6 +457,10 @@
             });
             doc.save('Empresas.pdf');
         },
+        formatPrice(value) {
+            let val = (value/1).toFixed(2).replace('.', ',')
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
         listar(){
             let me=this;
             let header={"Authorization" : "Bearer " + this.$store.state.token};
@@ -357,36 +477,9 @@
         },
         select(){
             let me=this;
-            var paisesArray=[];
-            var provinciasArray=[];
             var usuariosArray=[];
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
-            axios.get('api/Paises/Select',configuracion).then(function(response){
-                // console.log(response);
-                paisesArray=response.data;
-                paisesArray.map(function(x){
-                    me.paises.push({text: x.nombre,value:x.id});
-                });
-            }).catch(function(error){
-                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                me.snackcolor = 'error';
-                me.snackbar = true;
-                console.log(error);
-            });
-            axios.get('api/Provincias/Select',configuracion).then(function(response){
-                // console.log(response);
-                provinciasArray=response.data;
-                provinciasArray.map(function(x){
-                    me.provincias.push({text: x.nombre,value:x.id, pais: x.paisId});
-                    me.provinciasf=me.provincias;
-                });
-            }).catch(function(error){
-                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                me.snackcolor = 'error';
-                me.snackbar = true;
-                console.log(error);
-            });
             axios.get('api/Usuarios/Listar',configuracion).then(function(response){
                 usuariosArray=response.data;
                 usuariosArray.map(function(x){
@@ -400,37 +493,23 @@
                 console.log(error);
             });
         },
-        asignaPais(){
-            var ii = this.provincias.findIndex(p => p.value === this.provinciaId);
-            this.paisId = this.provincias[ii].pais;
-        },
-        filterProvincias(){
-            this.provinciasf = this.provincias.filter(x => x.pais === this.paisId);
-            if (this.provinciaId) {
-                var ii = this.provincias.findIndex(p => p.value === this.provinciaId);
-                if (!this.paisId === this.provincias[ii].pais){
-                    this.provinciaId="";
-                }
-            }
-        },
         editItem (item) {
-            this.id=item.id;
-            this.provinciaId=item.provinciaId;
-            this.paisId=item.paisId;
-            this.nombre=item.nombre;
-            this.cuit=item.cuit;
-            this.direccion=item.direccion;
-            this.localidad=item.localidad;
-            this.cpostal=item.cpostal;
-            this.telefono=item.telefono;
-            this.email=item.email;
-            this.webpage=item.webpage;
-            this.iduseralta=item.iduseralta;
-            this.fecalta=item.fecalta;
-            this.iduserumod=item.iduserumod;
-            this.fecumod=item.fecumod;
-            this.activo=item.activo;                
-            this.editedIndex=1;
+            this.id = item.id;
+            this.nombre = item.nombre;
+            this.aceptacargadiaria = item.aceptacargadiaria;
+            this.aceptacargasemanal = item.aceptacargasemanal;
+            this.facturabledefault = item.facturabledefault;
+            this.reservadodefault = item.reservadodefault;
+            this.tarifadefault = item.tarifadefault;
+            this.monedadefault = item.monedadefault;
+            this.logo = item.logo;
+            this.imageUrl = item.logo;
+            this.iduseralta = item.iduseralta;
+            this.fecalta = item.fecalta;
+            this.iduserumod = item.iduserumod;
+            this.fecumod = item.fecumod;
+            this.activo = item.activo;                
+            this.editedIndex = 1;
             this.dialog = true
         },
         deleteItem (item) {
@@ -474,17 +553,16 @@
 
         },
         limpiar(){
-            this.provinciasf=this.provincias;
-            this.id="";
-            this.paisId="";
-            this.provinciaId="";
-            this.nombre="";
-            this.cuit="";
-            this.direccion="";
-            this.localidad="";
-            this.telefono="";
-            this.email="";
-            this.webpage="";
+            this.id = "";
+            this.nombre = "";
+            this.aceptacargadiaria = false;
+            this.aceptacargasemanal = false;
+            this.facturabledefault = false;
+            this.reservadodefault = false;
+            this.tarifadefault = 0;
+            this.monedadefault = "";
+            this.logo = "";
+            this.imageUrl = "";
             this.iduseralta = "";
             this.fecalta = "";
             this.iduserumod = "";
@@ -505,20 +583,15 @@
                 let me=this;
                 axios.put('api/Empresas/Actualizar',{
                     'Id':me.id,
-                    'paisId':me.paisId,
-                    'provinciaId':me.provinciaId,
                     'nombre': me.nombre,
-                    'cuit': me.cuit,
-                    'direccion': me.direccion,
-                    'localidad': me.localidad,
-                    'cpostal': me.cpostal,
-                    'telefono': me.telefono,
-                    'email': me.email,
-                    'webpage': me.webpage,
-                    'iduseralta': me.iduseralta,
-                    'fecalta': me.fecalta,
+                    'logo':me.logo,
+                    'aceptacargadiaria':me.aceptacargadiaria,
+                    'aceptacargasemanal': me.aceptacargasemanal,
+                    'facturabledefault': me.facturabledefault,
+                    'reservadodefault': me.reservadodefault,
+                    'tarifadefault': me.tarifadefault,
+                    'monedadefault': me.monedadefault,
                     'iduserumod': me.$store.state.usuario.idusuario,
-                    'fecumod': new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString()                        
                 },configuracion).then( () => {
                     me.snacktext = 'Modificacion exitosa';
                     me.snackcolor = "success";
@@ -536,16 +609,14 @@
                 //Código para guardar
                 let me=this;
                 axios.post('api/Empresas/Crear',{
-                    'paisId':me.paisId,
-                    'provinciaId':me.provinciaId,
                     'nombre': me.nombre,
-                    'cuit': me.cuit,
-                    'direccion': me.direccion,
-                    'localidad': me.localidad,
-                    'cpostal': me.cpostal,
-                    'telefono': me.telefono,
-                    'email': me.email,
-                    'webpage': me.webpage,
+                    'logo':me.logo,
+                    'aceptacargadiaria':me.aceptacargadiaria,
+                    'aceptacargasemanal': me.aceptacargasemanal,
+                    'facturabledefault': me.facturabledefault,
+                    'reservadodefault': me.reservadodefault,
+                    'tarifadefault': me.tarifadefault,
+                    'monedadefault': me.monedadefault,
                     'iduseralta': me.$store.state.usuario.idusuario                           
                 },configuracion).then( () => {
                     me.snacktext = 'Creacion exitosa';
@@ -569,11 +640,11 @@
             if (this.nombre.length<3 || this.nombre.length>50){
                 this.validaMensaje.push("La empresa debe tener más de 3 caracteres y menos de 50 caracteres.");
             }
-            if (!this.paisId){
-                this.validaMensaje.push("Seleccione un país.");
+            if (!this.monedadefault){
+                this.validaMensaje.push("Ingrese una moneda.");
             }
-            if (!this.provinciaId){
-                this.validaMensaje.push("Seleccione una provincia.");
+            if (!this.tarifadefault){
+                this.validaMensaje.push("Ingrese una tarifa.");
             }
             if (this.validaMensaje.length){
                 this.valida=1;

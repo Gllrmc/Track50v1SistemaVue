@@ -27,6 +27,7 @@
         </template>
         <v-col>
             <v-data-table
+            dense
             :headers="headers"
             :items="appconfigs"
             :search="search"
@@ -129,14 +130,14 @@
                         <v-icon
                         @click="activarDesactivarMostrar(2,item)"
                         >
-                        block
+                        mdi-eye-off
                         </v-icon>
                     </template>
                     <template v-else>
                         <v-icon
                         @click="activarDesactivarMostrar(1,item)"
                         >
-                        check
+                        mdi-eye
                         </v-icon>
                 </template>
             </template>

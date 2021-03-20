@@ -29,7 +29,7 @@
             </v-list-item>
             <v-list-item :to="{ name: 'regdiario'}">
               <v-list-item-action>
-                <v-icon>mdi-timelapse</v-icon>
+                <v-icon color="primary">mdi-timelapse</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
@@ -39,11 +39,123 @@
             </v-list-item>
             <v-list-item :to="{ name: 'regsemanal'}">
               <v-list-item-action>
-                <v-icon>mdi-calendar-today</v-icon>
+                <v-icon color="primary">mdi-calendar-today</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
                   Registro Semanal
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item :to="{ name: 'regsemanal'}">
+              <v-list-item-action>
+                <v-icon color="primary">mdi-receipt</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Registro Gastos
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-group>
+        </template>
+        <template v-if="esAdministrador || esJefeAdministracion || esAsistAdministracion || esLiderProyecto || esConsultor || esDataentry">
+          <v-list-group>
+            <v-list-item slot="activator">
+              <v-list-item-content>
+                <v-list-item-title>
+                  Analisis
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item :to="{ name: 'regdiario'}">
+              <v-list-item-action>
+                <v-icon color="primary">mdi-view-dashboard</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Dashboard
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item :to="{ name: 'regsemanal'}">
+              <v-list-item-action>
+                <v-icon color="primary">mdi-cube</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Pivot Tables
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-group>
+        </template>
+        <template v-if="esAdministrador || esJefeAdministracion || esAsistAdministracion || esLiderProyecto || esConsultor || esDataentry">
+          <v-list-group>
+            <v-list-item slot="activator">
+              <v-list-item-content>
+                <v-list-item-title>
+                  Administracion
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item :to="{ name: 'regdiario'}">
+              <v-list-item-action>
+                <v-icon color="primary">mdi-sprout</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Proyectos
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item :to="{ name: 'regdiario'}">
+              <v-list-item-action>
+                <v-icon color="primary">mdi-account-cash</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Clientes
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item :to="{ name: 'tareas'}">
+              <v-list-item-action>
+                <v-icon color="primary">mdi-file-tree</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Tareas
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item :to="{ name: 'regdiario'}">
+              <v-list-item-action>
+                <v-icon color="primary">mdi-food-fork-drink</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Conceptos Generales
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item :to="{ name: 'regdiario'}">
+              <v-list-item-action>
+                <v-icon color="primary">mdi-wallet-travel</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Conceptos Especiales
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item :to="{ name: 'etiquetas'}">
+              <v-list-item-action>
+                <v-icon color="primary">mdi-tag</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Etiquetas
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -60,7 +172,7 @@
             </v-list-item>
             <v-list-item :to="{ name: 'usuarios'}">
               <v-list-item-action>
-                <v-icon>mdi-account-hard-hat</v-icon>
+                <v-icon color="primary">mdi-account-hard-hat</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
@@ -70,7 +182,7 @@
             </v-list-item>
             <v-list-item :to="{ name: 'grupos'}">
               <v-list-item-action>
-                <v-icon>mdi-account-multiple</v-icon>
+                <v-icon color="primary">mdi-account-multiple</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
@@ -80,7 +192,7 @@
             </v-list-item>
             <v-list-item :to="{ name: 'roles'}">
               <v-list-item-action>
-                <v-icon>mdi-target-account</v-icon>
+                <v-icon color="primary">mdi-target-account</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
@@ -95,13 +207,13 @@
             <v-list-item slot="activator">
               <v-list-item-content>
                 <v-list-item-title>
-                  Datos Maestros
+                  Configuracion
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item :to="{ name: 'empresas'}">
               <v-list-item-action>
-                <v-icon>mdi-folder-table</v-icon>
+                <v-icon color="primary">mdi-folder-table</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
@@ -109,9 +221,9 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'paises'}">
+            <!-- <v-list-item :to="{ name: 'paises'}">
               <v-list-item-action>
-                <v-icon>mdi-google-maps</v-icon>
+                <v-icon color="primary">mdi-google-maps</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
@@ -121,17 +233,17 @@
             </v-list-item>
             <v-list-item :to="{ name: 'provincias'}">
               <v-list-item-action>
-                <v-icon>mdi-google-maps</v-icon>
+                <v-icon color="primary">mdi-google-maps</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
                   Provincias
                 </v-list-item-title>
               </v-list-item-content>
-            </v-list-item>
+            </v-list-item> -->
             <v-list-item :to="{ name: 'appconfigs'}">
               <v-list-item-action>
-                <v-icon>mdi-tune</v-icon>
+                <v-icon color="primary">mdi-tune</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>

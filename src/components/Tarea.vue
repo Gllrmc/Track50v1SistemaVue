@@ -1,4 +1,4 @@
-<template>
+<template> 
     <v-row align="start">
         <template>
             <v-snackbar
@@ -25,12 +25,12 @@
                 </template>
             </v-snackbar>
         </template>
-        <v-col cols="12" md="8" sm="6">
+        <v-col cols="12" md="4" sm="3">
             <v-data-table
             dense
-            :headers="headersusuarios"
-            :items="usuarios"
-            :searchu="searchu"
+            :headers="headerstareas"
+            :items="tareas"
+            :search="searchg"
             class="elevation-1"
             no-data-text="Nada para mostrar"
             >
@@ -39,14 +39,14 @@
                         <div class="ma-2">
                             <v-btn small @click="crearPDF()"><v-icon>print</v-icon></v-btn>
                         </div>
-                        <v-toolbar-title>Personas</v-toolbar-title>
+                        <v-toolbar-title>Tareas</v-toolbar-title>
                         <v-divider
                             class="mx-4"
                             inset
                             vertical
                         ></v-divider>
                         <v-spacer></v-spacer>
-                        <v-text-field label="Búsqueda" outlined v-model="searchu" append-icon="search" single-line hide-details></v-text-field>
+                        <v-text-field label="Búsqueda" outlined v-model="searchg" append-icon="search" single-line hide-details></v-text-field>
                         <v-spacer></v-spacer>
                         <v-dialog v-model="dialog" max-width="600px">
                             <template v-slot:activator="{ on }">
@@ -59,74 +59,9 @@
                             <v-card-text>
                                 <v-container grid-list-md>
                                     <v-row dense>
-
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="userid" label="Userid">
+                                            <v-text-field v-model="nombre" label="Nombre Tarea">
                                             </v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" sm="6" md="6">
-                                            <v-select v-model="rolId"
-                                            :items="roles" label="Rol">
-                                            </v-select>
-                                        </v-col>
-                                        <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="iniciales" v-mask="up3" label="Iniciales" ></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="telefono" label="Teléfono">
-                                            </v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="email" label="Email">
-                                            </v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" sm="6" md="6">
-                                            <v-text-field type="password" v-model="password" label="Password">
-                                            </v-text-field>
-                                        </v-col>
-                                        <v-col cols=12 sm=6 md=6>
-                                            <v-select v-model="coltexto" :items="textos" label="Color texto"></v-select>
-                                        </v-col>
-                                        <v-col cols=12 sm=6 md=6>
-                                            <v-select v-model="colfondo" :items="colores" label="Color fondo"></v-select>
-                                        </v-col>
-                                        <v-col cols="12" sm="12" md="3">
-                                            <v-layout column>
-                                                <div v-if="imageUrl">
-                                                    <v-avatar  size=40>
-                                                        <img :src="imageUrl" aspect-ratio="2" contain>
-                                                    </v-avatar>
-                                                </div>
-                                                <div v-else>
-                                                    <v-avatar v-if="coltexto=='black'" :color="colfondo" size=40>
-                                                        <span style="color:black">{{ iniciales }}</span>
-                                                    </v-avatar>
-                                                    <v-avatar v-else :color="colfondo" size=40>
-                                                        <span style="color:white">{{ iniciales }}</span>
-                                                    </v-avatar>
-                                                </div>
-                                                <input v-show="false" ref="inputUpload1" type="file" @change="onFilePicked" >
-                                                <div class="subheading">Avatar</div>
-                                            </v-layout>
-                                        </v-col>
-                                        <v-col cols="12" sm="12" md="3">
-                                            <v-btn class="mx-2" small fab color="primary" @click="$refs.inputUpload1.click()">
-                                                <v-icon dark>
-                                                    mdi-plus
-                                                </v-icon>    
-                                            </v-btn>
-                                            <v-btn class="mx-2" small fab color="primary" @click="clearImagen">
-                                                <v-icon dark>
-                                                    mdi-delete
-                                                </v-icon>    
-                                            </v-btn>
-                                        </v-col>
-                                        <v-col cols="12" sm="12" md="6">
-                                            <v-switch v-model="pxch" class="mx-2" label="Solicitar Password"></v-switch>
-                                        </v-col>
-                                        <v-col cols="12" sm="12" md="12" v-show="valida">
-                                            <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v">
-                                            </div>
                                         </v-col>
                                     </v-row>
                                 </v-container>
@@ -140,13 +75,13 @@
                         </v-dialog>
                         <v-dialog v-model="adModal" max-width="390">
                             <v-card>
-                                <v-card-title class="headline" v-if="adAccion==1">¿Activar Miembro?</v-card-title>
-                                <v-card-title class="headline" v-if="adAccion==2">Bloquear Miembro?</v-card-title>
+                                <v-card-title class="headline" v-if="adAccion==1">¿Activar Tarea?</v-card-title>
+                                <v-card-title class="headline" v-if="adAccion==2">Bloquear Tarea?</v-card-title>
                                 <v-card-text>
                                     Estás a punto de 
                                     <span v-if="adAccion==1">Activar </span>
                                     <span v-if="adAccion==2">Bloquear </span>
-                                    esta Persona: {{ adNombre }}
+                                    esta Tarea: {{ adNombre }}
                                 </v-card-text>
                                 <v-card-actions>
                                     <v-spacer/>
@@ -188,9 +123,9 @@
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
                             <v-icon
-                            class="mr-2"
                             v-bind="attrs"
                             v-on="on"
+                            class="mr-2"
                             @click="editItem(item)"
                             >
                             mdi-pencil
@@ -204,12 +139,12 @@
                             class="mr-2"
                             v-bind="attrs"
                             v-on="on"
-                            @click="tratarGrupos(item)"
+                            @click="tratarTareas(item)"
                             >
-                            mdi-account-group
+                            mdi-clipboard-check-multiple
                             </v-icon>
                         </template>
-                        <span>Grupos</span>
+                        <span>Proyectos</span>
                     </v-tooltip>
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
@@ -258,7 +193,7 @@
                             @click="infoItem(item)"
                             small
                             >
-                            mdi-information-outline
+                            mdi-information-outline 
                             </v-icon>
                         </template>
                         <span>Info</span>
@@ -274,23 +209,6 @@
                         </div>
                     </td>
                 </template>
-                <template v-slot:[`item.imgusuario`]="{ item }">
-                    <td>
-                        <div v-if="item.imgusuario">
-                            <v-avatar size=40>
-                                <img :src="item.imgusuario" aspect-ratio="2" contain>
-                            </v-avatar>
-                        </div>
-                        <div v-else>
-                            <v-avatar v-if="item.coltexto=='black'" :color="item.colfondo" size=40>
-                                <span style="color:black">{{ item.iniciales }}</span>
-                            </v-avatar>
-                            <v-avatar v-else :color="item.colfondo" size=40>
-                                <span style="color:white">{{ item.iniciales }}</span>
-                            </v-avatar>
-                        </div>
-                    </td>
-                </template>
                 <template v-slot:[`item.fecalta`]="{ item }">
                     <td>{{ item.fecalta.substr(0, 16) }}</td>
                 </template>
@@ -303,54 +221,31 @@
             </v-data-table>
         </v-col>
         <v-col cols="12" md="6" sm="3">
-            <v-dialog v-model="groupdialog" max-width="750px">
+            <v-dialog v-model="userdialog" max-width="750px">
                 <v-data-table
                 dense
-                :headers="headersgrupos"
-                :items="grupos"
-                :search="searchg"
+                :headers="headersproyectos"
+                :items="proyectos"
+                :search="searchu"
                 class="elevation-1"
                 no-data-text="Nada para mostrar"
                 >
                     <template v-slot:top>
                         <v-toolbar flat color="white">
-                            <v-toolbar-title>{{groupheader}}</v-toolbar-title>
+                            <v-toolbar-title>{{userheader}}</v-toolbar-title>
                             <v-divider
                                 class="mx-4"
                                 inset
                                 vertical
                             ></v-divider>
                             <v-spacer></v-spacer>
-                            <v-text-field 
-                            label="Agregar grupo"
-                            class="ma-2"
-                            outlined 
-                            dense 
-                            single-line 
-                            hide-details
-                            v-model="addgroup"
-                            clearable
-                            :rules="[rules.counter]"
-                            ></v-text-field>
-                            <v-btn
-                            class="mx-2"
-                            fab
-                            dark
-                            small
-                            color="primary"
-                            @click="agregarGrupo(addgroup)"
-                            >
-                            <v-icon dark>
-                                mdi-plus
-                            </v-icon>
-                            </v-btn>                            
                             <template v-slot:extension>
                                 <v-row>
                                     <v-col cols="12" md="12" sm="6">
                                         <v-text-field label="Búsqueda" class="ma-2" 
                                         outlined 
                                         dense 
-                                        v-model="searchg" 
+                                        v-model="searchu" 
                                         append-icon="search" 
                                         single-line 
                                         hide-details
@@ -367,12 +262,29 @@
                             @click="accionUsuario(item)"
                         ></v-simple-checkbox>
                     </template>
+                    <template v-slot:[`item.imgusuario`]="{ item }">
+                        <td>
+                            <div v-if="item.imgusuario">
+                                <v-avatar size=40>
+                                    <img :src="item.imgusuario" aspect-ratio="2" contain>
+                                </v-avatar>
+                            </div>
+                            <div v-else>
+                                <v-avatar v-if="item.coltexto=='black'" :color="item.colfondo" size=40>
+                                    <span style="color:black">{{ item.iniciales }}</span>
+                                </v-avatar>
+                                <v-avatar v-else :color="item.colfondo" size=40>
+                                    <span style="color:white">{{ item.iniciales }}</span>
+                                </v-avatar>
+                            </div>
+                        </td>
+                    </template>
                     <template v-slot:no-data>
                         <v-btn color="primary" @click="listar">Resetear</v-btn>
                     </template>
                 </v-data-table>
             </v-dialog>
-        </v-col>        
+        </v-col>
     </v-row>
 </template>
 <script>
@@ -380,9 +292,6 @@
   import jsPDF from 'jspdf'
   export default {
     data: () => ({
-        rules: {
-            counter: value => value.length >= 3 && value.length <= 50  || 'Min 3 Max 50 characters'
-        },
         up3:'AAA',
         colores: [
             {value: '#F44336', text: 'Rojo'},
@@ -411,38 +320,34 @@
             {value: 'white', text: 'Blanco'},
             {value: 'black', text: 'Negro'},
         ],
-        snackbar: false,
-        snackcolor: '',
+        snackbar:false,
+        snackcolor:'',
         snacktext: '',
-        timeout: 4000,
+        timeout: 2000,
         recordInfo:0,
-        usuarios: [],
-        roles:[],
-        grupos:[],
-        grupousuarios:[],
-        workuserId:'',
+        tareas:[],
+        usuarios:[],
+        proyectos:[],
+        regtareaproyecto:[],
+        workgroupId:'',
         imageUrl:'',
-        groupheader: '',
+        userheader: '',
         dialog: false,
-        groupdialog: false,
-        headersusuarios: [
+        userdialog: false,
+        headerstareas: [
             { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
-            { text: 'Avatar', value: 'imgusuario', align: 'center', sortable: false },
-            { text: 'Userid', value: 'userid', align: 'start', sortable: true },
-            { text: 'email', value: 'email', align: 'start', sortable: true },
-            { text: 'Rol', value: 'rol', align: 'start', sortable: true },
-            { text: 'Iniciales', value: 'iniciales', align: 'start', sortable: true },                    
-            { text: 'Teléfono', value: 'telefono', align: 'start', sortable: true },
-            { text: 'Estado', value: 'activo', align: 'center', sortable: true  },
+            { text: 'Nombre tarea', value: 'nombre', align: 'start', sortable: true },
+            { text: 'Estado', value: 'activo', align: 'start', sortable: true  },
             //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
             //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
             //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
             //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
         ],
-        headersgrupos: [
+        headersproyectos: [
             { text: '#', value: 'selected', align: 'center', sortable: false },
-            { text: 'Nombre grupo', value: 'nombre', align: 'start', sortable: true },
-            //{ text: 'Estado', value: 'activo', align: 'start', sortable: true  },
+            { text: 'Avatar', value: 'imgusuario', align: 'center', sortable: false },
+            { text: 'Userid', value: 'userid', align: 'start', sortable: true },
+            { text: 'email', value: 'email', align: 'start', sortable: true },
             //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
             //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
             //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
@@ -452,24 +357,19 @@
         searchu:'',
         editedIndex: -1,
         id: '',
-        rolId:'',
+        nombre:'',
         iniciales:'',
         userid:'',
         telefono: '',
         email: '',
-        password:'',
         colfondo:'#000000',
         coltexto:'black',
         imgusuario:'',
-        pxch:false,
         iduseralta:'',
         fecalta:'',
         iduserumod:'',
         fecumod:'',
         activo:false,
-        addgroup: '',
-        actPassword:false,
-        passwordAnt:'',
         valida: 0,
         validaMensaje:[],
         adModal: 0,
@@ -480,7 +380,7 @@
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'Nuevo miembro' : 'Actualizar miembro'
+        return this.editedIndex === -1 ? 'Nueva tarea' : 'Actualizar tarea'
       },
     },
 
@@ -525,16 +425,13 @@
         },
         crearPDF(){
             var columns = [
-                    {title: "Iniciales", dataKey: "iniciales"},
-                    {title: "Nombre", dataKey: "userid"},
-                    {title: "Rol", dataKey: "rol"},
-                    {title: "Telefono", dataKey: "telefono"},
+                    {title: "Nombre tarea", dataKey: "nombre"},
                     {title: "Activo", dataKey: "activo"}
             ];
             var rows = [];
 
-            this.usuarios.map(function(x){
-                    rows.push({iniciales:x.iniciales,userid:x.userid,rol:x.rol,telefono:x.telefono,activo:x.activo});
+            this.tareas.map(function(x){
+                    rows.push({nombre:x.nombre,activo:x.activo});
             });
 
             // Only pt supported (not mm or in)
@@ -542,47 +439,38 @@
             doc.autoTable(columns, rows, {
                 margin: {top: 60},
                 addPageContent: () => {
-                    doc.text("Listado de Personas", 40, 30);
+                    doc.text("Listado de Tareas", 40, 30);
                 }
             });
-            doc.save('Personas.pdf');
+            doc.save('Tareas.pdf');
         },
         listar(){
             let me=this;
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
-            axios.get('api/Usuarios/Listar',configuracion).then(function(response){
+            axios.get('api/Tareas/Listar',configuracion).then(function(response){
                 //console.log(response);
-                me.usuarios=response.data;
+                me.tareas=response.data;
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                me.snackcolor = "error";
                 me.snackbar = true;
+                me.snackcolor = 'error'
                 console.log(error);
             });
         },
         select(){
             let me=this;
-            var rolesArray=[];
-            var gruposArray=[];
-            var grupousuariosArray=[];
+            var usuariosArray=[];
+            var proyectosArray=[];
+            var regtareaproyectoArray=[];
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
-            axios.get('api/Roles/Select',configuracion).then(function(response){
-                rolesArray=response.data;
-                rolesArray.map(function(x){
-                    me.roles.push({text: x.nombre,value:x.id});
-                });
-            }).catch(function(error){
-                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                me.snackcolor = "error";
-                me.snackbar = true;
-                console.log(error);
-            });
-            axios.get('api/Grupos/Listar',configuracion).then(function(response){
-                gruposArray=response.data;
-                gruposArray.map(function(x){
-                    me.grupos.push({selected: false, nombre: x.nombre, value:x.id});
+            axios.get('api/Usuarios/Listar',configuracion).then(function(response){
+                usuariosArray=response.data;
+                usuariosArray.map(function(x){
+                    me.usuarios.push({selected: false,iduseralta: x.iduseralta, iduserumod: x.iduserumod,
+                    imgusuario: x.imgusuario, colfondo: x.colfondo, coltexto: x.coltexto, 
+                    email: x.email, iniciales: x.iniciales, userid: x.userid, value:x.id});
                 });
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
@@ -590,10 +478,23 @@
                 me.snackbar = true;
                 console.log(error);
             });
-            axios.get('api/Grupousuarios/Listar',configuracion).then(function(response){
-                grupousuariosArray=response.data;
-                grupousuariosArray.map(function(x){
-                    me.grupousuarios.push({grupoid: x.grupoid, usuarioid: x.usuarioid, value:x.id});
+            axios.get('api/Usuarios/Listar',configuracion).then(function(response){
+                proyectosArray=response.data;
+                proyectosArray.map(function(x){
+                    me.proyectos.push({selected: false,iduseralta: x.iduseralta, iduserumod: x.iduserumod,
+                    imgusuario: x.imgusuario, colfondo: x.colfondo, coltexto: x.coltexto, 
+                    email: x.email, iniciales: x.iniciales, userid: x.userid, value:x.id});
+                });
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
+            axios.get('api/Regtareaproyecto/Listar',configuracion).then(function(response){
+                regtareaproyectoArray=response.data;
+                regtareaproyectoArray.map(function(x){
+                    me.regtareaproyecto.push({etiquetaid: x.etiquetaid, proyectoid: x.proyectoid, value:x.id});
                 });
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
@@ -604,25 +505,14 @@
         },
         editItem (item) {
             this.id=item.id;
-            this.rolId=item.rolId;
-            this.iniciales=item.iniciales;
-            this.userid=item.userid;
-            this.telefono=item.telefono;
-            this.email=item.email;
-            this.password=item.password_hash;
-            this.passwordAnt=item.password_hash;
-            this.colfondo=item.colfondo;
-            this.coltexto=item.coltexto;
-            this.imgusuario=item.imgusuario;
-            this.imageUrl=item.imgusuario;
-            this.pxch=item.pxch;
+            this.nombre=item.nombre;
             this.iduseralta=item.iduseralta;
             this.fecalta=item.fecalta;
             this.iduserumod=item.iduserumod;
             this.fecumod=item.fecumod;
             this.activo=item.activo;
-            this.editedIndex = 1;
-            this.groupdialog = false;
+            this.editedIndex=1;
+            this.userdialog = false;
             this.dialog = true
         },
         deleteItem (item) {
@@ -631,7 +521,7 @@
             if (resulta) {
                 let header={"Authorization" : "Bearer " + me.$store.state.token};
                 let configuracion= {headers : header};
-                axios.delete('api/Usuarios/Eliminar/'+item.id,configuracion).then( () => {
+                axios.delete('api/Tareas/Eliminar/'+item.id,configuracion).then( () => {
                     me.snacktext = 'Eliminacion exitosa';
                     me.snackcolor = "success";
                     me.snackbar = true;
@@ -639,8 +529,8 @@
                     me.listar();
                 }).catch(function(error){
                     me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                    me.snackcolor = "error";
                     me.snackbar = true;
+                    me.snackcolor = 'error'
                     console.log(error);
                 });
             }
@@ -664,32 +554,32 @@
             this.dialog = false
             this.limpiar();
         },
-        tratarGrupos(item){
+        tratarTareas(item){
             var me=this;
-            for (var l = 0; l < me.grupos.length; l++){
-                me.grupos[l].selected = false;
+            for (var l = 0; l < me.proyectos.length; l++){
+                me.proyectos[l].selected = false;
             };
-            for (let i = 0; i < me.grupousuarios.length; i++){
-                if (me.grupousuarios[i].usuarioid === item.id){
-                    me.grupos[me.grupos.findIndex(elemento => elemento.value === me.grupousuarios[i].grupoid )].selected = true;
+            for (let i = 0; i < me.regtareaproyecto.length; i++){
+                if (me.regtareaproyecto[i].etiquetaid === item.id){
+                    me.proyectos[me.proyectos.findIndex(elemento => elemento.value === me.regtareaproyecto[i].proyectoid )].selected = true;
                 }
             };
-            me.workuserId = item.id;
-            me.groupheader = 'Grupos de ' + item.iniciales + ' ' + item.email;
-            me.groupdialog=!me.groupdialog;
+            me.workgroupId = item.id;
+            me.userheader = 'Miembros de ' + item.nombre;
+            me.userdialog=!me.userdialog;
         },
         accionUsuario(item){
             var me=this;
             if (item.selected === true ) {
                 let header={"Authorization" : "Bearer " + this.$store.state.token};
                 let configuracion= {headers : header};
-                axios.post('api/Grupousuarios/Crear',{
-                    'grupoid': item.value,
-                    'usuarioid': this.workuserId,
+                axios.post('api/Regtareaproyecto/Crear',{
+                    'etiquetaid':this.workgroupId,
+                    'proyectoid':item.value,
                     'iduseralta': me.$store.state.usuario.idusuario                      
                 },configuracion)
                 .then(function(response){
-                    me.grupousuarios.push({grupoid: response.data.grupoid, usuarioid: response.data.usuarioid, value: response.data.id});
+                    me.regtareaproyecto.push({etiquetaid: response.data.etiquetaid, proyectoid: response.data.proyectoid, value: response.data.id});
                     //console.log(response);
                     me.snacktext = 'Creacion exitosa';
                     me.snackcolor = "success";
@@ -701,11 +591,11 @@
                     console.log(error);
                 });
             } else {
-                var indice = me.grupousuarios.find(x => item.value === x.grupoid && me.workuserId === x.usuarioid).value;
+                var indice = me.regtareaproyecto.find(x => item.value === x.proyectoid && me.workgroupId === x.etiquetaid).value;
                 let header={"Authorization" : "Bearer " + me.$store.state.token};
                 let configuracion= {headers : header};
-                axios.delete('api/Grupousuarios/Eliminar/'+indice,configuracion).then( () => {
-                    me.grupousuarios = me.grupousuarios.filter(x => x.value != indice); 
+                axios.delete('api/Regtareaproyecto/Eliminar/'+indice,configuracion).then( () => {
+                    me.regtareaproyecto = me.regtareaproyecto.filter(x => x.value != indice); 
                     me.snacktext = 'Eliminacion exitosa';
                     me.snackcolor = "success";
                     me.snackbar = true;
@@ -719,85 +609,47 @@
         },
         limpiar(){
                 this.id="";
-                this.rolId="";
-                this.iniciales=null;
-                this.userid="";
-                this.telefono="";
-                this.email="";
-                this.password="";
-                this.passwordAnt="";
-                this.colfondo="#000000";
-                this.coltexto="white";
-                this.imgusario="";
-                this.imageUrl="";
-                this.pxch=false;
+                this.nombre="";
                 this.iduseralta = "";
                 this.fecalta = "";
                 this.iduserumod = "";
                 this.fecumod = "";
-                this.activo = false;          
-                this.actPassword = false;
-                this.groupdialog = false;
+                this.activo = false;
+                this.userdialog = false;
                 this.editedIndex=-1;
         },
         guardar () {
             if (this.validar()){
                 return;
             }
-            var date = new Date();                
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
             if (this.editedIndex > -1) {
                 //Código para editar
                 //Código para guardar
                 let me=this;
-                if (me.password!=me.passwordAnt){
-                    me.actPassword=true;
-                }
-                axios.put('api/Usuarios/Actualizar',{
+                axios.put('api/Tareas/Actualizar',{
                     'Id':me.id,
-                    'rolId':me.rolId,
-                    'iniciales':me.iniciales,
-                    'userid':me.userid,
-                    'telefono': me.telefono,
-                    'email':me.email,
-                    'password':me.password,
-                    'act_password':me.actPassword,
-                    'colfondo':me.colfondo,
-                    'coltexto':me.coltexto,
-                    'imgusuario':me.imgusuario,
-                    'pxch':me.pxch,
-                    'iduseralta': me.iduseralta,
-                    'fecalta': me.fecalta,
-                    'iduserumod': me.$store.state.usuario.idusuario,
-                    'fecumod': new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString()                                            
+                    'nombre':me.nombre,
+                    'iduserumod': me.$store.state.usuario.idusuario
                 },configuracion).then( () => {
                     me.snacktext = 'Modificacion exitosa';
                     me.snackcolor = "success";
                     me.snackbar = true;
                     me.close();
                     me.listar();
-                    me.limpiar();
+                    me.limpiar();                        
                 }).catch(function(error){
                     me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                    me.snackcolor = "error";
                     me.snackbar = true;
+                    me.snackcolor = 'error'
                     console.log(error);
                 });
             } else {
                 //Código para guardar
                 let me=this;
-                axios.post('api/Usuarios/Crear',{
-                    'rolId':me.rolId,
-                    'iniciales':me.iniciales,
-                    'userid':me.userid,
-                    'telefono': me.telefono,
-                    'email':me.email,
-                    'password':me.password,
-                    'colfondo':me.colfondo,
-                    'coltexto':me.coltexto,
-                    'imgusuario':me.imgusuario,
-                    'pxch':me.pxch,
+                axios.post('api/Tareas/Crear',{
+                    'nombre':me.nombre,
                     'iduseralta': me.$store.state.usuario.idusuario                      
                 },configuracion)
                 .then(function(response){
@@ -807,11 +659,11 @@
                     me.snackbar = true;
                     me.close();
                     me.listar();
-                    me.limpiar();
+                    me.limpiar();                        
                 }).catch(function(error){
                     me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                    me.snackcolor = "error";
                     me.snackbar = true;
+                    me.snackcolor = 'error'
                     console.log(error);
                 });
             }
@@ -820,54 +672,13 @@
             this.valida=0;
             this.validaMensaje=[];
 
-            if (this.userid.length<3 || this.userid.length>100){
-                this.validaMensaje.push("El nombre debe tener más de 3 caracteres y menos de 100 caracteres.");
-            }
-            if (!this.rolId){
-                this.validaMensaje.push("Seleccione un rol.");
-            }
-            if (!this.email){
-                this.validaMensaje.push("Ingrese el email del usuario.");
-            }
-            if (!this.password){
-                this.validaMensaje.push("Ingrese el password del usuario.");
-            }
-            if (this.iniciales.length<1 || this.iniciales.length>3){
-                this.validaMensaje.push("Las iniciales deben tener al menos 1 caracter y no mas de 3 caracteres.");
-            }
-            if (!this.coltexto){
-                this.validaMensaje.push("Seleccione un color de texto.");
-            }
-            if (!this.colfondo){
-                this.validaMensaje.push("Seleccione un color de fondo.");
+            if (this.nombre.length<3 || this.nombre.length>50){
+                this.validaMensaje.push("El nombre debe tener más de 3 caracteres y menos de 50 caracteres.");
             }
             if (this.validaMensaje.length){
                 this.valida=1;
             }
             return this.valida;
-        },
-        agregarGrupo(addgroup){
-            let me=this;
-            if(addgroup.length >= 3 && addgroup.length <= 50 ){
-                let header={"Authorization" : "Bearer " + this.$store.state.token};
-                let configuracion= {headers : header};
-                axios.post('api/Grupos/Crear',{
-                    'nombre':addgroup,
-                    'iduseralta': me.$store.state.usuario.idusuario                      
-                },configuracion)
-                .then(function(response){
-                    //console.log(response);
-                    me.grupos.push({selected: false, nombre: response.data.nombre, value: response.data.id});
-                    me.snacktext = 'Creacion exitosa';
-                    me.snackcolor = "success";
-                    me.snackbar = true;
-                }).catch(function(error){
-                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                    me.snackbar = true;
-                    me.snackcolor = 'error'
-                    console.log(error);
-                });
-            }
         },
         activarDesactivarMostrar(accion,item){
             this.adModal=1;
@@ -890,7 +701,7 @@
             let me=this;
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
-            axios.put('api/Usuarios/Activar/'+this.adId,{},configuracion).then( () => {
+            axios.put('api/Tareas/Activar/'+this.adId,{},configuracion).then( () => {
                 me.snacktext = 'Activacion exitosa';
                 me.snackcolor = "success";
                 me.snackbar = true;
@@ -901,7 +712,7 @@
                 me.listar();                       
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                me.snackcolor = "error";
+                me.snackcolor = 'error'
                 me.snackbar = true;
                 console.log(error);
             });
@@ -910,8 +721,7 @@
             let me=this;
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
-
-            axios.put('api/Usuarios/Desactivar/'+this.adId,{},configuracion).then( () => {
+            axios.put('api/Tareas/Desactivar/'+this.adId,{},configuracion).then( () => {
                 me.snacktext = 'Desactivacion exitosa';
                 me.snackcolor = "success";
                 me.snackbar = true;
@@ -922,7 +732,7 @@
                 me.listar();                       
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                me.snackcolor = "error";
+                me.snackcolor = 'error'
                 me.snackbar = true;
                 console.log(error);
             });

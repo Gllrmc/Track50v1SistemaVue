@@ -27,6 +27,7 @@
         </template>
         <v-col cols="12" md="4" sm="3">
             <v-data-table
+            dense
             :headers="headers"
             :items="paises"
             :search="search"
@@ -125,38 +126,71 @@
                 </v-toolbar>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
-                <v-icon
-                class="mr-2"
-                @click="editItem(item)"
-                >
-                edit
-                </v-icon>
-                <v-icon
-                @click="deleteItem(item)"
-                >
-                mdi-delete
-                </v-icon>
-                    <template v-if="item.activo">
-                        <v-icon
-                        @click="activarDesactivarMostrar(2,item)"
-                        >
-                        block
-                        </v-icon>
-                    </template>
-                    <template v-else>
-                        <v-icon
-                        @click="activarDesactivarMostrar(1,item)"
-                        >
-                        check
-                        </v-icon>
-                </template>
-                <v-icon
-                class="mr-2"
-                @click="infoItem(item)"
-                small
-                >
-                mdi-information-outline
-                </v-icon>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            class="mr-2"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="editItem(item)"
+                            >
+                            mdi-pencil
+                            </v-icon>
+                        </template>
+                        <span>Editar</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            class="mr-2"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="deleteItem(item)"
+                            >
+                            mdi-delete
+                            </v-icon>
+                        </template>
+                        <span>Borrar</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <template v-if="item.activo">
+                                <v-icon
+                                class="mr-2"
+                                v-bind="attrs"
+                                v-on="on"
+                                @click="activarDesactivarMostrar(2,item)"
+                                >
+                                mdi-eye-off
+                                </v-icon>
+                            </template>
+                            <template v-else>
+                                <v-icon
+                                class="mr-2"
+                                v-bind="attrs"
+                                v-on="on"
+                                @click="activarDesactivarMostrar(1,item)"
+                                >
+                                mdi-eye
+                                </v-icon>
+                            </template>
+                        </template>
+                        <span>Act/Blo</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            class="mr-2"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="infoItem(item)"
+                            small
+                            >
+                            mdi-information-outline
+                            </v-icon>
+                        </template>
+                        <span>Info</span>
+                    </v-tooltip>
             </template>
             <template v-slot:[`item.activo`]="{ item }">
                 <td>

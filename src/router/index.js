@@ -5,6 +5,8 @@ import Login from '../components/Login.vue'
 import Rol from '../components/Rol.vue'
 import Usuario from '../components/Usuario.vue'
 import Grupo from '../components/Grupo.vue'
+import Tarea from '../components/Tarea.vue'
+import Etiqueta from '../components/Etiqueta.vue'
 import Appconfig from '../components/Appconfig.vue'
 import Empresa from '../components/Empresa.vue'
 import Pais from '../components/Pais.vue'
@@ -34,6 +36,32 @@ const routes = [
     component: Login,
     meta:{
       libre: true
+    }
+  },
+  {
+    path: '/tareas',
+    name: 'tareas',
+    component: Tarea,
+    meta: {
+      administrador: true,
+      jefeadministracion: true,
+      liderproyecto:true, 
+      consultor: true,
+      asistadministracion: true,
+      dataentry: true
+    }
+  },
+  {
+    path: '/etiquetas',
+    name: 'etiquetas',
+    component: Etiqueta,
+    meta: {
+      administrador: true,
+      jefeadministracion: true,
+      liderproyecto:true, 
+      consultor: true,
+      asistadministracion: true,
+      dataentry: true
     }
   },
   {
