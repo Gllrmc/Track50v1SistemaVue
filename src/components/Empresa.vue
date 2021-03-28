@@ -25,7 +25,7 @@
                 </template>
             </v-snackbar>
         </template>
-        <v-col cols="12" md="8" sm="6">
+        <v-col cols="12" md="9" sm="9">
             <v-data-table
             dense
             :headers="headers"
@@ -46,7 +46,7 @@
                         vertical
                     ></v-divider>
                     <v-spacer></v-spacer>
-                    <v-text-field label="Búsqueda" outlined v-model="search" append-icon="search" single-line hide-details></v-text-field>
+                    <v-text-field dense label="Búsqueda" outlined v-model="search" append-icon="search" single-line hide-details clearable ></v-text-field>
                     <v-spacer></v-spacer>
                     <v-dialog v-model="dialog" max-width="600px">
                         <template v-slot:activator="{ on }">
@@ -60,22 +60,28 @@
                             <v-container grid-list-md>
                                 <v-row dense>
                                     <v-col cols="12" sm="12" md="12">
-                                        <v-text-field v-model="nombre" label="Empresa">
+                                        <v-text-field v-model="nombre" label="Empresa" counter="50">
                                         </v-text-field>
-                                        <v-switch dense v-model="aceptacargadiaria"
+                                    </v-col>
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-switch dense v-model="aceptacargalapsos"
                                         flat
-                                        label="Permite Carga diaria?"
+                                        label="Permite cargar lapsos?"
                                         ></v-switch>                                    
-                                        <v-switch dense v-model="aceptacargasemanal"
+                                    </v-col>
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-switch dense v-model="aceptacargatiempos"
                                         flat
-                                        label="Permite Carga semanal?"
-                                        ></v-switch>                                    
+                                        label="Permite carga tiempos?"
+                                        ></v-switch>
+                                    </v-col>
+                                    <v-col cols="12" sm="6" md="6">
                                         <v-switch dense v-model="facturabledefault"
                                         flat
                                         label="Es Facturable por omision?"
                                         ></v-switch>                                    
                                     </v-col>
-                                    <v-col cols="12" sm="12" md="12">
+                                    <v-col cols="12" sm="6" md="6">
                                         <v-switch dense v-model="reservadodefault"
                                         flat
                                         label="Es Privado por omision?"
@@ -91,11 +97,11 @@
                                     </v-col>
                                     <v-col cols="12" sm="2" md="2">
                                         <v-layout column>
-                                            <v-avatar  size=60>
-                                                <img :src="imageUrl" aspect-ratio="2" contain>
+                                            <div class="ml-2" style="font-size : 12px">Logo</div>
+                                            <v-avatar  size=40>
+                                                <v-img :src="imageUrl" aspect-ratio="2" contain></v-img>
                                             </v-avatar>
                                             <input v-show="false" ref="inputUpload1" type="file" @change="onFilePicked" >
-                                            <div class="subheading">Logo</div>
                                         </v-layout>
                                     </v-col>
                                     <v-col cols="12" sm="4" md="4">
@@ -238,26 +244,25 @@
                     </v-tooltip>
             </template>
             <template v-slot:[`item.nombre`]="{ item }">
-                        <v-chip class="ma-2" large>{{item.nombre}}</v-chip>
+                <v-chip class="ma-2">{{item.nombre}}</v-chip>
             </template>
-                <template v-slot:[`item.logo`]="{ item }">
-                    <td>
-                        <div v-if="item.logo">
-                            <v-avatar size=60>
-                                <img :src="item.logo" aspect-ratio="2" contain>
-                            </v-avatar>
-                        </div>
-                        <div v-else>
-                            <v-avatar  size=60>
-                                <span style="color:black">n/d</span>
-                            </v-avatar>
-                        </div>
-                    </td>
-                </template>
-
-            <template v-slot:[`item.aceptacargadiaria`]="{ item }">
+            <template v-slot:[`item.logo`]="{ item }">
                 <td>
-                    <div v-if="item.aceptacargadiaria">
+                    <div v-if="item.logo">
+                        <v-avatar size=50>
+                            <v-img :src="item.logo" aspect-ratio="2" contain></v-img>
+                        </v-avatar>
+                    </div>
+                    <div v-else>
+                        <v-avatar  size=40>
+                            <span style="color:black">n/d</span>
+                        </v-avatar>
+                    </div>
+                </td>
+            </template>
+            <template v-slot:[`item.aceptacargalapsos`]="{ item }">
+                <td>
+                    <div v-if="item.aceptacargalapsos">
                         <v-chip class="ma-2" color="primary" text-color="white">Si</v-chip>
                     </div>
                     <div v-else>
@@ -265,9 +270,9 @@
                     </div>
                 </td>
             </template>
-            <template v-slot:[`item.aceptacargasemanal`]="{ item }">
+            <template v-slot:[`item.aceptacargatiempos`]="{ item }">
                 <td>
-                    <div v-if="item.aceptacargasemanal">
+                    <div v-if="item.aceptacargatiempos">
                         <v-chip class="ma-2" color="primary" text-color="white">Si</v-chip>
                     </div>
                     <div v-else>
@@ -304,10 +309,10 @@
             <template v-slot:[`item.activo`]="{ item }">
                 <td>
                     <div v-if="item.activo">
-                        <span class="blue--text">Activo</span>
+                        <v-chip class="ma-2" color="primary" text-color="white">Activo</v-chip>
                     </div>
                     <div v-else>
-                        <span class="red--text">Inactivo</span>
+                        <v-chip class="ma-2">Inactivo</v-chip>
                     </div>
                 </td>
             </template>
@@ -346,8 +351,8 @@
             { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
             { text: 'Logo', value: 'logo', align: 'start', sortable: true  },
             { text: 'Razon Social', value: 'nombre', align: 'start', sortable: true },
-            { text: 'Carga diaria', value: 'aceptacargadiaria', align: 'start', sortable: true },
-            { text: 'Carga semanal', value: 'aceptacargasemanal', align: 'start', sortable: true },
+            { text: 'Carga lapsos?', value: 'aceptacargalapsos', align: 'start', sortable: true },
+            { text: 'Carga tiempos?', value: 'aceptacargatiempos', align: 'start', sortable: true },
             { text: 'Facturable?', value: 'facturabledefault', align: 'start', sortable: true },
             { text: 'Privados?', value: 'reservadodefault', align: 'start', sortable: true },
             { text: 'Tarifa base', value: 'tarifadefault', align: 'start', sortable: true  },
@@ -364,8 +369,8 @@
         editedIndex: -1,
         id: '',
         nombre: '',
-        aceptacargadiaria: false,
-        aceptacargasemanal: false,
+        aceptacargalapsos: false,
+        aceptacargatiempos: false,
         facturabledefault: false,
         reservadodefault: false,
         tarifadefault: 0,
@@ -432,8 +437,8 @@
         crearPDF(){
             var columns = [
                     {title: "Razon Social", dataKey: "nombre"},
-                    {title: "Carga diaria", dataKey: "aceptacargadiaria"},
-                    {title: "Carga semanal", dataKey: "aceptacargasemanal"}, 
+                    {title: "Carga lapsos", dataKey: "aceptacargalapsos"},
+                    {title: "Carga diaria", dataKey: "aceptacargatiempos"}, 
                     {title: "Facturable?", dataKey: "facturabledefault"}, 
                     {title: "Privados?", dataKey: "reservadodefault"},
                     {title: "Tarifa base", dataKey: "tarifadefault"}, 
@@ -496,8 +501,8 @@
         editItem (item) {
             this.id = item.id;
             this.nombre = item.nombre;
-            this.aceptacargadiaria = item.aceptacargadiaria;
-            this.aceptacargasemanal = item.aceptacargasemanal;
+            this.aceptacargalapsos = item.aceptacargalapsos;
+            this.aceptacargatiempos = item.aceptacargatiempos;
             this.facturabledefault = item.facturabledefault;
             this.reservadodefault = item.reservadodefault;
             this.tarifadefault = item.tarifadefault;
@@ -555,8 +560,8 @@
         limpiar(){
             this.id = "";
             this.nombre = "";
-            this.aceptacargadiaria = false;
-            this.aceptacargasemanal = false;
+            this.aceptacargalapsos = false;
+            this.aceptacargatiempos = false;
             this.facturabledefault = false;
             this.reservadodefault = false;
             this.tarifadefault = 0;
@@ -585,8 +590,8 @@
                     'Id':me.id,
                     'nombre': me.nombre,
                     'logo':me.logo,
-                    'aceptacargadiaria':me.aceptacargadiaria,
-                    'aceptacargasemanal': me.aceptacargasemanal,
+                    'aceptacargalapsos':me.aceptacargalapsos,
+                    'aceptacargatiempos': me.aceptacargatiempos,
                     'facturabledefault': me.facturabledefault,
                     'reservadodefault': me.reservadodefault,
                     'tarifadefault': me.tarifadefault,
@@ -611,8 +616,8 @@
                 axios.post('api/Empresas/Crear',{
                     'nombre': me.nombre,
                     'logo':me.logo,
-                    'aceptacargadiaria':me.aceptacargadiaria,
-                    'aceptacargasemanal': me.aceptacargasemanal,
+                    'aceptacargalapsos':me.aceptacargalapsos,
+                    'aceptacargatiempos': me.aceptacargatiempos,
                     'facturabledefault': me.facturabledefault,
                     'reservadodefault': me.reservadodefault,
                     'tarifadefault': me.tarifadefault,

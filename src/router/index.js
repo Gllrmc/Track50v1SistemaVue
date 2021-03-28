@@ -5,6 +5,8 @@ import Login from '../components/Login.vue'
 import Rol from '../components/Rol.vue'
 import Usuario from '../components/Usuario.vue'
 import Grupo from '../components/Grupo.vue'
+import Proyecto from '../components/Proyecto.vue'
+import Cliente from '../components/Cliente.vue'
 import Tarea from '../components/Tarea.vue'
 import Etiqueta from '../components/Etiqueta.vue'
 import Appconfig from '../components/Appconfig.vue'
@@ -36,6 +38,32 @@ const routes = [
     component: Login,
     meta:{
       libre: true
+    }
+  },
+  {
+    path: '/proyectos',
+    name: 'proyectos',
+    component: Proyecto,
+    meta: {
+      administrador: true,
+      jefeadministracion: true,
+      liderproyecto:true, 
+      consultor: true,
+      asistadministracion: true,
+      dataentry: true
+    }
+  },
+  {
+    path: '/clientes',
+    name: 'clientes',
+    component: Cliente,
+    meta: {
+      administrador: true,
+      jefeadministracion: true,
+      liderproyecto:true, 
+      consultor: true,
+      asistadministracion: true,
+      dataentry: true
     }
   },
   {

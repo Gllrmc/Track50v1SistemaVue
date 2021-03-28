@@ -46,7 +46,7 @@
                             vertical
                         ></v-divider>
                         <v-spacer></v-spacer>
-                        <v-text-field label="Búsqueda" outlined v-model="searchg" append-icon="search" single-line hide-details></v-text-field>
+                        <v-text-field dense label="Búsqueda" outlined v-model="searchg" append-icon="search" single-line hide-details clearable ></v-text-field>
                         <v-spacer></v-spacer>
                         <v-dialog v-model="dialog" max-width="600px">
                             <template v-slot:activator="{ on }">
@@ -60,7 +60,7 @@
                                 <v-container grid-list-md>
                                     <v-row dense>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="nombre" label="Nombre Etiqueta">
+                                            <v-text-field v-model="nombre" label="Nombre Etiqueta" counter="50">
                                             </v-text-field>
                                         </v-col>
                                     </v-row>
@@ -144,7 +144,7 @@
                             mdi-clipboard-check-multiple
                             </v-icon>
                         </template>
-                        <span>Proyectos</span>
+                        <span>Registros</span>
                     </v-tooltip>
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
@@ -202,10 +202,10 @@
                 <template v-slot:[`item.activo`]="{ item }">
                     <td>
                         <div v-if="item.activo">
-                            <span class="blue--text">Activo</span>
+                            <v-chip class="ma-2" color="primary" text-color="white">Activo</v-chip>
                         </div>
                         <div v-else>
-                            <span class="red--text">Inactivo</span>
+                            <v-chip class="ma-2">Inactivo</v-chip>
                         </div>
                     </td>
                 </template>
@@ -231,17 +231,11 @@
                 no-data-text="Nada para mostrar"
                 >
                     <template v-slot:top>
-                        <v-toolbar flat color="white">
-                            <v-toolbar-title>{{userheader}}</v-toolbar-title>
-                            <v-divider
-                                class="mx-4"
-                                inset
-                                vertical
-                            ></v-divider>
-                            <v-spacer></v-spacer>
-                            <template v-slot:extension>
+                        <v-card flat color="white">
+                            <v-card-title>{{userheader}}</v-card-title>
+                            <v-card-actions>
                                 <v-row>
-                                    <v-col cols="12" md="12" sm="6">
+                                    <v-col cols="12" md="12" sm="12">
                                         <v-text-field label="Búsqueda" class="ma-2" 
                                         outlined 
                                         dense 
@@ -249,11 +243,13 @@
                                         append-icon="search" 
                                         single-line 
                                         hide-details
+                                        clearable
                                         ></v-text-field>
                                     </v-col>
                                 </v-row>
-                            </template>           
-                        </v-toolbar>
+                                <v-btn color="primary" dense dark class="ma-2" @click.native="userdialog=false">Salir</v-btn>
+                            </v-card-actions>
+                        </v-card>
                     </template>
                     <template v-slot:[`item.selected`]="{ item }">
                         <v-simple-checkbox
@@ -266,7 +262,7 @@
                         <td>
                             <div v-if="item.imgusuario">
                                 <v-avatar size=40>
-                                    <img :src="item.imgusuario" aspect-ratio="2" contain>
+                                    <v-img :src="item.imgusuario" aspect-ratio="2" contain></v-img>
                                 </v-avatar>
                             </div>
                             <div v-else>
@@ -328,7 +324,7 @@
         tareas:[],
         usuarios:[],
         proyectos:[],
-        etiquetaproyecto:[],
+        etiquetaregistro:[],
         workgroupId:'',
         imageUrl:'',
         userheader: '',
@@ -491,10 +487,10 @@
                 me.snackbar = true;
                 console.log(error);
             });
-            axios.get('api/Etiquetaproyecto/Listar',configuracion).then(function(response){
+            axios.get('api/Etiquetaregistros/Listar',configuracion).then(function(response){
                 etiquetaproyectoArray=response.data;
                 etiquetaproyectoArray.map(function(x){
-                    me.etiquetaproyecto.push({etiquetaid: x.etiquetaid, registroid: x.registroid, value:x.id});
+                    me.etiquetaregistro.push({etiquetaid: x.etiquetaid, registroid: x.registroid, value:x.id});
                 });
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
@@ -559,9 +555,9 @@
             for (var l = 0; l < me.proyectos.length; l++){
                 me.proyectos[l].selected = false;
             };
-            for (let i = 0; i < me.etiquetaproyecto.length; i++){
-                if (me.etiquetaproyecto[i].etiquetaid === item.id){
-                    me.proyectos[me.proyectos.findIndex(elemento => elemento.value === me.etiquetaproyecto[i].registroid )].selected = true;
+            for (let i = 0; i < me.etiquetaregistro.length; i++){
+                if (me.etiquetaregistro[i].etiquetaid === item.id){
+                    me.proyectos[me.proyectos.findIndex(elemento => elemento.value === me.etiquetaregistro[i].registroid )].selected = true;
                 }
             };
             me.workgroupId = item.id;
@@ -573,13 +569,13 @@
             if (item.selected === true ) {
                 let header={"Authorization" : "Bearer " + this.$store.state.token};
                 let configuracion= {headers : header};
-                axios.post('api/Etiquetaproyecto/Crear',{
+                axios.post('api/Etiquetaregistros/Crear',{
                     'etiquetaid':this.workgroupId,
                     'registroid':item.value,
                     'iduseralta': me.$store.state.usuario.idusuario                      
                 },configuracion)
                 .then(function(response){
-                    me.etiquetaproyecto.push({etiquetaid: response.data.etiquetaid, registroid: response.data.registroid, value: response.data.id});
+                    me.etiquetaregistro.push({etiquetaid: response.data.etiquetaid, registroid: response.data.registroid, value: response.data.id});
                     //console.log(response);
                     me.snacktext = 'Creacion exitosa';
                     me.snackcolor = "success";
@@ -591,11 +587,11 @@
                     console.log(error);
                 });
             } else {
-                var indice = me.etiquetaproyecto.find(x => item.value === x.registroid && me.workgroupId === x.etiquetaid).value;
+                var indice = me.etiquetaregistro.find(x => item.value === x.registroid && me.workgroupId === x.etiquetaid).value;
                 let header={"Authorization" : "Bearer " + me.$store.state.token};
                 let configuracion= {headers : header};
-                axios.delete('api/Etiquetaproyecto/Eliminar/'+indice,configuracion).then( () => {
-                    me.etiquetaproyecto = me.etiquetaproyecto.filter(x => x.value != indice); 
+                axios.delete('api/Etiquetaregistros/Eliminar/'+indice,configuracion).then( () => {
+                    me.etiquetaregistro = me.etiquetaregistro.filter(x => x.value != indice); 
                     me.snacktext = 'Eliminacion exitosa';
                     me.snackcolor = "success";
                     me.snackbar = true;

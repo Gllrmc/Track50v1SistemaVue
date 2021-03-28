@@ -46,7 +46,7 @@
                             vertical
                         ></v-divider>
                         <v-spacer></v-spacer>
-                        <v-text-field label="Búsqueda" outlined v-model="searchg" append-icon="search" single-line hide-details></v-text-field>
+                        <v-text-field dense label="Búsqueda" outlined v-model="searchg" append-icon="search" single-line hide-details clearable ></v-text-field>
                         <v-spacer></v-spacer>
                         <v-dialog v-model="dialog" max-width="600px">
                             <template v-slot:activator="{ on }">
@@ -60,7 +60,7 @@
                                 <v-container grid-list-md>
                                     <v-row dense>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="nombre" label="Nombre Tarea">
+                                            <v-text-field v-model="nombre" label="Nombre Tarea" counter="50">
                                             </v-text-field>
                                         </v-col>
                                     </v-row>
@@ -139,9 +139,9 @@
                             class="mr-2"
                             v-bind="attrs"
                             v-on="on"
-                            @click="tratarTareas(item)"
+                            @click="tratarProyectos(item)"
                             >
-                            mdi-clipboard-check-multiple
+                            mdi-sprout
                             </v-icon>
                         </template>
                         <span>Proyectos</span>
@@ -202,10 +202,10 @@
                 <template v-slot:[`item.activo`]="{ item }">
                     <td>
                         <div v-if="item.activo">
-                            <span class="blue--text">Activo</span>
+                            <v-chip class="ma-2" color="primary" text-color="white">Activo</v-chip>
                         </div>
                         <div v-else>
-                            <span class="red--text">Inactivo</span>
+                            <v-chip class="ma-2">Inactivo</v-chip>
                         </div>
                     </td>
                 </template>
@@ -221,7 +221,7 @@
             </v-data-table>
         </v-col>
         <v-col cols="12" md="6" sm="3">
-            <v-dialog v-model="userdialog" max-width="750px">
+            <v-dialog persistent v-model="userdialog" max-width="900px">
                 <v-data-table
                 dense
                 :headers="headersproyectos"
@@ -231,57 +231,115 @@
                 no-data-text="Nada para mostrar"
                 >
                     <template v-slot:top>
-                        <v-toolbar flat color="white">
-                            <v-toolbar-title>{{userheader}}</v-toolbar-title>
-                            <v-divider
-                                class="mx-4"
-                                inset
-                                vertical
-                            ></v-divider>
-                            <v-spacer></v-spacer>
-                            <template v-slot:extension>
+                        <v-card  flat color="white">
+                            <v-card-title>{{userheader}}</v-card-title>
+                            <v-card-actions>
                                 <v-row>
-                                    <v-col cols="12" md="12" sm="6">
-                                        <v-text-field label="Búsqueda" class="ma-2" 
+                                    <v-col cols="12" md="12" sm="12">
+                                        <v-text-field label="Búsqueda" 
                                         outlined 
                                         dense 
                                         v-model="searchu" 
                                         append-icon="search" 
                                         single-line 
                                         hide-details
+                                        clearable 
                                         ></v-text-field>
                                     </v-col>
                                 </v-row>
-                            </template>           
-                        </v-toolbar>
+                                <v-btn color="primary" dense dark class="ma-2" @click.native="userdialog=false">Salir</v-btn>
+                            </v-card-actions>      
+                        </v-card>
                     </template>
                     <template v-slot:[`item.selected`]="{ item }">
                         <v-simple-checkbox
                             v-model="item.selected"
                             :ripple="false"
-                            @click="accionUsuario(item)"
+                            @click="accionProyecto(item)"
                         ></v-simple-checkbox>
                     </template>
-                    <template v-slot:[`item.imgusuario`]="{ item }">
-                        <td>
-                            <div v-if="item.imgusuario">
-                                <v-avatar size=40>
-                                    <img :src="item.imgusuario" aspect-ratio="2" contain>
-                                </v-avatar>
-                            </div>
-                            <div v-else>
-                                <v-avatar v-if="item.coltexto=='black'" :color="item.colfondo" size=40>
-                                    <span style="color:black">{{ item.iniciales }}</span>
-                                </v-avatar>
-                                <v-avatar v-else :color="item.colfondo" size=40>
-                                    <span style="color:white">{{ item.iniciales }}</span>
-                                </v-avatar>
-                            </div>
-                        </td>
+                    <template v-slot:[`item.estimadomonto`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.estimadomonto"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            persistent
+                        >
+                            {{ props.item.estimadomonto }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.estimadomonto"
+                                type="number"
+                                label="Editar"
+                                single-line
+                                counter
+                                clearable
+                                @change="editProyecto(props.item)"
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
                     </template>
+                    <template v-slot:[`item.estimadotarifa`]="{ item }">
+                        <div v-if="item.selected" class="d-flex align-end flex-column">
+                            <td>{{ Number(item.estimadotarifa).toFixed(2)}}</td>
+                        </div>
+                    </template>
+                    <template v-slot:[`item.estimadohoras`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.estimadohoras"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            @save="save"
+                            @cancel="cancel"
+                            persistent
+                        >
+                            {{ props.item.estimadohoras }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.estimadohoras"
+                                type="number"
+                                label="Editar"
+                                single-line
+                                counter
+                                clearable
+                                @change="editProyecto(props.item)"
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>
+                    <template v-slot:[`item.notas`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.notas"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            persistent
+                        >
+                            {{ props.item.notas }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.notas"
+                                counter="256"
+                                label="Editar"
+                                single-line
+                                clearable
+                                @change="editProyecto(props.item)"
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>                    
                     <template v-slot:no-data>
                         <v-btn color="primary" @click="listar">Resetear</v-btn>
                     </template>
+
                 </v-data-table>
             </v-dialog>
         </v-col>
@@ -292,6 +350,7 @@
   import jsPDF from 'jspdf'
   export default {
     data: () => ({
+        max256chars: v => v.length <= 256 || 'Input too long!',
         up3:'AAA',
         colores: [
             {value: '#F44336', text: 'Rojo'},
@@ -328,7 +387,7 @@
         tareas:[],
         usuarios:[],
         proyectos:[],
-        regtareaproyecto:[],
+        proyectotareas:[],
         workgroupId:'',
         imageUrl:'',
         userheader: '',
@@ -345,9 +404,12 @@
         ],
         headersproyectos: [
             { text: '#', value: 'selected', align: 'center', sortable: false },
-            { text: 'Avatar', value: 'imgusuario', align: 'center', sortable: false },
-            { text: 'Userid', value: 'userid', align: 'start', sortable: true },
-            { text: 'email', value: 'email', align: 'start', sortable: true },
+            //{ text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
+            { text: 'Proyecto', value: 'nombre', align: 'start', sortable: false },
+            { text: 'Est.Horas', value: 'estimadohoras', align: 'end', sortable: true },
+            { text: 'Est.Tarifa', value: 'estimadotarifa', align: 'end', sortable: true },
+            { text: 'Est.Monto', value: 'estimadomonto', align: 'end', sortable: true },
+            { text: 'Notas', value: 'notas', align: 'start', sortable: true },
             //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
             //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
             //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
@@ -370,6 +432,8 @@
         iduserumod:'',
         fecumod:'',
         activo:false,
+        estimadohoras:0,
+        estimadomonto:0,
         valida: 0,
         validaMensaje:[],
         adModal: 0,
@@ -396,6 +460,14 @@
     },
 
     methods: {
+        save () {
+        },
+        cancel () {
+        },
+        formatPrice(value,dec) {
+            let val = (value/1).toFixed(dec).replace('.', ',')
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
         pickFile () {
             this.$refs.image.click ()
         },
@@ -462,7 +534,7 @@
             let me=this;
             var usuariosArray=[];
             var proyectosArray=[];
-            var regtareaproyectoArray=[];
+            var tareaproyectoArray=[];
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
             axios.get('api/Usuarios/Listar',configuracion).then(function(response){
@@ -478,12 +550,10 @@
                 me.snackbar = true;
                 console.log(error);
             });
-            axios.get('api/Usuarios/Listar',configuracion).then(function(response){
+            axios.get('api/Proyectos/Listar',configuracion).then(function(response){
                 proyectosArray=response.data;
                 proyectosArray.map(function(x){
-                    me.proyectos.push({selected: false,iduseralta: x.iduseralta, iduserumod: x.iduserumod,
-                    imgusuario: x.imgusuario, colfondo: x.colfondo, coltexto: x.coltexto, 
-                    email: x.email, iniciales: x.iniciales, userid: x.userid, value:x.id});
+                    me.proyectos.push({selected: false, value:x.id, nombre: x.nombre, relid: 0, estimadohoras: 0, estimadomonto: 0, estimadotarifa: 0, notas: ''});
                 });
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
@@ -491,10 +561,11 @@
                 me.snackbar = true;
                 console.log(error);
             });
-            axios.get('api/Regtareaproyecto/Listar',configuracion).then(function(response){
-                regtareaproyectoArray=response.data;
-                regtareaproyectoArray.map(function(x){
-                    me.regtareaproyecto.push({etiquetaid: x.etiquetaid, proyectoid: x.proyectoid, value:x.id});
+            axios.get('api/Proyectotareas/Listar',configuracion).then(function(response){
+                tareaproyectoArray=response.data;
+                tareaproyectoArray.map(function(x){
+                    me.proyectotareas.push({tareaid: x.tareaid, proyectoid: x.proyectoid, estimadohoras: x.estimadohoras,
+                        estimadomonto: x.estimadomonto, estimadotarifa: (x.estimadomonto / x.estimadohoras).toFixed(2), notas: x.notas, value:x.id});
                 });
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
@@ -554,32 +625,50 @@
             this.dialog = false
             this.limpiar();
         },
-        tratarTareas(item){
+        tratarProyectos(item){
             var me=this;
+            let index = 0;
             for (var l = 0; l < me.proyectos.length; l++){
                 me.proyectos[l].selected = false;
+                me.proyectos[l].relid = 0;
+                me.proyectos[l].estimadotarifa = 0;
+                me.proyectos[l].estimadomonto = 0;
+                me.proyectos[l].estimadohoras = 0;
+                me.proyectos[l].notas = '';
             };
-            for (let i = 0; i < me.regtareaproyecto.length; i++){
-                if (me.regtareaproyecto[i].etiquetaid === item.id){
-                    me.proyectos[me.proyectos.findIndex(elemento => elemento.value === me.regtareaproyecto[i].proyectoid )].selected = true;
+            for (var i = 0; i < me.proyectotareas.length; i++){
+                if (me.proyectotareas[i].tareaid === item.id){
+                    index = me.proyectos.findIndex(elemento => elemento.value === me.proyectotareas[i].proyectoid );
+                    me.proyectos[index].selected = true;
+                    me.proyectos[index].relid = me.proyectotareas[i].value;
+                    me.proyectos[index].estimadotarifa = (me.proyectotareas[i].estimadomonto / me.proyectotareas[i].estimadohoras).toFixed(2);
+                    me.proyectos[index].estimadomonto = me.proyectotareas[i].estimadomonto;
+                    me.proyectos[index].estimadohoras  = me.proyectotareas[i].estimadohoras;
+                    me.proyectos[index].notas          = me.proyectotareas[i].notas;
                 }
             };
             me.workgroupId = item.id;
-            me.userheader = 'Miembros de ' + item.nombre;
+            me.userheader = 'Proyectos vinculados a ' + item.nombre;
             me.userdialog=!me.userdialog;
         },
-        accionUsuario(item){
+        accionProyecto(item){
             var me=this;
+            let index = 0;
+            index = me.proyectos.findIndex(elemento => elemento.value === item.value );
             if (item.selected === true ) {
                 let header={"Authorization" : "Bearer " + this.$store.state.token};
                 let configuracion= {headers : header};
-                axios.post('api/Regtareaproyecto/Crear',{
-                    'etiquetaid':this.workgroupId,
+                axios.post('api/Proyectotareas/Crear',{
+                    'tareaid':this.workgroupId,
                     'proyectoid':item.value,
+                    'estimadohoras':item.estimadohoras,
+                    'estimadomonto':item.estimadomonto,
+                    'notas':item.notas,
                     'iduseralta': me.$store.state.usuario.idusuario                      
                 },configuracion)
                 .then(function(response){
-                    me.regtareaproyecto.push({etiquetaid: response.data.etiquetaid, proyectoid: response.data.proyectoid, value: response.data.id});
+                    me.proyectotareas.push({tareaid: response.data.tareaid, proyectoid: response.data.proyectoid, estimadomonto: 0, estimadohoras: 0, estimadotarifa: 0, value: response.data.id});
+                    me.proyectos[index].relid = response.data.id;
                     //console.log(response);
                     me.snacktext = 'Creacion exitosa';
                     me.snackcolor = "success";
@@ -591,11 +680,16 @@
                     console.log(error);
                 });
             } else {
-                var indice = me.regtareaproyecto.find(x => item.value === x.proyectoid && me.workgroupId === x.etiquetaid).value;
+                var indice = me.proyectotareas.find(x => item.value === x.proyectoid && me.workgroupId === x.tareaid).value;
                 let header={"Authorization" : "Bearer " + me.$store.state.token};
                 let configuracion= {headers : header};
-                axios.delete('api/Regtareaproyecto/Eliminar/'+indice,configuracion).then( () => {
-                    me.regtareaproyecto = me.regtareaproyecto.filter(x => x.value != indice); 
+                axios.delete('api/Proyectotareas/Eliminar/'+indice,configuracion).then( () => {
+                    me.proyectotareas = me.proyectotareas.filter(x => x.value != indice);
+                    me.proyectos[index].relid = 0;
+                    me.proyectos[index].estimadotarifa = 0;
+                    me.proyectos[index].estimadohoras = 0;
+                    me.proyectos[index].estimadomonto = 0;
+                    me.proyectos[index].notas = '';
                     me.snacktext = 'Eliminacion exitosa';
                     me.snackcolor = "success";
                     me.snackbar = true;
@@ -606,6 +700,37 @@
                     console.log(error);
                 });
             }
+        },
+        editProyecto(item){
+            var me=this;
+            let index=0;
+            index = me.proyectotareas.findIndex(elemento => elemento.value === item.relid );
+            let header={"Authorization" : "Bearer " + this.$store.state.token};
+            let configuracion= {headers : header};
+
+            axios.put('api/Proyectotareas/Actualizar',{
+                'Id':item.relid,
+                'tareaid':this.workgroupId,
+                'proyectoid':item.value,
+                'estimadohoras':item.estimadohoras,
+                'estimadomonto':item.estimadomonto,
+                'notas':item.notas,
+                'iduseralta': me.$store.state.usuario.idusuario                      
+            },configuracion).then( () => {
+                me.proyectotareas[index].estimadotarifa = (Number(item.estimadomonto) / Number(item.estimadohoras)).toFixed(2);
+                me.proyectotareas[index].estimadomonto = Number(item.estimadomonto);
+                me.proyectotareas[index].estimadohoras  = Number(item.estimadohoras);
+                me.proyectotareas[index].notas          = item.notas;
+                me.proyectos[me.proyectos.findIndex(elemento => elemento.value === me.proyectotareas[index].proyectoid )].estimadotarifa = me.proyectotareas[index].estimadotarifa;
+                me.snacktext = 'Modificacion exitosa';
+                me.snackcolor = "success";
+                me.snackbar = true;
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackbar = true;
+                me.snackcolor = 'error'
+                console.log(error);
+            });
         },
         limpiar(){
                 this.id="";

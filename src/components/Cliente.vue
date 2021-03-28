@@ -13,7 +13,7 @@
                 {{ snacktext }}
                 <template v-slot:action="{ attrs }">
                     <v-btn 
-                        color="@FFFFFF"
+                        color="#FFFFFF"
                         dark
                         vertical
                         text
@@ -25,11 +25,11 @@
                 </template>
             </v-snackbar>
         </template>
-        <v-col cols="12" md="4" sm="3">
+        <v-col cols="12" md="6" sm="6">
             <v-data-table
             dense
             :headers="headers"
-            :items="paises"
+            :items="clientes"
             :search="search"
             class="elevation-1"
             no-data-text="Nada para mostrar"
@@ -39,7 +39,7 @@
                     <div class="ma-2">
                         <v-btn small @click="crearPDF()"><v-icon>print</v-icon></v-btn>
                     </div>
-                    <v-toolbar-title>Paises</v-toolbar-title>
+                    <v-toolbar-title>Clientes</v-toolbar-title>
                     <v-divider
                         class="mx-4"
                         inset
@@ -59,11 +59,34 @@
                         <v-card-text>
                             <v-container grid-list-md>
                                 <v-row dense>
-                                    <v-col cols="12" sm="12" md="12">
-                                        <v-text-field v-model="nombre" label="Pais" counter="50"></v-text-field>
+                                    <v-col cols="12" sm="6" md="8">
+                                        <v-text-field v-model="nombre" label="Cliente" counter="50">
+                                        </v-text-field>
                                     </v-col>
-                                    <v-col cols="12" sm="12" md="12">
-                                        <v-text-field v-model="cuit" label="CUIT"></v-text-field>
+                                    <v-col cols="12" sm="6" md="4">
+                                        <v-text-field v-model="tarifadefault" type="number" label="Tarifa default">
+                                        </v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" sm="2" md="2">
+                                        <v-layout column>
+                                            <div class="ml-2" style="font-size : 12px">Logo</div>
+                                            <v-avatar  size=40>
+                                                <v-img :src="imageUrl" aspect-ratio="2" contain></v-img>
+                                            </v-avatar>
+                                            <input v-show="false" ref="inputUpload1" type="file" @change="onFilePicked" >
+                                        </v-layout>
+                                    </v-col>
+                                    <v-col cols="12" sm="4" md="4">
+                                        <v-btn class="mx-2" small fab color="primary" @click="$refs.inputUpload1.click()">
+                                            <v-icon dark>
+                                                mdi-plus
+                                            </v-icon>    
+                                        </v-btn>
+                                        <v-btn class="mx-2" small fab color="primary" @click="clearImagen">
+                                            <v-icon dark>
+                                                mdi-delete
+                                            </v-icon>    
+                                        </v-btn>
                                     </v-col>
                                     <v-col cols="12" sm="12" md="12" v-show="valida">
                                         <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v">
@@ -81,13 +104,13 @@
                     </v-dialog>
                     <v-dialog v-model="adModal" max-width="390">
                         <v-card>
-                            <v-card-title class="headline" v-if="adAccion==1">¿Activar Pais?</v-card-title>
-                            <v-card-title class="headline" v-if="adAccion==2">Bloquear Pais?</v-card-title>
+                            <v-card-title class="headline" v-if="adAccion==1">¿Activar Cliente?</v-card-title>
+                            <v-card-title class="headline" v-if="adAccion==2">Bloquear Cliente?</v-card-title>
                             <v-card-text>
                                 Estás a punto de 
                                 <span v-if="adAccion==1">Activar </span>
                                 <span v-if="adAccion==2">Bloquear </span>
-                                el Pais: {{ adNombre }}
+                                el Cliente: {{ adNombre }}
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer/>
@@ -104,25 +127,25 @@
                         </v-card>
                     </v-dialog>
                     <v-dialog v-model="recordInfo" max-width="400">
-                    <v-card>
-                        <v-card-title class="headline">Informacion del item</v-card-title>
-                        <v-card-text>
-                            <p><b>Datos creacion:</b></p>
-                            {{iduseralta}}<br>
-                            {{fecalta}}
-                            <p/>
-                            <p><b>Datos ultima modificacion':</b></p>
-                            {{iduserumod}}<br>
-                            {{fecumod}}<br>
-                        </v-card-text>
-                        <v-card-actions>
-                            <v-spacer/>
-                            <v-btn small @click="recordInfo=false">Salir
-                            <v-icon>cancel</v-icon>
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
+                        <v-card>
+                            <v-card-title class="headline">Informacion del item</v-card-title>
+                            <v-card-text>
+                                <p><b>Datos creacion:</b></p>
+                                {{iduseralta}}<br>
+                                {{fecalta}}
+                                <p/>
+                                <p><b>Datos ultima modificacion':</b></p>
+                                {{iduserumod}}<br>
+                                {{fecumod}}<br>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer/>
+                                <v-btn small @click="recordInfo=false">Salir
+                                <v-icon>cancel</v-icon>
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
                 </v-toolbar>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
@@ -192,6 +215,26 @@
                         <span>Info</span>
                     </v-tooltip>
             </template>
+            <template v-slot:[`item.nombre`]="{ item }">
+                <div class="ma-2">{{item.nombre}}</div>
+            </template>
+            <template v-slot:[`item.logo`]="{ item }">
+                <td>
+                    <div v-if="item.logo">
+                        <v-avatar size=40>
+                            <v-img :src="item.logo" aspect-ratio="2" contain></v-img>
+                        </v-avatar>
+                    </div>
+                    <div v-else>
+                        <v-avatar  size=40>
+                            <span style="color:black">n/d</span>
+                        </v-avatar>
+                    </div>
+                </td>
+            </template>
+            <template v-slot:[`item.tarifadefault`]="{ item }">
+                        <div class="ma-2">{{formatPrice(item.tarifadefault)}}</div>
+            </template>
             <template v-slot:[`item.activo`]="{ item }">
                 <td>
                     <div v-if="item.activo">
@@ -219,31 +262,37 @@
 <script>
   import axios from 'axios'
   import jsPDF from 'jspdf'
+  import autoTable from 'jspdf-autotable';
   export default {
     data: () => ({
-        snackbar:false,
-        snackcolor:'',
+        snackbar: false,
+        snackcolor: '',
         snacktext: '',
         timeout: 4000,
-        recordInfo: false,
+        recordInfo:0,
         usuarios: [],
-        paises:[],
+        clientes:[],
+        imageUrl: '',
         dialog: false,
         headers: [
             { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
-            { text: 'Pais', value: 'nombre', align: 'start', sortable: true },
-            { text: 'CUIT', value: 'cuit', align: 'start', sortable: true },
-            { text: 'Estado', value: 'activo', align: 'center', sortable: true  },
+            { text: 'Logo', value: 'logo', align: 'start', sortable: true  },
+            { text: 'Razon Social', value: 'nombre', align: 'start', sortable: true },
+            { text: 'Tarifa default', value: 'tarifadefault', align: 'start', sortable: true },
+            { text: 'Estado', value: 'activo', align: 'start', sortable: true  },
             //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
             //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
             //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
             //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
         ],
         search: '',
+        searchpa: '',
+        searchpr: '',
         editedIndex: -1,
-        id:'',
-        nombre:'',
-        cuit:'',
+        id: '',
+        nombre: '',
+        tarifadefault: 0,
+        logo: '',
         iduseralta:'',
         fecalta:'',
         iduserumod:'',
@@ -259,7 +308,7 @@
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'Nuevo país' : 'Actualizar país'
+        return this.editedIndex === -1 ? 'Nueva cliente' : 'Actualizar cliente'
       },
     },
 
@@ -270,44 +319,82 @@
     },
 
     created () {
+        this.select();
         this.listar()
-        this.select()
     },
 
     methods: {
+        pickFile () {
+            this.$refs.image.click ()
+        },
+        onFilePicked (e) {
+            const files = e.target.files
+            if (files[0] !== undefined) {
+                this.imageName = files[0].name
+                if (this.imageName.lastIndexOf('.') <= 0) {
+                return
+                }
+                const fr = new FileReader ()
+                fr.readAsDataURL(files[0])
+                if (files[0].size <= 128000 ){
+                    this.snacktext = 'El archivo cumple requisitos';
+                    this.snackcolor = 'success';
+                    this.snackbar = true;
+                    fr.addEventListener('load', () => {
+                        this.imageUrl = fr.result
+                        this.imageFile = files[0] // this is an image file that can be sent to server...
+                        this.logo = this.imageUrl;
+                    })
+                } else{
+                    this.snacktext = 'Archivo demasiado grande';
+                    this.snackcolor = 'error';
+                    this.snackbar = true;
+                }
+            } else {
+                this.imageName = ''
+                this.imageFile = ''
+                this.imageUrl = ''
+            }
+        },
+        clearImagen(){
+            this.imageUrl = ''
+            this.logo = ''
+        },
         crearPDF(){
             var columns = [
-                    {title: "Id", dataKey: "id"},
-                    {title: "Pais", dataKey: "nombre"},
-                    {title: "CUIT", dataKey: "cuit"},
-                    {title: "Estado", dataKey: "activo"},
+                    {title: "Razon Social", dataKey: "nombre"},
+                    {title: "Activo", dataKey: "activo"}
             ];
             var rows = [];
 
-            this.paises.map(function(x){
-                    rows.push({id:x.id,nombre:x.nombre, cuit:x.cuit,activo:x.activo ? "Activo" : "Inactivo"});
+            this.clientes.map(function(x){
+                    rows.push({nombre:x.nombre,activo:x.activo});
             });
 
             // Only pt supported (not mm or in)
             var doc = new jsPDF('l', 'pt');
             doc.autoTable(columns, rows, {
                 margin: {top: 60},
-                addPageContent: () => {
-                    doc.text("Listado de Paises", 40, 30);
+                addPageContent: () =>  {
+                    doc.text("Listado de Clientes", 40, 30);
                 }
             });
-            doc.save('Paises.pdf');
+            doc.save('Clientes.pdf');
+        },
+        formatPrice(value) {
+            let val = (value/1).toFixed(2).replace('.', ',')
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
         listar(){
             let me=this;
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
-            axios.get('api/Paises/Listar',configuracion).then(function(response){
+            axios.get('api/Clientes/Listar',configuracion).then(function(response){
                 //console.log(response);
-                me.paises=response.data;
+                me.clientes=response.data;
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                me.snackcolor='error';
+                me.snackcolor = 'error';
                 me.snackbar = true;
                 console.log(error);
             });
@@ -329,25 +416,24 @@
                 me.snackbar = true;
                 console.log(error);
             });
-        },            
+        },
         editItem (item) {
-            this.id=item.id;
-            this.provinciaId=item.provinciaId;
-            this.paisId=item.paisId;
-            this.nombre=item.nombre;
-            this.cuit=item.cuit;
-            this.direccion=item.direccion;
-            this.localidad=item.localidad;
-            this.cpostal=item.cpostal;
-            this.telefono=item.telefono;
-            this.email=item.email;
-            this.webpage=item.webpage;
-            this.iduseralta=item.iduseralta;
-            this.fecalta=item.fecalta;
-            this.iduserumod=item.iduserumod;
-            this.fecumod=item.fecumod;
-            this.activo=item.activo;                
-            this.editedIndex=1;
+            this.id = item.id;
+            this.nombre = item.nombre;
+            this.aceptacargadiaria = item.aceptacargadiaria;
+            this.aceptacargasemanal = item.aceptacargasemanal;
+            this.facturabledefault = item.facturabledefault;
+            this.reservadodefault = item.reservadodefault;
+            this.tarifadefault = item.tarifadefault;
+            this.monedadefault = item.monedadefault;
+            this.logo = item.logo;
+            this.imageUrl = item.logo;
+            this.iduseralta = item.iduseralta;
+            this.fecalta = item.fecalta;
+            this.iduserumod = item.iduserumod;
+            this.fecumod = item.fecumod;
+            this.activo = item.activo;                
+            this.editedIndex = 1;
             this.dialog = true
         },
         deleteItem (item) {
@@ -356,7 +442,7 @@
             if (resulta) {
                 let header={"Authorization" : "Bearer " + me.$store.state.token};
                 let configuracion= {headers : header};
-                axios.delete('api/Paises/Eliminar/'+item.id,configuracion).then( () => {
+                axios.delete('api/Clientes/Eliminar/'+item.id,configuracion).then( () => {
                     me.snacktext = 'Eliminacion exitosa';
                     me.snackcolor = "success";
                     me.snackbar = true;
@@ -364,7 +450,7 @@
                     me.listar();
                 }).catch(function(error){
                     me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                    me.snackcolor='error';
+                    me.snackcolor = 'error';
                     me.snackbar = true;
                     console.log(error);
                 });
@@ -391,14 +477,16 @@
 
         },
         limpiar(){
-            this.id="";
-            this.nombre="";
-            this.cuit="";
+            this.id = "";
+            this.nombre = "";
+            this.tarifadefault = 0;
+            this.logo = "";
+            this.imageUrl = "";
             this.iduseralta = "";
             this.fecalta = "";
             this.iduserumod = "";
             this.fecumod = "";
-            this.activo = false;
+            this.activo = false;                  
             this.editedIndex=-1;
         },
         guardar () {
@@ -412,14 +500,12 @@
                 //Código para editar
                 //Código para guardar
                 let me=this;
-                axios.put('api/Paises/Actualizar',{
-                    'id':me.id,
+                axios.put('api/Clientes/Actualizar',{
+                    'Id':me.id,
                     'nombre': me.nombre,
-                    'cuit':me.cuit,
-                    'iduseralta': me.iduseralta,
-                    'fecalta': me.fecalta,
+                    'logo':me.logo,
+                    'tarifadefault': me.tarifadefault,
                     'iduserumod': me.$store.state.usuario.idusuario,
-                    'fecumod': new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString()                             
                 },configuracion).then( () => {
                     me.snacktext = 'Modificacion exitosa';
                     me.snackcolor = "success";
@@ -436,10 +522,11 @@
             } else {
                 //Código para guardar
                 let me=this;
-                axios.post('api/Paises/Crear',{
+                axios.post('api/Clientes/Crear',{
                     'nombre': me.nombre,
-                    'cuit': me.cuit,
-                    'iduseralta': me.$store.state.usuario.idusuario                         
+                    'logo':me.logo,
+                    'tarifadefault': me.tarifadefault,
+                    'iduseralta': me.$store.state.usuario.idusuario                           
                 },configuracion).then( () => {
                     me.snacktext = 'Creacion exitosa';
                     me.snackcolor = "success";
@@ -460,7 +547,10 @@
             this.validaMensaje=[];
 
             if (this.nombre.length<3 || this.nombre.length>50){
-                this.validaMensaje.push("El nombre del pais no debe tener menos de 3 caracteres y mas de 50 caracteres.");
+                this.validaMensaje.push("El cliente debe tener más de 3 caracteres y menos de 50 caracteres.");
+            }
+            if (!this.tarifadefault){
+                this.validaMensaje.push("Ingrese una tarifa.");
             }
             if (this.validaMensaje.length){
                 this.valida=1;
@@ -488,7 +578,7 @@
             let me=this;
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
-            axios.put('api/Paises/Activar/'+this.adId,{},configuracion).then( () => {
+            axios.put('api/Clientes/Activar/'+this.adId,{},configuracion).then( () => {
                 me.snacktext = 'Activacion exitosa';
                 me.snackcolor = "success";
                 me.snackbar = true;
@@ -499,7 +589,7 @@
                 me.listar();                       
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                me.snackcolor = 'error'
+                me.snackcolor = 'error';
                 me.snackbar = true;
                 console.log(error);
             });
@@ -508,7 +598,7 @@
             let me=this;
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
-            axios.put('api/Paises/Desactivar/'+this.adId,{},configuracion).then( () => {
+            axios.put('api/Clientes/Desactivar/'+this.adId,{},configuracion).then( () => {
                 me.snacktext = 'Desactivacion exitosa';
                 me.snackcolor = "success";
                 me.snackbar = true;
@@ -519,7 +609,7 @@
                 me.listar();                       
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                me.snackcolor = 'error'
+                me.snackcolor = 'error';
                 me.snackbar = true;
                 console.log(error);
             });

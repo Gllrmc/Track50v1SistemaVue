@@ -25,7 +25,7 @@
                 </template>
             </v-snackbar>
         </template>
-        <v-col cols="12" md="8" sm="6">
+        <v-col cols="12" md="9" sm="12">
             <v-data-table
             dense
             :headers="headersusuarios"
@@ -46,7 +46,7 @@
                             vertical
                         ></v-divider>
                         <v-spacer></v-spacer>
-                        <v-text-field label="Búsqueda" outlined v-model="searchu" append-icon="search" single-line hide-details></v-text-field>
+                        <v-text-field dense label="Búsqueda" outlined v-model="searchu" clearable append-icon="search" single-line hide-details></v-text-field>
                         <v-spacer></v-spacer>
                         <v-dialog v-model="dialog" max-width="600px">
                             <template v-slot:activator="{ on }">
@@ -59,70 +59,75 @@
                             <v-card-text>
                                 <v-container grid-list-md>
                                     <v-row dense>
-
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="userid" label="Userid">
+                                            <v-text-field dense v-model="userid" label="Userid" counter="100">
                                             </v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-select v-model="rolId"
+                                            <v-select dense v-model="rolId"
                                             :items="roles" label="Rol">
                                             </v-select>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="iniciales" v-mask="up3" label="Iniciales" ></v-text-field>
+                                            <v-text-field dense v-model="iniciales" v-mask="up3" label="Iniciales" counter="3"></v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="telefono" label="Teléfono">
+                                            <v-text-field dense v-model="telefono" label="Teléfono" counter="20">
                                             </v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="email" label="Email">
+                                            <v-text-field dense v-model="email" label="Email" counter="50">
                                             </v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field type="password" v-model="password" label="Password">
+                                            <v-text-field dense type="password" v-model="password" label="Password">
                                             </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-switch dense v-model="reservado"
+                                            flat
+                                            label="Visualiza privados?"
+                                            ></v-switch>                                    
                                         </v-col>
                                         <v-col cols=12 sm=6 md=6>
-                                            <v-select v-model="coltexto" :items="textos" label="Color texto"></v-select>
+                                            <v-select dense v-model="lineaspag" :items="lineaspags" label="# lineas en tablas"></v-select>
                                         </v-col>
                                         <v-col cols=12 sm=6 md=6>
-                                            <v-select v-model="colfondo" :items="colores" label="Color fondo"></v-select>
+                                            <v-select dense v-model="coltexto" :items="textos" label="Color texto"></v-select>
                                         </v-col>
-                                        <v-col cols="12" sm="12" md="3">
+                                        <v-col cols=12 sm=6 md=6>
+                                            <v-select dense v-model="colfondo" :items="colores" label="Color fondo"></v-select>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-avatar class="ml-2" v-if="coltexto=='black'" :color="colfondo" size=40>
+                                                <span style="color:black">{{ iniciales }}</span>
+                                            </v-avatar>
+                                            <v-avatar class="ml-2" v-else :color="colfondo" size=40>
+                                                <span style="color:white">{{ iniciales }}</span>
+                                            </v-avatar>
+                                        </v-col>
+                                        <v-col cols="12" sm="3" md="3">
                                             <v-layout column>
-                                                <div v-if="imageUrl">
-                                                    <v-avatar  size=40>
-                                                        <img :src="imageUrl" aspect-ratio="2" contain>
-                                                    </v-avatar>
-                                                </div>
-                                                <div v-else>
-                                                    <v-avatar v-if="coltexto=='black'" :color="colfondo" size=40>
-                                                        <span style="color:black">{{ iniciales }}</span>
-                                                    </v-avatar>
-                                                    <v-avatar v-else :color="colfondo" size=40>
-                                                        <span style="color:white">{{ iniciales }}</span>
-                                                    </v-avatar>
-                                                </div>
+                                                <v-avatar class="ml-2" size=40>
+                                                    <v-img :src="imageUrl" aspect-ratio="2" contain></v-img>
+                                                </v-avatar>
                                                 <input v-show="false" ref="inputUpload1" type="file" @change="onFilePicked" >
-                                                <div class="subheading">Avatar</div>
                                             </v-layout>
                                         </v-col>
-                                        <v-col cols="12" sm="12" md="3">
+                                        <v-col cols="12" sm="3" md="3">
                                             <v-btn class="mx-2" small fab color="primary" @click="$refs.inputUpload1.click()">
-                                                <v-icon dark>
+                                                <v-icon dense dark>
                                                     mdi-plus
                                                 </v-icon>    
                                             </v-btn>
                                             <v-btn class="mx-2" small fab color="primary" @click="clearImagen">
-                                                <v-icon dark>
+                                                <v-icon dense dark>
                                                     mdi-delete
                                                 </v-icon>    
                                             </v-btn>
                                         </v-col>
                                         <v-col cols="12" sm="12" md="6">
-                                            <v-switch v-model="pxch" class="mx-2" label="Solicitar Password"></v-switch>
+                                            <v-switch  densev-model="pxch" class="mx-2" label="Solicitar Password"></v-switch>
                                         </v-col>
                                         <v-col cols="12" sm="12" md="12" v-show="valida">
                                             <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v">
@@ -217,6 +222,19 @@
                             class="mr-2"
                             v-bind="attrs"
                             v-on="on"
+                            @click="tratarProyectos(item)"
+                            >
+                            mdi-sprout
+                            </v-icon>
+                        </template>
+                        <span>Proyectos</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            class="mr-2"
+                            v-bind="attrs"
+                            v-on="on"
                             @click="deleteItem(item)"
                             >
                             mdi-delete
@@ -267,10 +285,10 @@
                 <template v-slot:[`item.activo`]="{ item }">
                     <td>
                         <div v-if="item.activo">
-                            <span class="blue--text">Activo</span>
+                            <v-chip class="ma-2" color="primary" text-color="white">Activo</v-chip>
                         </div>
                         <div v-else>
-                            <span class="red--text">Inactivo</span>
+                            <v-chip class="ma-2">Inactivo</v-chip>
                         </div>
                     </td>
                 </template>
@@ -278,7 +296,7 @@
                     <td>
                         <div v-if="item.imgusuario">
                             <v-avatar size=40>
-                                <img :src="item.imgusuario" aspect-ratio="2" contain>
+                                <v-img :src="item.imgusuario" aspect-ratio="2" contain></v-img>
                             </v-avatar>
                         </div>
                         <div v-else>
@@ -288,6 +306,16 @@
                             <v-avatar v-else :color="item.colfondo" size=40>
                                 <span style="color:white">{{ item.iniciales }}</span>
                             </v-avatar>
+                        </div>
+                    </td>
+                </template>
+                <template v-slot:[`item.reservado`]="{ item }">
+                    <td>
+                        <div v-if="item.reservado">
+                            <v-chip class="ma-2" color="primary" text-color="white">Si</v-chip>
+                        </div>
+                        <div v-else>
+                            <v-chip class="ma-2">No</v-chip>
                         </div>
                     </td>
                 </template>
@@ -313,40 +341,11 @@
                 no-data-text="Nada para mostrar"
                 >
                     <template v-slot:top>
-                        <v-toolbar flat color="white">
-                            <v-toolbar-title>{{groupheader}}</v-toolbar-title>
-                            <v-divider
-                                class="mx-4"
-                                inset
-                                vertical
-                            ></v-divider>
-                            <v-spacer></v-spacer>
-                            <v-text-field 
-                            label="Agregar grupo"
-                            class="ma-2"
-                            outlined 
-                            dense 
-                            single-line 
-                            hide-details
-                            v-model="addgroup"
-                            clearable
-                            :rules="[rules.counter]"
-                            ></v-text-field>
-                            <v-btn
-                            class="mx-2"
-                            fab
-                            dark
-                            small
-                            color="primary"
-                            @click="agregarGrupo(addgroup)"
-                            >
-                            <v-icon dark>
-                                mdi-plus
-                            </v-icon>
-                            </v-btn>                            
-                            <template v-slot:extension>
+                        <v-card flat color="white">
+                            <v-card-title>{{groupheader}}</v-card-title>
+                            <v-card-actions>
                                 <v-row>
-                                    <v-col cols="12" md="12" sm="6">
+                                    <v-col cols="12" md="6" sm="6">
                                         <v-text-field label="Búsqueda" class="ma-2" 
                                         outlined 
                                         dense 
@@ -354,11 +353,27 @@
                                         append-icon="search" 
                                         single-line 
                                         hide-details
+                                        clearable 
                                         ></v-text-field>
                                     </v-col>
+                                    <v-col cols="12" md="5" sm="5">
+                                        <v-text-field 
+                                            label="Agregar grupo"
+                                            class="ma-2"
+                                            outlined 
+                                            dense 
+                                            hide-details
+                                            v-model="addgroup"
+                                            clearable
+                                            counter="50"
+                                            append-icon="mdi-plus-circle"
+                                            @click:append="agregarGrupo(addgroup)"
+                                            ></v-text-field>
+                                    </v-col>
                                 </v-row>
-                            </template>           
-                        </v-toolbar>
+                                <v-btn color="primary" dense dark class="ma-2" @click.native="groupdialog=false">Salir</v-btn>
+                            </v-card-actions>
+                        </v-card>
                     </template>
                     <template v-slot:[`item.selected`]="{ item }">
                         <v-simple-checkbox
@@ -367,6 +382,123 @@
                             @click="accionUsuario(item)"
                         ></v-simple-checkbox>
                     </template>
+                    <template v-slot:no-data>
+                        <v-btn color="primary" @click="listar">Resetear</v-btn>
+                    </template>
+                </v-data-table>
+            </v-dialog>
+            <v-dialog v-model="proydialog" max-width="750px">
+                <v-data-table
+                dense
+                :headers="headersproyectos"
+                :items="proyectos"
+                :search="searchp"
+                class="elevation-1"
+                no-data-text="Nada para mostrar"
+                >
+                    <template v-slot:top>
+                        <v-card flat color="white">
+                            <v-card-title>{{proyheader}}</v-card-title>
+                            <v-card-actions>
+                                <v-row>
+                                    <v-col cols="12" md="8" sm="8">
+                                        <v-text-field label="Búsqueda" class="ma-2" 
+                                        outlined 
+                                        dense 
+                                        v-model="searchp" 
+                                        append-icon="search" 
+                                        single-line 
+                                        hide-details
+                                        clearable 
+                                        ></v-text-field>
+                                    </v-col>
+                                </v-row>
+                                <v-btn color="primary" dense dark class="ma-2" @click.native="proydialog=false">Salir</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </template>
+                    <template v-slot:[`item.selected`]="{ item }">
+                        <v-simple-checkbox
+                            v-model="item.selected"
+                            :ripple="false"
+                            @click="accionProyecto(item)"
+                        ></v-simple-checkbox>
+                    </template>
+
+                    <template v-slot:[`item.tarifaproyectousuario`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.tarifaproyectousuario"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            persistent
+                        >
+                            {{ props.item.tarifaproyectousuario }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.tarifaproyectousuario"
+                                type="number"
+                                label="Editar"
+                                single-line
+                                counter
+                                clearable
+                                @change="editProyecto(props.item)"
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>
+                    <template v-slot:[`item.costoproyectousuario`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.costoproyectousuario"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            @save="save"
+                            @cancel="cancel"
+                            persistent
+                        >
+                            {{ props.item.costoproyectousuario }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.costoproyectousuario"
+                                type="number"
+                                label="Editar"
+                                single-line
+                                counter
+                                clearable
+                                @change="editProyecto(props.item)"
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>
+                    <template v-slot:[`item.notas`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.notas"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            persistent
+                        >
+                            {{ props.item.notas }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.notas"
+                                counter="256"
+                                label="Editar"
+                                single-line
+                                clearable
+                                @change="editProyecto(props.item)"
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>                    
+
                     <template v-slot:no-data>
                         <v-btn color="primary" @click="listar">Resetear</v-btn>
                     </template>
@@ -411,6 +543,12 @@
             {value: 'white', text: 'Blanco'},
             {value: 'black', text: 'Negro'},
         ],
+        lineaspags: [
+            {value: 5, text: "5"},
+            {value: 10, text: "10"},
+            {value: 15, text: "15"},
+            {value: -1, text: "All"},
+        ],
         snackbar: false,
         snackcolor: '',
         snacktext: '',
@@ -419,19 +557,25 @@
         usuarios: [],
         roles:[],
         grupos:[],
+        proyectos:[],
         grupousuarios:[],
+        proyectousuarios:[],
         workuserId:'',
         imageUrl:'',
         groupheader: '',
+        proyheader: '',
         dialog: false,
         groupdialog: false,
+        proydialog: false,
         headersusuarios: [
             { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
             { text: 'Avatar', value: 'imgusuario', align: 'center', sortable: false },
             { text: 'Userid', value: 'userid', align: 'start', sortable: true },
             { text: 'email', value: 'email', align: 'start', sortable: true },
             { text: 'Rol', value: 'rol', align: 'start', sortable: true },
-            { text: 'Iniciales', value: 'iniciales', align: 'start', sortable: true },                    
+            { text: 'Reservados?', value: 'reservado', align: 'start', sortable: true },
+            { text: 'Iniciales', value: 'iniciales', align: 'start', sortable: true },
+            { text: 'LinXPag', value: 'lineaspag', align: 'start', sortable: true },
             { text: 'Teléfono', value: 'telefono', align: 'start', sortable: true },
             { text: 'Estado', value: 'activo', align: 'center', sortable: true  },
             //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
@@ -448,8 +592,21 @@
             //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
             //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
         ],
-        searchg:'',
-        searchu:'',
+        headersproyectos: [
+            { text: '#', value: 'selected', align: 'center', sortable: false },
+            { text: 'Proyecto', value: 'nombre', align: 'start', sortable: true },
+            { text: 'Tarifa', value: 'tarifaproyectousuario', align: 'end', sortable: true },
+            { text: 'Costo', value: 'costoproyectousuario', align: 'end', sortable: true },
+            { text: 'Notas', value: 'notas', align: 'start', sortable: true },
+            //{ text: 'Estado', value: 'activo', align: 'start', sortable: true  },
+            //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
+            //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
+            //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
+            //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
+        ],
+        searchg: '',
+        searchu: '',
+        searchp: '',
         editedIndex: -1,
         id: '',
         rolId:'',
@@ -457,10 +614,12 @@
         userid:'',
         telefono: '',
         email: '',
+        reservado: '',
         password:'',
         colfondo:'#000000',
         coltexto:'black',
         imgusuario:'',
+        lineaspag: 0,
         pxch:false,
         iduseralta:'',
         fecalta:'',
@@ -468,6 +627,7 @@
         fecumod:'',
         activo:false,
         addgroup: '',
+        addproy: '',
         actPassword:false,
         passwordAnt:'',
         valida: 0,
@@ -496,6 +656,10 @@
     },
 
     methods: {
+        save () {
+        },
+        cancel () {
+        },
         pickFile () {
             this.$refs.image.click ()
         },
@@ -528,13 +692,14 @@
                     {title: "Iniciales", dataKey: "iniciales"},
                     {title: "Nombre", dataKey: "userid"},
                     {title: "Rol", dataKey: "rol"},
+                    {title: "Reservado?", dataKey: "reservado"},
                     {title: "Telefono", dataKey: "telefono"},
                     {title: "Activo", dataKey: "activo"}
             ];
             var rows = [];
 
             this.usuarios.map(function(x){
-                    rows.push({iniciales:x.iniciales,userid:x.userid,rol:x.rol,telefono:x.telefono,activo:x.activo});
+                    rows.push({iniciales:x.iniciales,userid:x.userid,rol:x.rol,reservado,x:reservado,telefono:x.telefono,activo:x.activo});
             });
 
             // Only pt supported (not mm or in)
@@ -565,7 +730,9 @@
             let me=this;
             var rolesArray=[];
             var gruposArray=[];
+            var proyectosArray=[];
             var grupousuariosArray=[];
+            var proyectousuariosArray=[];
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
             axios.get('api/Roles/Select',configuracion).then(function(response){
@@ -601,6 +768,29 @@
                 me.snackbar = true;
                 console.log(error);
             });
+            axios.get('api/Proyectos/Listar',configuracion).then(function(response){
+                proyectosArray=response.data;
+                proyectosArray.map(function(x){
+                    me.proyectos.push({selected: false, value:x.id, nombre: x.nombre, relid: 0, tarifaproyectousuario: 0, costoproyectousuario: 0, notas: ''});
+                });
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
+            axios.get('api/Proyectousuarios/Listar',configuracion).then(function(response){
+                proyectousuariosArray=response.data;
+                proyectousuariosArray.map(function(x){
+                    me.proyectousuarios.push({proyectoid: x.proyectoid, usuarioid: x.usuarioid, 
+                    tarifaproyectousuario: x.tarifaproyectousuario, costoproyectousuario: x.costoproyectousuario, value:x.id});
+                });
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
         },
         editItem (item) {
             this.id=item.id;
@@ -609,12 +799,14 @@
             this.userid=item.userid;
             this.telefono=item.telefono;
             this.email=item.email;
+            this.reservado=item.reservado;
             this.password=item.password_hash;
             this.passwordAnt=item.password_hash;
             this.colfondo=item.colfondo;
             this.coltexto=item.coltexto;
             this.imgusuario=item.imgusuario;
             this.imageUrl=item.imgusuario;
+            this.lineaspag=item.lineaspag;
             this.pxch=item.pxch;
             this.iduseralta=item.iduseralta;
             this.fecalta=item.fecalta;
@@ -623,6 +815,7 @@
             this.activo=item.activo;
             this.editedIndex = 1;
             this.groupdialog = false;
+            this.proydialog = false;
             this.dialog = true
         },
         deleteItem (item) {
@@ -666,17 +859,44 @@
         },
         tratarGrupos(item){
             var me=this;
+            let index = 0;
             for (var l = 0; l < me.grupos.length; l++){
                 me.grupos[l].selected = false;
             };
             for (let i = 0; i < me.grupousuarios.length; i++){
                 if (me.grupousuarios[i].usuarioid === item.id){
-                    me.grupos[me.grupos.findIndex(elemento => elemento.value === me.grupousuarios[i].grupoid )].selected = true;
+                    index = me.grupos.findIndex(elemento => elemento.value === me.grupousuarios[i].grupoid );
+                    me.grupos[index].selected = true;
                 }
             };
             me.workuserId = item.id;
             me.groupheader = 'Grupos de ' + item.iniciales + ' ' + item.email;
             me.groupdialog=!me.groupdialog;
+        },
+        tratarProyectos(item){
+            var me=this;
+            let index = 0;
+            for (var l = 0; l < me.proyectos.length; l++){
+                me.proyectos[l].selected = false;
+                me.proyectos[l].relid = 0;
+                me.proyectos[l].tarifaproyectousuario = 0;
+                me.proyectos[l].costoproyectousuario = 0;
+                me.proyectos[l].notas = ''
+            };
+            for (let i = 0; i < me.proyectousuarios.length; i++){
+                if (me.proyectousuarios[i].usuarioid === item.id){
+                    index = me.proyectos.findIndex(elemento => elemento.value === me.proyectousuarios[i].proyectoid )
+                    me.proyectos[index].selected = true;
+                    me.proyectos[index].relid = me.proyectousuarios[i].value;
+                    me.proyectos[index].tarifaproyectousuario = me.proyectousuarios[i].tarifaproyectousuario;
+                    me.proyectos[index].costoproyectousuario = me.proyectousuarios[i].costoproyectousuario;
+                    me.proyectos[index].notas = me.proyectousuarios[i].notas;
+
+                }
+            };
+            me.workuserId = item.id;
+            me.proyheader = 'Proyectos vinculados a ' + item.iniciales + ' ' + item.email;
+            me.proydialog=!me.proydialog;
         },
         accionUsuario(item){
             var me=this;
@@ -717,6 +937,85 @@
                 });
             }
         },
+        accionProyecto(item){
+            var me=this;
+            let index = 0;
+            index = me.proyectos.findIndex(elemento => elemento.value === item.value );
+            if (item.selected === true ) {
+                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuracion= {headers : header};
+                axios.post('api/Proyectousuarios/Crear',{
+                    'proyectoid': item.value,
+                    'usuarioid': this.workuserId,
+                    'tarifaproyectousuario': item.tarifaproyectousuario,
+                    'costoproyectousuario': item.costoproyectousuario,
+                    'notas': item.notas,
+                    'iduseralta': me.$store.state.usuario.idusuario                      
+                },configuracion)
+                .then(function(response){
+                    me.proyectousuarios.push({proyectoid: response.data.proyectoid, usuarioid: response.data.usuarioid, value: response.data.id});
+                    me.proyectos[index].relid = response.data.id;
+                    //console.log(response);
+                    me.snacktext = 'Creacion exitosa';
+                    me.snackcolor = "success";
+                    me.snackbar = true;
+                }).catch(function(error){
+                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                    me.snackbar = true;
+                    me.snackcolor = 'error'
+                    console.log(error);
+                });
+            } else {
+                var indice = me.proyectousuarios.find(x => item.value === x.proyectoid && me.workuserId === x.usuarioid).value;
+                let header={"Authorization" : "Bearer " + me.$store.state.token};
+                let configuracion= {headers : header};
+                axios.delete('api/Proyectousuarios/Eliminar/'+indice,configuracion).then( () => {
+                    me.proyectousuarios = me.proyectousuarios.filter(x => x.value != indice); 
+                    me.proyectos[index].relid = 0;
+                    me.proyectos[index].tarifaproyectousuario = 0;
+                    me.proyectos[index].costoproyectousuario = 0;
+                    me.proyectos[index].notas = '';
+                    me.snacktext = 'Eliminacion exitosa';
+                    me.snackcolor = "success";
+                    me.snackbar = true;
+                }).catch(function(error){
+                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                    me.snackcolor = "error";
+                    me.snackbar = true;
+                    console.log(error);
+                });
+            }
+        },
+        editProyecto(item){
+            var me=this;
+            let index=0;
+            index = me.proyectousuarios.findIndex(elemento => elemento.value === item.relid );
+            let header={"Authorization" : "Bearer " + this.$store.state.token};
+            let configuracion= {headers : header};
+
+            axios.put('api/Proyectousuarios/Actualizar',{
+                'Id':item.relid,
+                'usuarioid':this.workuserId,
+                'proyectoid':item.value,
+                'tarifaproyectousuario':item.tarifaproyectousuario,
+                'costoproyectousuario':item.costoproyectousuario,
+                'notas':item.notas,
+                'iduseralta': me.$store.state.usuario.idusuario                      
+            },configuracion).then( () => {
+                me.proyectousuarios[index].tarifaproyectousuario = (Number(item.tarifaproyectousuario)).toFixed(2);
+                me.proyectousuarios[index].costoproyectousuario = Number(item.costoproyectousuario);
+                me.proyectousuarios[index].notas          = item.notas;
+                //me.proyectos[me.proyectos.findIndex(elemento => elemento.value === me.proyectousuarios[index].proyectoid )].estimadotarifa = me.proyectotareas[index].estimadotarifa;
+                me.snacktext = 'Modificacion exitosa';
+                me.snackcolor = "success";
+                me.snackbar = true;
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackbar = true;
+                me.snackcolor = 'error'
+                console.log(error);
+            });
+        },
         limpiar(){
                 this.id="";
                 this.rolId="";
@@ -724,12 +1023,14 @@
                 this.userid="";
                 this.telefono="";
                 this.email="";
+                this.reservado="";
                 this.password="";
                 this.passwordAnt="";
                 this.colfondo="#000000";
                 this.coltexto="white";
                 this.imgusario="";
                 this.imageUrl="";
+                this.lineaspag=0;
                 this.pxch=false;
                 this.iduseralta = "";
                 this.fecalta = "";
@@ -761,17 +1062,20 @@
                     'userid':me.userid,
                     'telefono': me.telefono,
                     'email':me.email,
+                    'reservado':me.reservado,
                     'password':me.password,
                     'act_password':me.actPassword,
                     'colfondo':me.colfondo,
                     'coltexto':me.coltexto,
                     'imgusuario':me.imgusuario,
+                    'lineaspag':me.lineaspag,
                     'pxch':me.pxch,
                     'iduseralta': me.iduseralta,
                     'fecalta': me.fecalta,
                     'iduserumod': me.$store.state.usuario.idusuario,
                     'fecumod': new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString()                                            
                 },configuracion).then( () => {
+                    me.buscarUserinfo();
                     me.snacktext = 'Modificacion exitosa';
                     me.snackcolor = "success";
                     me.snackbar = true;
@@ -793,15 +1097,18 @@
                     'userid':me.userid,
                     'telefono': me.telefono,
                     'email':me.email,
+                    'reservado':me.reservado,
                     'password':me.password,
                     'colfondo':me.colfondo,
                     'coltexto':me.coltexto,
                     'imgusuario':me.imgusuario,
+                    'lineaspag':me.lineaspag,
                     'pxch':me.pxch,
                     'iduseralta': me.$store.state.usuario.idusuario                      
                 },configuracion)
                 .then(function(response){
                     //console.log(response);
+                    me.buscarUserinfo();
                     me.snacktext = 'Creacion exitosa';
                     me.snackcolor = "success";
                     me.snackbar = true;
@@ -815,6 +1122,24 @@
                     console.log(error);
                 });
             }
+        },
+        buscarUserinfo(){
+            let me=this;
+            let header={"Authorization" : "Bearer " + me.$store.state.token};
+            let configuracion= {headers : header};
+            axios.get('api/Usuarios/Traer/'+me.$store.state.usuario.idusuario,configuracion)
+            .then(respuesta => {
+                return respuesta.data
+            })
+            .then(data => {
+                this.$store.dispatch("guardarUserinfo", data)
+            })
+            .catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
         },
         validar(){
             this.valida=0;
@@ -861,6 +1186,7 @@
                     me.snacktext = 'Creacion exitosa';
                     me.snackcolor = "success";
                     me.snackbar = true;
+                    me.addgroup = "";
                 }).catch(function(error){
                     me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
                     me.snackbar = true;

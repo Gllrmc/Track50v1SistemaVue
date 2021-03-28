@@ -46,7 +46,7 @@
                             vertical
                         ></v-divider>
                         <v-spacer></v-spacer>
-                        <v-text-field label="Búsqueda" outlined v-model="searchg" append-icon="search" single-line hide-details></v-text-field>
+                        <v-text-field dense label="Búsqueda" outlined v-model="searchg" append-icon="search" single-line hide-details clearable ></v-text-field>
                         <v-spacer></v-spacer>
                         <v-dialog v-model="dialog" max-width="600px">
                             <template v-slot:activator="{ on }">
@@ -60,7 +60,9 @@
                                 <v-container grid-list-md>
                                     <v-row dense>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-text-field v-model="nombre" label="Nombre grupo">
+                                            <v-text-field v-model="nombre" 
+                                            label="Nombre grupo"
+                                            counter="50">
                                             </v-text-field>
                                         </v-col>
                                     </v-row>
@@ -141,10 +143,23 @@
                             v-on="on"
                             @click="tratarGrupos(item)"
                             >
-                            mdi-account-multiple
+                            mdi-account-hard-hat
                             </v-icon>
                         </template>
                         <span>Personas</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            class="mr-2"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="tratarProyectos(item)"
+                            >
+                            mdi-sprout
+                            </v-icon>
+                        </template>
+                        <span>Proyectos</span>
                     </v-tooltip>
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
@@ -202,10 +217,10 @@
                 <template v-slot:[`item.activo`]="{ item }">
                     <td>
                         <div v-if="item.activo">
-                            <span class="blue--text">Activo</span>
+                            <v-chip class="ma-2" color="primary" text-color="white">Activo</v-chip>
                         </div>
                         <div v-else>
-                            <span class="red--text">Inactivo</span>
+                            <v-chip class="ma-2">Inactivo</v-chip>
                         </div>
                     </td>
                 </template>
@@ -231,17 +246,11 @@
                 no-data-text="Nada para mostrar"
                 >
                     <template v-slot:top>
-                        <v-toolbar flat color="white">
-                            <v-toolbar-title>{{userheader}}</v-toolbar-title>
-                            <v-divider
-                                class="mx-4"
-                                inset
-                                vertical
-                            ></v-divider>
-                            <v-spacer></v-spacer>
-                            <template v-slot:extension>
+                        <v-card flat color="white">
+                            <v-card-title>{{userheader}}</v-card-title>
+                            <v-card-actions>
                                 <v-row>
-                                    <v-col cols="12" md="12" sm="6">
+                                    <v-col cols="12" md="12" sm="12">
                                         <v-text-field label="Búsqueda" class="ma-2" 
                                         outlined 
                                         dense 
@@ -249,11 +258,13 @@
                                         append-icon="search" 
                                         single-line 
                                         hide-details
+                                        clearable 
                                         ></v-text-field>
                                     </v-col>
                                 </v-row>
-                            </template>           
-                        </v-toolbar>
+                                <v-btn color="primary" dense dark class="ma-2" @click.native="userdialog=false">Salir</v-btn>
+                            </v-card-actions>
+                        </v-card>
                     </template>
                     <template v-slot:[`item.selected`]="{ item }">
                         <v-simple-checkbox
@@ -266,7 +277,7 @@
                         <td>
                             <div v-if="item.imgusuario">
                                 <v-avatar size=40>
-                                    <img :src="item.imgusuario" aspect-ratio="2" contain>
+                                    <v-img :src="item.imgusuario" aspect-ratio="2" contain></v-img>
                                 </v-avatar>
                             </div>
                             <div v-else>
@@ -279,6 +290,122 @@
                             </div>
                         </td>
                     </template>
+                    <template v-slot:no-data>
+                        <v-btn color="primary" @click="listar">Resetear</v-btn>
+                    </template>
+                </v-data-table>
+            </v-dialog>
+            <v-dialog v-model="proydialog" max-width="750px">
+                <v-data-table
+                dense
+                :headers="headersproyectos"
+                :items="proyectos"
+                :search="searchp"
+                class="elevation-1"
+                no-data-text="Nada para mostrar"
+                >
+                    <template v-slot:top>
+                        <v-card flat color="white">
+                            <v-card-title>{{proyheader}}</v-card-title>
+                            <v-card-actions>
+                                <v-row>
+                                    <v-col cols="12" md="8" sm="8">
+                                        <v-text-field label="Búsqueda" class="ma-2" 
+                                        outlined 
+                                        dense 
+                                        v-model="searchp" 
+                                        append-icon="search" 
+                                        single-line 
+                                        hide-details
+                                        clearable 
+                                        ></v-text-field>
+                                    </v-col>
+                                </v-row>
+                                <v-btn color="primary" dense dark class="ma-2" @click.native="proydialog=false">Salir</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </template>
+                    <template v-slot:[`item.selected`]="{ item }">
+                        <v-simple-checkbox
+                            v-model="item.selected"
+                            :ripple="false"
+                            @click="accionProyecto(item)"
+                        ></v-simple-checkbox>
+                    </template>
+
+                    <template v-slot:[`item.tarifaproyectogrupo`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.tarifaproyectogrupo"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            persistent
+                        >
+                            {{ props.item.tarifaproyectogrupo }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.tarifaproyectogrupo"
+                                type="number"
+                                label="Editar"
+                                single-line
+                                counter
+                                clearable
+                                @change="editProyecto(props.item)"
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>
+                    <template v-slot:[`item.costoproyectogrupo`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.costoproyectogrupo"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            @save="save"
+                            @cancel="cancel"
+                            persistent
+                        >
+                            {{ props.item.costoproyectogrupo }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.costoproyectogrupo"
+                                type="number"
+                                label="Editar"
+                                single-line
+                                counter
+                                clearable
+                                @change="editProyecto(props.item)"
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>
+                    <template v-slot:[`item.notas`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.notas"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            persistent
+                        >
+                            {{ props.item.notas }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.notas"
+                                counter="256"
+                                label="Editar"
+                                clearable
+                                @change="editProyecto(props.item)"
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>                    
+
                     <template v-slot:no-data>
                         <v-btn color="primary" @click="listar">Resetear</v-btn>
                     </template>
@@ -328,11 +455,15 @@
         grupos:[],
         usuarios:[],
         grupousuarios:[],
+        proyectos:[],
+        proyectogrupos:[],
         workgroupId:'',
         imageUrl:'',
         userheader: '',
+        proyheader: '',
         dialog: false,
         userdialog: false,
+        proydialog: false,
         headersgrupos: [
             { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
             { text: 'Nombre grupo', value: 'nombre', align: 'start', sortable: true },
@@ -352,7 +483,15 @@
             //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
             //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
         ],
+        headersproyectos: [
+            { text: '#', value: 'selected', align: 'center', sortable: false },
+            { text: 'Proyecto', value: 'nombre', align: 'start', sortable: true },
+            { text: 'Tarifa', value: 'tarifaproyectogrupo', align: 'end', sortable: true },
+            { text: 'Costo', value: 'costoproyectogrupo', align: 'end', sortable: true },
+            { text: 'Notas', value: 'notas', align: 'start', sortable: true },
+        ],
         searchg:'',
+        searchp:'',
         searchu:'',
         editedIndex: -1,
         id: '',
@@ -395,6 +534,10 @@
     },
 
     methods: {
+        save () {
+        },
+        cancel () {
+        },
         pickFile () {
             this.$refs.image.click ()
         },
@@ -460,7 +603,9 @@
         select(){
             let me=this;
             var usuariosArray=[];
+            var proyectosArray=[];
             var grupousuariosArray=[];
+            var proyectogrupoArray=[];
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
             axios.get('api/Usuarios/Listar',configuracion).then(function(response){
@@ -480,6 +625,29 @@
                 grupousuariosArray=response.data;
                 grupousuariosArray.map(function(x){
                     me.grupousuarios.push({grupoid: x.grupoid, usuarioid: x.usuarioid, value:x.id});
+                });
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
+            axios.get('api/Proyectos/Listar',configuracion).then(function(response){
+                proyectosArray=response.data;
+                proyectosArray.map(function(x){
+                    me.proyectos.push({selected: false, value:x.id, nombre: x.nombre, relid: 0, tarifaproyectousuario: 0, costoproyectousuario: 0, notas: ''});
+                });
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
+            axios.get('api/Proyectogrupos/Listar',configuracion).then(function(response){
+                proyectogrupoArray=response.data;
+                proyectogrupoArray.map(function(x){
+                    me.proyectogrupos.push({proyectoid: x.proyectoid, grupoid: x.grupoid, 
+                    tarifaproyectogrupo: x.tarifaproyectogrupo, costoproyectogrupo: x.costoproyectogrupo, value:x.id});
                 });
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
@@ -553,6 +721,31 @@
             me.userheader = 'Miembros de ' + item.nombre;
             me.userdialog=!me.userdialog;
         },
+        tratarProyectos(item){
+            var me=this;
+            let index = 0;
+            for (var l = 0; l < me.proyectos.length; l++){
+                me.proyectos[l].selected = false;
+                me.proyectos[l].relid = 0;
+                me.proyectos[l].tarifaproyectogrupo = 0;
+                me.proyectos[l].costoproyectogrupo = 0;
+                me.proyectos[l].notas = ''
+            };
+            for (let i = 0; i < me.proyectogrupos.length; i++){
+                if (me.proyectogrupos[i].grupoid === item.id){
+                    index = me.proyectos.findIndex(elemento => elemento.value === me.proyectogrupos[i].proyectoid )
+                    me.proyectos[index].selected = true;
+                    me.proyectos[index].relid = me.proyectogrupos[i].value;
+                    me.proyectos[index].tarifaproyectogrupo = me.proyectogrupos[i].tarifaproyectogrupo;
+                    me.proyectos[index].costoproyectogrupo = me.proyectogrupos[i].costoproyectogrupo;
+                    me.proyectos[index].notas = me.proyectogrupos[i].notas;
+
+                }
+            };
+            me.workuserId = item.id;
+            me.proyheader = 'Proyectos vinculados a ' + item.iniciales + ' ' + item.email;
+            me.proydialog=!me.proydialog;
+        },
         accionUsuario(item){
             var me=this;
             if (item.selected === true ) {
@@ -591,6 +784,85 @@
                     console.log(error);
                 });
             }
+        },
+        accionProyecto(item){
+            var me=this;
+            let index = 0;
+            index = me.proyectos.findIndex(elemento => elemento.value === item.value );
+            if (item.selected === true ) {
+                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuracion= {headers : header};
+                axios.post('api/Proyectogrupos/Crear',{
+                    'proyectoid': item.value,
+                    'grupoid': this.workuserId,
+                    'tarifaproyectogrupo': item.tarifaproyectogrupo,
+                    'costoproyectogrupo': item.costoproyectogrupo,
+                    'notas': item.notas,
+                    'iduseralta': me.$store.state.usuario.idusuario                      
+                },configuracion)
+                .then(function(response){
+                    me.proyectogrupos.push({proyectoid: response.data.proyectoid, grupoid: response.data.grupoid, value: response.data.id});
+                    me.proyectos[index].relid = response.data.id;
+                    //console.log(response);
+                    me.snacktext = 'Creacion exitosa';
+                    me.snackcolor = "success";
+                    me.snackbar = true;
+                }).catch(function(error){
+                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                    me.snackbar = true;
+                    me.snackcolor = 'error'
+                    console.log(error);
+                });
+            } else {
+                var indice = me.proyectogrupos.find(x => item.value === x.proyectoid && me.workuserId === x.grupoid).value;
+                let header={"Authorization" : "Bearer " + me.$store.state.token};
+                let configuracion= {headers : header};
+                axios.delete('api/Proyectogrupos/Eliminar/'+indice,configuracion).then( () => {
+                    me.proyectogrupos = me.proyectogrupos.filter(x => x.value != indice); 
+                    me.proyectos[index].relid = 0;
+                    me.proyectos[index].tarifaproyectogrupo = 0;
+                    me.proyectos[index].costoproyectogrupo = 0;
+                    me.proyectos[index].notas = '';
+                    me.snacktext = 'Eliminacion exitosa';
+                    me.snackcolor = "success";
+                    me.snackbar = true;
+                }).catch(function(error){
+                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                    me.snackcolor = "error";
+                    me.snackbar = true;
+                    console.log(error);
+                });
+            }
+        },
+        editProyecto(item){
+            var me=this;
+            let index=0;
+            index = me.proyectogrupos.findIndex(elemento => elemento.value === item.relid );
+            let header={"Authorization" : "Bearer " + this.$store.state.token};
+            let configuracion= {headers : header};
+
+            axios.put('api/Proyectogrupos/Actualizar',{
+                'Id':item.relid,
+                'grupoid':this.workuserId,
+                'proyectoid':item.value,
+                'tarifaproyectogrupo':item.tarifaproyectogrupo,
+                'costoproyectogrupo':item.costoproyectogrupo,
+                'notas':item.notas,
+                'iduseralta': me.$store.state.usuario.idusuario                      
+            },configuracion).then( () => {
+                me.proyectogrupos[index].tarifaproyectogrupo = (Number(item.tarifaproyectogrupo)).toFixed(2);
+                me.proyectogrupos[index].costoproyectogrupo = Number(item.costoproyectogrupo);
+                me.proyectogrupos[index].notas          = item.notas;
+                //me.proyectos[me.proyectos.findIndex(elemento => elemento.value === me.proyectogrupos[index].proyectoid )].estimadotarifa = me.proyectotareas[index].estimadotarifa;
+                me.snacktext = 'Modificacion exitosa';
+                me.snackcolor = "success";
+                me.snackbar = true;
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackbar = true;
+                me.snackcolor = 'error'
+                console.log(error);
+            });
         },
         limpiar(){
                 this.id="";

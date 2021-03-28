@@ -8,7 +8,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     token: null,
-    usuario: null
+    usuario: null,
+    userInfo: []
   },
   mutations: {
     setToken(state,token){
@@ -16,6 +17,9 @@ export default new Vuex.Store({
     },
     setUsuario(state,usuario){
       state.usuario=usuario;
+    },
+    setUserinfo(state,userInfo){
+      state.userInfo=userInfo;
     }
   },
   actions: {
@@ -24,11 +28,14 @@ export default new Vuex.Store({
       commit("setUsuario",decode(token))
       localStorage.setItem("token",token)
     },
+    guardarUserinfo({commit},userInfo){
+      commit("setUserinfo",userInfo)
+    },
     autoLogin({commit}){
       let token = localStorage.getItem("token")
       if(token){
         commit("setToken", token)
-        commit("setUsuario",decode(token))
+        commit("setUsuario", decode(token))
       }
       router.push({name: 'home'})
     },
@@ -37,8 +44,7 @@ export default new Vuex.Store({
       commit("setUsuario", null)
       localStorage.removeItem("token")
       router.push({name: 'login'})
-
-    }
+    },
   },
   modules: {
   }

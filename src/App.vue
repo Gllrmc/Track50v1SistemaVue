@@ -33,7 +33,7 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  Registro diario
+                  Registrar Lapso
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -43,7 +43,7 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  Registro Semanal
+                  Registrar Dias
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -99,7 +99,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'regdiario'}">
+            <v-list-item :to="{ name: 'proyectos'}">
               <v-list-item-action>
                 <v-icon color="primary">mdi-sprout</v-icon>
               </v-list-item-action>
@@ -109,7 +109,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'regdiario'}">
+            <v-list-item :to="{ name: 'clientes'}">
               <v-list-item-action>
                 <v-icon color="primary">mdi-account-cash</v-icon>
               </v-list-item-action>
@@ -271,6 +271,21 @@
         <span class="hidden-sm-and-down">Tracker - Registro de Actividades y Tiempos</span>
       </v-toolbar-title>
       <v-spacer />
+      <div class="mr-10" v-if="logueado">
+        <div v-if="this.$store.state.userInfo.imgusuario">
+            <v-avatar size=50>
+                <v-img :src="this.$store.state.userInfo.imgusuario" aspect-ratio="2" contain></v-img>
+            </v-avatar>
+        </div>
+        <div v-else>
+            <v-avatar v-if="this.$store.state.userInfo.coltexto=='black'" :color="this.$store.state.userInfo.colfondo" size=50>
+                <span style="color:black">{{ this.$store.state.userInfo.iniciales }}</span>
+            </v-avatar>
+            <v-avatar v-else :color="this.$store.state.userInfo.colfondo" size=50>
+                <span style="color:white">{{ this.$store.state.userInfo.iniciales }}</span>
+            </v-avatar>
+        </div>
+      </div>
       <v-btn @click="salir" v-if="logueado">
         <v-icon>logout</v-icon> Salir
       </v-btn>

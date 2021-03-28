@@ -48,9 +48,14 @@ import axios from 'axios'
 export default {
     data(){
         return {
+            snackbar: false,
+            snackcolor: '',
+            snacktext: '',
+            timeout: 4000,
             source: String,
             email: '',
             password: '',
+            userInfo: [],
             error: null
         }
     },
@@ -61,8 +66,10 @@ export default {
             .then(respuesta => {
                 return respuesta.data
             })
-            .then(data => {        
+            .then(data => {
                 this.$store.dispatch("guardarToken", data.token)
+                this.buscarUserinfo()
+                this.$store.dispatch("guardarUserinfo", this.userInfo)
                 this.$router.push({ name: 'home' })
             })
             .catch(err => {
@@ -76,7 +83,25 @@ export default {
                 }
                 console.log(err)
             })
-        }
+        },
+        buscarUserinfo(){
+            let me=this;
+            let header={"Authorization" : "Bearer " + me.$store.state.token};
+            let configuracion= {headers : header};
+            axios.get('api/Usuarios/Traer/'+me.$store.state.usuario.idusuario,configuracion)
+            .then(respuesta => {
+                return respuesta.data
+            })
+            .then(data => {
+                this.$store.dispatch("guardarUserinfo", data)
+            })
+            .catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
+        },
     }
     
 }

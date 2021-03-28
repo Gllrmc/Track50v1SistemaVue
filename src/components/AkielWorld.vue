@@ -1,5 +1,30 @@
 <template> 
   <v-container>
+        <template>
+            <v-snackbar
+                v-model="snackbar"
+                :timeout="timeout"
+                absolute
+                bottom
+                app
+                right
+                :color="snackcolor"
+                >
+                {{ snacktext }}
+                <template v-slot:action="{ attrs }">
+                    <v-btn 
+                        color="#FFFFFF"
+                        dark
+                        vertical
+                        text
+                        v-bind="attrs"
+                        @click="snackbar = false"
+                    >
+                        Cerrar
+                    </v-btn>
+                </template>
+            </v-snackbar>
+        </template>
         <v-layout
           justify-center
         >
@@ -81,10 +106,15 @@
 <script>
   import axios from 'axios'
   export default {
-    name: 'AkielWorld',
+
+name: 'AkielWorld',
 
     data: () => {
       return {
+        snackbar: false,
+        snackcolor: '',
+        snacktext: '',
+        timeout: 4000,
         actualpassword: '',
         password: '',
         retypepassword: '',
@@ -102,6 +132,7 @@
         this.inicializar();
       },
     methods:{
+      
       inicializar(){
         let me=this;
         me.dialog=me.$store.state.usuario.pxch=="SI"?true:false;
@@ -131,6 +162,7 @@
         }).catch(function(error){
             me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
             me.snackbar = true;
+            me.snackcolor = 'error'
             console.log(error);
         });
       },
@@ -139,7 +171,7 @@
         this.validaMensaje=[];
 
         if (this.password !== this.retypepassword){
-            this.validaMensaje.push("No hay coincidenciaq en la verificacacón de Passwords.");
+            this.validaMensaje.push("No hay coincidencia en la verificacacón de Passwords.");
         }
         if (this.password.length<6){
             this.validaMensaje.push("El password debe poseer al menos 6 caracteres alfanumericos y/o especiales.");

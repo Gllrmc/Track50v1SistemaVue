@@ -100,10 +100,10 @@
                 <template v-slot:[`item.activo`]="{ item }">
                     <td>
                         <div v-if="item.activo">
-                            <span class="blue--text">Activo</span>
+                            <v-chip class="ma-2" color="primary" text-color="white">Activo</v-chip>
                         </div>
                         <div v-else>
-                            <span class="red--text">Inactivo</span>
+                            <v-chip class="ma-2">Inactivo</v-chip>
                         </div>
                     </td>
                 </template>

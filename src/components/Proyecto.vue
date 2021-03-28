@@ -25,11 +25,11 @@
                 </template>
             </v-snackbar>
         </template>
-        <v-col cols="12" md="4" sm="3">
+        <v-col cols="12" md="12" sm="12">
             <v-data-table
             dense
             :headers="headers"
-            :items="provincias"
+            :items="proyectos"
             :search="search"
             class="elevation-1"
             no-data-text="Nada para mostrar"
@@ -39,7 +39,7 @@
                     <div class="ma-2">
                         <v-btn small @click="crearPDF()"><v-icon>print</v-icon></v-btn>
                     </div>
-                    <v-toolbar-title>Provincias</v-toolbar-title>
+                    <v-toolbar-title>Proyectos</v-toolbar-title>
                     <v-divider
                         class="mx-4"
                         inset
@@ -59,13 +59,95 @@
                         <v-card-text>
                             <v-container grid-list-md>
                                 <v-row dense>
-                                    <v-col cols="12" sm="12" md="12">
-                                        <v-select v-model="paisId"
-                                        :items = "paises" label = "País">
+                                    <v-col v-if="pideempresa" cols="12" sm="12" md="12">
+                                        <v-select dense v-model="empresaid"
+                                        :items = "empresas" label = "Empresa">
                                         </v-select>
-                                    </v-col>                                
+                                    </v-col>
                                     <v-col cols="12" sm="12" md="12">
-                                        <v-text-field v-model="nombre" label="Provincia" counter="50"></v-text-field>
+                                        <v-text-field dense v-model="nombre" label="Proyecto" counter="50">
+                                        </v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" sm="12" md="12">
+                                        <v-select dense v-model="clienteid"
+                                        :items = "clientes" label = "Cliente">
+                                        </v-select>
+                                    </v-col>
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-text-field dense v-model="tarifadefault" type="number" label="Tarifa x omision">
+                                        </v-text-field>
+                                    </v-col>
+                                    <template>
+                                        <v-col cols="12" sm="6" md="6">
+                                            <v-menu
+                                                ref="menu"
+                                                v-model="menu"
+                                                :close-on-content-click="false"
+                                                :return-value.sync="fecregdesde"
+                                                transition="scale-transition"
+                                                offset-y
+                                                min-width="auto"
+                                            >
+                                                <template v-slot:activator="{ on, attrs }">
+                                                <v-text-field dense
+                                                    v-model="fecregdesde"
+                                                    chips
+                                                    small-chips
+                                                    label="Fecha inicio"
+                                                    prepend-icon="mdi-calendar"
+                                                    readonly
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                ></v-text-field>
+                                                </template>
+                                                <v-date-picker
+                                                v-model="fecregdesde"
+                                                no-title
+                                                scrollable
+                                                >
+                                                <v-spacer></v-spacer>
+                                                <v-btn
+                                                text
+                                                color="primary"
+                                                @click="menu = false"
+                                                >
+                                                Cancel
+                                                </v-btn>
+                                                <v-btn
+                                                text
+                                                color="primary"
+                                                @click="$refs.menu.save(fecregdesde)"
+                                                >
+                                                OK
+                                                </v-btn>          
+                                                </v-date-picker>
+                                            </v-menu>
+                                        </v-col>
+                                    </template>
+                                    <v-col cols=12 sm=6 md=6>
+                                        <v-select dense v-model="coltexto" :items="textos" label="Color texto"></v-select>
+                                    </v-col>
+                                    <v-col cols=12 sm=6 md=6>
+                                        <v-select dense v-model="colfondo" :items="colores" label="Color fondo"></v-select>
+                                    </v-col>
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-switch dense v-model="facturable"
+                                        flat
+                                        label="Facturable?"
+                                        ></v-switch>                                    
+                                    </v-col>
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-switch dense v-model="reservado"
+                                        flat
+                                        label="Privado?"
+                                        ></v-switch>                                    
+                                    </v-col>
+                                    <v-col cols="12" sm="12" md="12">
+                                        <v-textarea dense
+                                        v-model="notas"
+                                        counter="256"
+                                        label="Notas"
+                                        ></v-textarea>
                                     </v-col>
                                     <v-col cols="12" sm="12" md="12" v-show="valida">
                                         <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v">
@@ -83,13 +165,13 @@
                     </v-dialog>
                     <v-dialog v-model="adModal" max-width="390">
                         <v-card>
-                            <v-card-title class="headline" v-if="adAccion==1">¿Activar Provincia?</v-card-title>
-                            <v-card-title class="headline" v-if="adAccion==2">Bloquear Provincia?</v-card-title>
+                            <v-card-title class="headline" v-if="adAccion==1">¿Activar Cliente?</v-card-title>
+                            <v-card-title class="headline" v-if="adAccion==2">Bloquear Cliente?</v-card-title>
                             <v-card-text>
                                 Estás a punto de 
                                 <span v-if="adAccion==1">Activar </span>
                                 <span v-if="adAccion==2">Bloquear </span>
-                                la Provincia: {{ adNombre }}
+                                el Cliente: {{ adNombre }}
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer/>
@@ -194,6 +276,47 @@
                         <span>Info</span>
                     </v-tooltip>
             </template>
+            <template v-slot:[`item.empresa`]="{ item }">
+                <v-chip class="ma-2">{{item.empresa}}</v-chip>
+            </template>
+            <template v-slot:[`item.nombre`]="{ item }">
+                <div class="ma-2">{{item.nombre}}</div>
+            </template>
+            <template v-slot:[`item.cliente`]="{ item }">
+                <v-chip class="ma-2">{{item.cliente}}</v-chip>
+            </template>
+            <template v-slot:[`item.facturable`]="{ item }">
+                <td>
+                    <div v-if="item.facturable">
+                        <v-chip class="ma-2" color="primary" text-color="white">Si</v-chip>
+                    </div>
+                    <div v-else>
+                        <v-chip class="ma-2">No</v-chip>
+                    </div>
+                </td>
+            </template>
+            <template v-slot:[`item.tarifadefault`]="{ item }">
+                        <div class="ma-2">{{formatPrice(item.tarifadefault)}}</div>
+            </template>
+            <template v-slot:[`item.reservado`]="{ item }">
+                <td>
+                    <div v-if="item.reservado">
+                        <v-chip class="ma-2" color="primary" text-color="white">Si</v-chip>
+                    </div>
+                    <div v-else>
+                        <v-chip class="ma-2">No</v-chip>
+                    </div>
+                </td>
+            </template>
+            <template v-slot:[`item.fecregdesde`]="{ item }">
+                        <div class="ma-2">{{item.fecregdesde.substr(0,10)}}</div>
+            </template>
+            <template v-slot:[`item.fecultfact`]="{ item }">
+                        <v-chip class="ma-2">{{item.fecultfac ? item.fecultfac.substr(0,10) : "" }}</v-chip>
+            </template>
+            <template v-slot:[`item.fecultliqui`]="{ item }">
+                        <v-chip class="ma-2">{{item.fecultliqui ? item.fecultliqui.substr(0,10) : "" }}</v-chip>
+            </template>
             <template v-slot:[`item.activo`]="{ item }">
                 <td>
                     <div v-if="item.activo">
@@ -221,40 +344,90 @@
 <script>
   import axios from 'axios'
   import jsPDF from 'jspdf'
-  import autoTable from 'jspdf-autotable';
   export default {
     data: () => ({
-        snackbar:false,
+        colores: [
+            {value: '#F44336', text: 'Rojo'},
+            {value: '#E91E63', text: 'Rosa'},
+            {value: '#9C27B0', text: 'Violeta'},
+            {value: '#673AB7', text: 'Violeta oscuro'},                    
+            {value: '#3F51B5', text: 'Indigo'},
+            {value: '#2196F3', text: 'Azul'},
+            {value: '#03A9F4', text: 'Celeste'},
+            {value: '#00BCD4', text: 'Cianico'},
+            {value: '#009688', text: 'Turquesa'},
+            {value: '#4CAF50', text: 'Verde'},
+            {value: '#8BC34A', text: 'Verde claro'},                    
+            {value: '#CDDC39', text: 'Lima'},
+            {value: '#FFEB3B', text: 'Amarillo'},
+            {value: '#FFC107', text: 'Ambar'},
+            {value: '#FF9800', text: 'Naranja'},
+            {value: '#FF5722', text: 'Naranja oscuro'},
+            {value: '#795548', text: 'Marron'},
+            {value: '#607D8B', text: 'Lívido'},
+            {value: '#9E9E9E', text: 'Gris'},
+            {value: '#000000', text: 'Negro'},
+            {value: '#FFFFFF', text: 'Blanco'}
+        ],
+        textos: [
+            {value: 'white', text: 'Blanco'},
+            {value: 'black', text: 'Negro'},
+        ],
+        lineaspags: [
+            {value: 5, text: "5"},
+            {value: 10, text: "10"},
+            {value: 15, text: "15"},
+            {value: -1, text: "All"},
+        ],
+        menu: '',
+        snackbar: false,
         snackcolor: '',
         snacktext: '',
         timeout: 4000,
         recordInfo:0,
         usuarios: [],
-        provincias:[],
-        paises: [],
+        empresas: [],
+        clientes:[],
+        proyectos:[],
         dialog: false,
         headers: [
             { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
-            { text: 'Pais', value: 'pais', align: 'start', sortable: true },
-            { text: 'Provincia', value: 'nombre', align: 'start', sortable: true},
-            { text: 'Estado', value: 'activo', align: 'center', sortable: true  },
-            //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
-            //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
-            //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
-            //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
+            { text: 'Proyecto', value: 'nombre', align: 'start', sortable: true },
+            { text: 'Cliente', value: 'cliente', align: 'start', sortable: true },
+            { text: 'Facturable?', value: 'facturable', align: 'start', sortable: true },
+            { text: 'Tarifa default', value: 'tarifadefault', align: 'start', sortable: true },
+            { text: 'Reservado?', value: 'reservado', align: 'start', sortable: true },
+            { text: 'Cargas desde', value: 'fecregdesde', align: 'start', sortable: true },
+            { text: 'Ult.Facturacion', value: 'fecultfact', align: 'start', sortable: true },
+            { text: 'Ult.Liquidacion', value: 'fecultliqui', align: 'start', sortable: true },
+            { text: 'Estado', value: 'activo', align: 'start', sortable: true  }
+//            { text: 'Empresa', value: 'empresa', align: 'start', sortable: true },
         ],
         search: '',
         searchpa: '',
         searchpr: '',
         editedIndex: -1,
-        id:'',
-        nombre:'',
-        paisId:'',
+        id: '',
+        nombre: '',
+        empresaid: '',
+        empresa: '',
+        clienteid: '',
+        cliente: '',
+        facturable: true,
+        tarifadefault: 0,
+        notas: '',
+        reservado: false,
+        colfondo: '',
+        coltexto: '',
+        fecregdesde: '',
+        estimadohoras: 0,
+        estimadomonto: 0,
         iduseralta:'',
         fecalta:'',
         iduserumod:'',
         fecumod:'',
         activo:false,
+        pideempresa: false,
         valida: 0,
         validaMensaje:[],
         adModal: 0,
@@ -265,7 +438,7 @@
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'Nueva provincia' : 'Actualizar provincia'
+        return this.editedIndex === -1 ? 'Nuevo proyecto' : 'Actualizar proyecto'
       },
     },
 
@@ -283,36 +456,39 @@
     methods: {
         crearPDF(){
             var columns = [
-                    {title: "Id", dataKey: "id"},
-                    {title: "Provincia", dataKey: "nombre"},
-                    {title: "Estado", dataKey: "activo"},
+                    {title: "Razon Social", dataKey: "nombre"},
+                    {title: "Activo", dataKey: "activo"}
             ];
             var rows = [];
 
-            this.provincias.map(function(x){
-                    rows.push({id:x.id,nombre:x.nombre,activo:x.activo ? "Activo" : "Inactivo"});
+            this.proyectos.map(function(x){
+                    rows.push({nombre:x.nombre,activo:x.activo});
             });
 
             // Only pt supported (not mm or in)
             var doc = new jsPDF('l', 'pt');
-            autoTable(columns, rows, {
+            doc.autoTable(columns, rows, {
                 margin: {top: 60},
-                addPageContent: () => {
-                    doc.text("Listado de Provincias", 40, 30);
+                addPageContent: () =>  {
+                    doc.text("Listado de Proyectos", 40, 30);
                 }
             });
-            doc.save('Provincias.pdf');
+            doc.save('Proyectos.pdf');
+        },
+        formatPrice(value) {
+            let val = (value/1).toFixed(2).replace('.', ',')
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
         listar(){
             let me=this;
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
-            axios.get('api/Provincias/Listar',configuracion).then(function(response){
+            axios.get('api/Proyectos/Listar',configuracion).then(function(response){
                 //console.log(response);
-                me.provincias=response.data;
+                me.proyectos=response.data;
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                me.snackcolor='error';
+                me.snackcolor = 'error';
                 me.snackbar = true;
                 console.log(error);
             });
@@ -320,21 +496,10 @@
         select(){
             let me=this;
             var usuariosArray=[];
-            var paisesArray=[];
+            var empresasArray=[];
+            var clientesArray=[];
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
-            axios.get('api/Paises/Select',configuracion).then(function(response){
-                // console.log(response);
-                paisesArray=response.data;
-                paisesArray.map(function(x){
-                    me.paises.push({text: x.nombre,value:x.id});
-                });
-            }).catch(function(error){
-                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                me.snackcolor='error';
-                me.snackbar = true;
-                console.log(error);
-            });
             axios.get('api/Usuarios/Listar',configuracion).then(function(response){
                 usuariosArray=response.data;
                 usuariosArray.map(function(x){
@@ -347,17 +512,56 @@
                 me.snackbar = true;
                 console.log(error);
             });
-        },            
+            axios.get('api/Empresas/Listar',configuracion).then(function(response){
+                empresasArray=response.data;
+                empresasArray.map(function(x){
+                    me.empresas.push({iduseralta: x.iduseralta, iduserumod: x.iduserumod,monedadefault: x.monedadefault, tarifadefault: x.tarifadefault, reservadodefaultcolfondo: x.reservadodefault, facturabledefault: x.facturabledefault, 
+                    aceptacargatiempos: x.aceptacargatiempos, aceptacargalapsos: x.aceptacargalapsos, text: x.nombre, value:x.id});
+                    if (me.empresas.length > 1){
+                        me.headers.push({"text": 'Empresa', "value": 'empresa', "align": 'start', "sortable": true});
+                        me.pideempresa=true;
+                    }
+                });
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
+            axios.get('api/Clientes/Listar',configuracion).then(function(response){
+                clientesArray=response.data;
+                clientesArray.map(function(x){
+                    me.clientes.push({ tarifadefault: x.tarifadefault, text: x.nombre, value:x.id});
+                });
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
+        },
         editItem (item) {
-            this.id=item.id;
-            this.nombre=item.nombre;
-            this.paisId=item.paisId;
-            this.iduseralta=item.iduseralta;
-            this.fecalta=item.fecalta;
-            this.iduserumod=item.iduserumod;
-            this.fecumod=item.fecumod;
-            this.activo=item.activo;                   
-            this.editedIndex=1;
+            this.id = item.id;
+            this.nombre = item.nombre;
+            this.empresaid = item.empresaid;
+            this.empresa = item.empresa;
+            this.clienteid = item.clienteid;
+            this.cliente = item.cliente;
+            this.facturable = item.facturable;
+            this.tarifadefault = item.tarifadefault;
+            this.notas = item.notas;
+            this.reservado = item.reservado;
+            this.coltexto = item.coltexto;
+            this.colfondo = item.colfondo;
+            this.fecregdesde = item.fecregdesde;
+            this.estimadohoras = item.estimadohoras;
+            this.estimadomonto = item.estimadomonto;
+            this.iduseralta = item.iduseralta;
+            this.fecalta = item.fecalta;
+            this.iduserumod = item.iduserumod;
+            this.fecumod = item.fecumod;
+            this.activo = item.activo;                
+            this.editedIndex = 1;
             this.dialog = true
         },
         deleteItem (item) {
@@ -366,7 +570,7 @@
             if (resulta) {
                 let header={"Authorization" : "Bearer " + me.$store.state.token};
                 let configuracion= {headers : header};
-                axios.delete('api/Provincias/Eliminar/'+item.id,configuracion).then( () => {
+                axios.delete('api/Proyectos/Eliminar/'+item.id,configuracion).then( () => {
                     me.snacktext = 'Eliminacion exitosa';
                     me.snackcolor = "success";
                     me.snackbar = true;
@@ -374,7 +578,7 @@
                     me.listar();
                 }).catch(function(error){
                     me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                    me.snackcolor='error';
+                    me.snackcolor = 'error';
                     me.snackbar = true;
                     console.log(error);
                 });
@@ -401,9 +605,21 @@
 
         },
         limpiar(){
-            this.id="";
-            this.nombre="";
-            this.paisId="";
+            this.id = "";
+            this.nombre = "";
+            this.empresaid = "";
+            this.empresa = "";
+            this.clienteid = "";
+            this.cliente = "";
+            this.facturable = true;
+            this.tarifadefault = 0;
+            this.notas = "";
+            this.reservado = false;
+            this.coltexto = "";
+            this.colfondo = "";
+            this.fecregdesde = "";
+            this.estimadohoras = 0;
+            this.estimadomonto = 0;
             this.iduseralta = "";
             this.fecalta = "";
             this.iduserumod = "";
@@ -415,21 +631,28 @@
             if (this.validar()){
                 return;
             }
+            let me=this;
             var date = new Date();                
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
             if (this.editedIndex > -1) {
                 //Código para editar
                 //Código para guardar
-                let me=this;
-                axios.put('api/Provincias/Actualizar',{
+                axios.put('api/Proyectos/Actualizar',{
                     'Id':me.id,
                     'nombre': me.nombre,
-                    'paisId': me.paisId,
-                    'iduseralta': me.iduseralta,
-                    'fecalta': me.fecalta,
-                    'iduserumod': me.$store.state.usuario.idusuario,
-                    'fecumod': new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString()
+                    'empresaid': me.empresaid,
+                    'clienteid': me.clienteid,
+                    'facturable': me.facturable,
+                    'tarifadefault': me.tarifadefault,
+                    'notas': me.notas,
+                    'reservado': me.reservado,
+                    'coltexto' : me.coltexto,
+                    'colfondo' : me.colfondo,
+                    'fecregdesde': me.fecregdesde,
+                    'estimadohoras': me.estimadohoras,
+                    'estimadomonto': me.estimadomonto,
+                    'iduserumod': me.$store.state.usuario.idusuario
                 },configuracion).then( () => {
                     me.snacktext = 'Modificacion exitosa';
                     me.snackcolor = "success";
@@ -439,17 +662,27 @@
                     me.limpiar();                        
                 }).catch(function(error){
                     me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                    me.snackcolor='error';
+                    me.snackcolor = 'error';
                     me.snackbar = true;
                     console.log(error);
                 });
             } else {
                 //Código para guardar
-                let me=this;
-                axios.post('api/Provincias/Crear',{
+                debugger;
+                axios.post('api/Proyectos/Crear',{
                     'nombre': me.nombre,
-                    'paisId': me.paisId,
-                    'iduseralta': me.$store.state.usuario.idusuario                         
+                    'empresaid': me.pideempresa ? me.empresaid : empresas[0].value,
+                    'clienteid': me.clienteid,
+                    'facturable': me.facturable,
+                    'tarifadefault': me.tarifadefault,
+                    'notas': me.notas,
+                    'reservado': me.reservado,
+                    'coltexto' : me.coltexto,
+                    'colfondo' : me.colfondo,
+                    'fecregdesde': me.fecregdesde,
+                    'estimadohoras': me.estimadohoras,
+                    'estimadomonto': me.estimadomonto,
+                    'iduseralta': me.$store.state.usuario.idusuario
                 },configuracion).then( () => {
                     me.snacktext = 'Creacion exitosa';
                     me.snackcolor = "success";
@@ -459,7 +692,7 @@
                     me.limpiar();                        
                 }).catch(function(error){
                     me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                    me.snackcolor='error';
+                    me.snackcolor = 'error';
                     me.snackbar = true;
                     console.log(error);
                 });
@@ -468,12 +701,16 @@
         validar(){
             this.valida=0;
             this.validaMensaje=[];
+
             if (this.nombre.length<3 || this.nombre.length>50){
-                this.validaMensaje.push("El nombre de la provincia no debe tener menos de 3 caracteres y mas de 50 caracteres.");
+                this.validaMensaje.push("El proyecto debe tener más de 3 caracteres y menos de 50 caracteres.");
             }
-            if (!this.paisId){
-                this.validaMensaje.push("Seleccione un país.");
-            }                
+            if (this.notas.length > 256){
+                this.validaMensaje.push("La nota excede los 256 caracteres.");
+            }
+            if (!this.tarifadefault){
+                this.validaMensaje.push("Ingrese una tarifa.");
+            }
             if (this.validaMensaje.length){
                 this.valida=1;
             }
@@ -500,7 +737,7 @@
             let me=this;
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
-            axios.put('api/Provincias/Activar/'+this.adId,{},configuracion).then( () => {
+            axios.put('api/Proyectos/Activar/'+this.adId,{},configuracion).then( () => {
                 me.snacktext = 'Activacion exitosa';
                 me.snackcolor = "success";
                 me.snackbar = true;
@@ -511,7 +748,7 @@
                 me.listar();                       
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                me.snackcolor='error';
+                me.snackcolor = 'error';
                 me.snackbar = true;
                 console.log(error);
             });
@@ -520,7 +757,7 @@
             let me=this;
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
-            axios.put('api/Provincias/Desactivar/'+this.adId,{},configuracion).then( () => {
+            axios.put('api/Proyectos/Desactivar/'+this.adId,{},configuracion).then( () => {
                 me.snacktext = 'Desactivacion exitosa';
                 me.snackcolor = "success";
                 me.snackbar = true;
@@ -531,7 +768,7 @@
                 me.listar();                       
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                me.snackcolor='error';
+                me.snackcolor = 'error';
                 me.snackbar = true;
                 console.log(error);
             });

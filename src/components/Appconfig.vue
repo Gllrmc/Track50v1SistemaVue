@@ -46,7 +46,7 @@
                         vertical
                     ></v-divider>
                     <v-spacer></v-spacer>
-                    <v-text-field label="Búsqueda" outlined v-model="search" append-icon="search" single-line hide-details></v-text-field>
+                    <v-text-field dense label="Búsqueda" outlined v-model="search" append-icon="search" single-line hide-details clearable ></v-text-field>
                     <v-spacer></v-spacer>
                     <v-dialog v-model="dialog" max-width="600px">
                         <template v-slot:activator="{ on }">
@@ -144,10 +144,10 @@
             <template v-slot:[`item.activo`]="{ item }">
                 <td>
                     <div v-if="item.activo">
-                        <span class="blue--text">Activo</span>
+                        <v-chip class="ma-2" color="primary" text-color="white">Activo</v-chip>
                     </div>
                     <div v-else>
-                        <span class="red--text">Inactivo</span>
+                        <v-chip class="ma-2">Inactivo</v-chip>
                     </div>
                 </td>
             </template>
