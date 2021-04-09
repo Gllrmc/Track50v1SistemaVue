@@ -55,7 +55,7 @@ export default {
             source: String,
             email: '',
             password: '',
-            userInfo: [],
+            userinfo: [],
             error: null
         }
     },
@@ -69,7 +69,6 @@ export default {
             .then(data => {
                 this.$store.dispatch("guardarToken", data.token)
                 this.buscarUserinfo()
-                this.$store.dispatch("guardarUserinfo", this.userInfo)
                 this.$router.push({ name: 'home' })
             })
             .catch(err => {

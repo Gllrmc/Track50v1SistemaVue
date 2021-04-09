@@ -28,7 +28,7 @@
         <v-col cols="12" md="12" sm="12">
             <v-data-table
             dense
-            :headers="headers"
+            :headers="headersproyecto"
             :items="proyectos"
             :search="search"
             class="elevation-1"
@@ -65,16 +65,27 @@
                                         </v-select>
                                     </v-col>
                                     <v-col cols="12" sm="12" md="12">
-                                        <v-text-field dense v-model="nombre" label="Proyecto" counter="50">
+                                        <v-text-field 
+                                        dense 
+                                        v-model="nombre" 
+                                        label="Proyecto" 
+                                        counter="50">
                                         </v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="12" md="12">
-                                        <v-select dense v-model="clienteid"
-                                        :items = "clientes" label = "Cliente">
+                                        <v-select 
+                                        dense 
+                                        v-model="clienteid"
+                                        :items = "clientes" 
+                                        label = "Cliente"
+                                        clearable>
                                         </v-select>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-text-field dense v-model="tarifadefault" type="number" label="Tarifa x omision">
+                                        <v-text-field dense 
+                                        v-model="tarifadefault" 
+                                        type="number" 
+                                        label="Tarifa x omision">
                                         </v-text-field>
                                     </v-col>
                                     <template>
@@ -229,6 +240,45 @@
                             class="mr-2"
                             v-bind="attrs"
                             v-on="on"
+                            @click="tratarTareas(item)"
+                            >
+                            mdi-file-tree
+                            </v-icon>
+                        </template>
+                        <span>Tareas</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            class="mr-2"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="tratarUsuarios(item)"
+                            >
+                            mdi-account-hard-hat
+                            </v-icon>
+                        </template>
+                        <span>Personas</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            class="mr-2"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="tratarGrupos(item)"
+                            >
+                            mdi-account-group
+                            </v-icon>
+                        </template>
+                        <span>Grupos</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            class="mr-2"
+                            v-bind="attrs"
+                            v-on="on"
                             @click="deleteItem(item)"
                             >
                             mdi-delete
@@ -337,7 +387,391 @@
                 <v-btn color="primary" @click="listar">Resetear</v-btn>
             </template>
             </v-data-table>
+        </v-col>
+        <v-col cols="12" md="6" sm="3">
+            <v-dialog v-model="taskdialog" max-width="750px">
+                <v-data-table
+                dense
+                :headers="headerstareas"
+                :items="tareas"
+                :search="searcht"
+                class="elevation-1"
+                no-data-text="Nada para mostrar"
+                >
+                    <template v-slot:top>
+                        <v-card flat color="white">
+                            <v-card-title>{{taskheader}}</v-card-title>
+                            <v-card-actions>
+                                <v-row>
+                                    <v-col cols="12" md="6" sm="6">
+                                        <v-text-field label="Búsqueda" class="ma-2" 
+                                        outlined 
+                                        dense 
+                                        v-model="searcht" 
+                                        append-icon="search" 
+                                        single-line 
+                                        hide-details
+                                        clearable 
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="5" sm="5">
+                                        <v-text-field 
+                                            label="Agregar tarea"
+                                            class="ma-2"
+                                            outlined 
+                                            dense 
+                                            hide-details
+                                            v-model="addtask"
+                                            clearable
+                                            counter="50"
+                                            append-icon="mdi-plus-circle"
+                                            @click:append="agregarTarea(addtask)"
+                                            ></v-text-field>
+                                    </v-col>
+                                </v-row>
+                                <v-btn color="primary" dense dark class="ma-2" @click.native="taskdialog=false">Salir</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </template>
+                    <template v-slot:[`item.selected`]="{ item }">
+                        <v-simple-checkbox
+                            v-model="item.selected"
+                            :ripple="false"
+                            @click="accionTarea(item)"
+                        ></v-simple-checkbox>
+                    </template>
+                    <template v-slot:[`item.estimadomonto`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.estimadomonto"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            persistent
+                            @save="editTareas(props.item)"
+                            @cancel="cancel"
+                            >
+                            {{ props.item.estimadomonto }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.estimadomonto"
+                                type="number"
+                                label="Editar"
+                                single-line
+                                counter
+                                clearable
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>
+                    <template v-slot:[`item.estimadotarifa`]="{ item }">
+                        <div v-if="item.selected" class="d-flex align-end flex-column">
+                            <td>{{ Number(item.estimadotarifa).toFixed(2)}}</td>
+                        </div>
+                    </template>
+                    <template v-slot:[`item.estimadohoras`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.estimadohoras"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            @save="editTareas(props.item)"
+                            @cancel="cancel"
+                            persistent
+                        >
+                            {{ props.item.estimadohoras }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.estimadohoras"
+                                type="number"
+                                label="Editar"
+                                single-line
+                                counter
+                                clearable
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>
+                    <template v-slot:[`item.notas`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.notas"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            @save="editTareas(props.item)"
+                            @cancel="cancel"
+                            persistent
+                        >
+                            {{ props.item.notas }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.notas"
+                                counter="256"
+                                label="Editar"
+                                single-line
+                                clearable
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>                    
+                    <template v-slot:no-data>
+                        <v-btn color="primary" @click="listar">Resetear</v-btn>
+                    </template>
+                </v-data-table>
+            </v-dialog>
+            <v-dialog v-model="userdialog" max-width="750px">
+                <v-data-table
+                dense
+                :headers="headersusuarios"
+                :items="usuarios"
+                :search="searchu"
+                class="elevation-1"
+                no-data-text="Nada para mostrar"
+                >
+                    <template v-slot:top>
+                        <v-card flat color="white">
+                            <v-card-title>{{userheader}}</v-card-title>
+                            <v-card-actions>
+                                <v-row>
+                                    <v-col cols="12" md="8" sm="8">
+                                        <v-text-field label="Búsqueda" class="ma-2" 
+                                        outlined 
+                                        dense 
+                                        v-model="searchu" 
+                                        append-icon="search" 
+                                        single-line 
+                                        hide-details
+                                        clearable 
+                                        ></v-text-field>
+                                    </v-col>
+                                </v-row>
+                                <v-btn color="primary" dense dark class="ma-2" @click.native="userdialog=false">Salir</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </template>
+                    <template v-slot:[`item.selected`]="{ item }">
+                        <v-simple-checkbox
+                            v-model="item.selected"
+                            :ripple="false"
+                            @click="accionUsuario(item)"
+                        ></v-simple-checkbox>
+                    </template>
 
+                    <template v-slot:[`item.tarifaproyectousuario`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.tarifaproyectousuario"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            @save="editUsuario(props.item)"
+                            @cancel="cancel"
+                            persistent
+                        >
+                            {{ props.item.tarifaproyectousuario }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.tarifaproyectousuario"
+                                type="number"
+                                label="Editar"
+                                single-line
+                                counter
+                                clearable
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>
+                    <template v-slot:[`item.costoproyectousuario`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.costoproyectousuario"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            @save="editUsuario(props.item)"
+                            @cancel="cancel"
+                            persistent
+                        >
+                            {{ props.item.costoproyectousuario }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.costoproyectousuario"
+                                type="number"
+                                label="Editar"
+                                single-line
+                                counter
+                                clearable
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>
+                    <template v-slot:[`item.notas`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.notas"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            @save="editUsuario(props.item)"
+                            @cancel="cancel"
+                            persistent
+                        >
+                            {{ props.item.notas }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.notas"
+                                counter="256"
+                                label="Editar"
+                                single-line
+                                clearable
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>                    
+
+                    <template v-slot:no-data>
+                        <v-btn color="primary" @click="listar">Resetear</v-btn>
+                    </template>
+                </v-data-table>
+            </v-dialog>
+            <v-dialog v-model="groupdialog" max-width="750px">
+                <v-data-table
+                dense
+                :headers="headersgrupos"
+                :items="grupos"
+                :search="searchg"
+                class="elevation-1"
+                no-data-text="Nada para mostrar"
+                >
+                    <template v-slot:top>
+                        <v-card flat color="white">
+                            <v-card-title>{{groupheader}}</v-card-title>
+                            <v-card-actions>
+                                <v-row>
+                                    <v-col cols="12" md="6" sm="6">
+                                        <v-text-field label="Búsqueda" class="ma-2" 
+                                        outlined 
+                                        dense 
+                                        v-model="searchg" 
+                                        append-icon="search" 
+                                        single-line 
+                                        hide-details
+                                        clearable 
+                                        ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="5" sm="5">
+                                        <v-text-field 
+                                            label="Agregar grupo"
+                                            class="ma-2"
+                                            outlined 
+                                            dense 
+                                            hide-details
+                                            v-model="addgroup"
+                                            clearable
+                                            counter="50"
+                                            append-icon="mdi-plus-circle"
+                                            @click:append="agregarGrupo(addgroup)"
+                                            ></v-text-field>
+                                    </v-col>
+                                </v-row>
+                                <v-btn color="primary" dense dark class="ma-2" @click.native="groupdialog=false">Salir</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </template>
+                    <template v-slot:[`item.selected`]="{ item }">
+                        <v-simple-checkbox
+                            v-model="item.selected"
+                            :ripple="false"
+                            @click="accionGrupo(item)"
+                        ></v-simple-checkbox>
+                    </template>
+                    <template v-slot:[`item.tarifaproyectogrupo`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.tarifaproyectogrupo"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            persistent
+                            @save="editGrupo(props.item)"
+                            @cancel="cancel"
+                        >
+                            {{ props.item.tarifaproyectogrupo }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.tarifaproyectogrupo"
+                                type="number"
+                                label="Editar"
+                                single-line
+                                counter
+                                clearable
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>
+                    <template v-slot:[`item.costoproyectogrupo`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.costoproyectogrupo"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            @save="editGrupo(props.item)"
+                            @cancel="cancel"
+                            persistent
+                        >
+                            {{ props.item.costoproyectogrupo }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.costoproyectogrupo"
+                                type="number"
+                                label="Editar"
+                                single-line
+                                counter
+                                clearable
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>
+                    <template v-slot:[`item.notas`]="props">
+                        <v-edit-dialog
+                            v-if="props.item.selected"  
+                            :return-value.sync="props.item.notas"
+                            large
+                            cancel-text="Salir"
+                            save-text="Grabar"
+                            @save="editGrupo(props.item)"
+                            @cancel="cancel"
+                            persistent
+                        >
+                            {{ props.item.notas }}
+                            <template v-if="props.item.selected" v-slot:input>
+                                <v-text-field
+                                dense
+                                v-model="props.item.notas"
+                                counter="256"
+                                label="Editar"
+                                single-line
+                                clearable
+                                ></v-text-field>
+                            </template>
+                        </v-edit-dialog>
+                    </template>                    
+                    <template v-slot:no-data>
+                        <v-btn color="primary" @click="listar">Resetear</v-btn>
+                    </template>
+                </v-data-table>
+            </v-dialog>
         </v-col>
     </v-row>
 </template>
@@ -385,12 +819,23 @@
         snacktext: '',
         timeout: 4000,
         recordInfo:0,
-        usuarios: [],
+        usuarios:[],
         empresas: [],
         clientes:[],
         proyectos:[],
+        tareas:[],
+        proyectotareas:[],
+        proyectousuarios:[],
+        grupos:[],
+        proyectogrupos:[],
+        taskheader:'',
+        userheader:'',
+        groupheader:'',
+        userdialog: false,
+        taskdialog: false,
+        groupdialog: false,
         dialog: false,
-        headers: [
+        headersproyecto: [
             { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
             { text: 'Proyecto', value: 'nombre', align: 'start', sortable: true },
             { text: 'Cliente', value: 'cliente', align: 'start', sortable: true },
@@ -403,9 +848,47 @@
             { text: 'Estado', value: 'activo', align: 'start', sortable: true  }
 //            { text: 'Empresa', value: 'empresa', align: 'start', sortable: true },
         ],
+        headerstareas: [
+            { text: '#', value: 'selected', align: 'center', sortable: false },
+            { text: 'Nombre tarea', value: 'nombre', align: 'start', sortable: true },
+            { text: 'Est.Horas', value: 'estimadohoras', align: 'end', sortable: true },
+            { text: 'Est.Tarifa', value: 'estimadotarifa', align: 'end', sortable: true },
+            { text: 'Est.Monto', value: 'estimadomonto', align: 'end', sortable: true },
+            { text: 'Notas', value: 'notas', align: 'start', sortable: true },
+            //{ text: 'Estado', value: 'activo', align: 'start', sortable: true  },
+            //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
+            //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
+            //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
+            //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
+        ],
+        headersusuarios: [
+            { text: '#', value: 'selected', align: 'center', sortable: false },
+            { text: 'Persona', value: "email", align: 'start', sortable: true },
+            { text: 'Tarifa', value: 'tarifaproyectousuario', align: 'end', sortable: true },
+            { text: 'Costo', value: 'costoproyectousuario', align: 'end', sortable: true },
+            { text: 'Notas', value: 'notas', align: 'start', sortable: true },
+            //{ text: 'Estado', value: 'activo', align: 'start', sortable: true  },
+            //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
+            //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
+            //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
+            //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
+        ],
+        headersgrupos: [
+            { text: '#', value: 'selected', align: 'center', sortable: false },
+            { text: 'Nombre grupo', value: 'nombre', align: 'start', sortable: true },
+            { text: 'Tarifa', value: 'tarifaproyectogrupo', align: 'end', sortable: true },
+            { text: 'Costo', value: 'costoproyectogrupo', align: 'end', sortable: true },
+            { text: 'Notas', value: 'notas', align: 'start', sortable: true },
+            //{ text: 'Estado', value: 'activo', align: 'start', sortable: true  },
+            //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
+            //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
+            //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
+            //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
+        ],
         search: '',
-        searchpa: '',
-        searchpr: '',
+        searchu: '',
+        searcht: '',
+        searchg: '',
         editedIndex: -1,
         id: '',
         nombre: '',
@@ -427,6 +910,8 @@
         iduserumod:'',
         fecumod:'',
         activo:false,
+        addtask: '',
+        addgroup: '',
         pideempresa: false,
         valida: 0,
         validaMensaje:[],
@@ -454,6 +939,10 @@
     },
 
     methods: {
+        save () {
+        },
+        cancel () {
+        },
         crearPDF(){
             var columns = [
                     {title: "Razon Social", dataKey: "nombre"},
@@ -496,14 +985,21 @@
         select(){
             let me=this;
             var usuariosArray=[];
+            var gruposArray=[];
+            var proyectogruposArray=[];
             var empresasArray=[];
             var clientesArray=[];
+            var tareasArray=[];
+            var proyectotareasArray=[];
+            var proyectousuariosArray=[];
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
             axios.get('api/Usuarios/Listar',configuracion).then(function(response){
                 usuariosArray=response.data;
                 usuariosArray.map(function(x){
-                    me.usuarios.push({iduseralta: x.iduseralta, iduserumod: x.iduserumod,text: x.iniciales, imgusuario: x.imgusuario, colfondo: x.colfondo, coltexto: x.coltexto, 
+                    me.usuarios.push({selected: false,iduseralta: x.iduseralta, iduserumod: x.iduserumod,
+                    imgusuario: x.imgusuario, colfondo: x.colfondo, coltexto: x.coltexto, 
+                    tarifaproyectousuario: 0, costoproyectousuario: 0,
                     email: x.email, iniciales: x.iniciales, userid: x.userid, value:x.id});
                 });
             }).catch(function(error){
@@ -518,7 +1014,7 @@
                     me.empresas.push({iduseralta: x.iduseralta, iduserumod: x.iduserumod,monedadefault: x.monedadefault, tarifadefault: x.tarifadefault, reservadodefaultcolfondo: x.reservadodefault, facturabledefault: x.facturabledefault, 
                     aceptacargatiempos: x.aceptacargatiempos, aceptacargalapsos: x.aceptacargalapsos, text: x.nombre, value:x.id});
                     if (me.empresas.length > 1){
-                        me.headers.push({"text": 'Empresa', "value": 'empresa', "align": 'start', "sortable": true});
+                        me.headersproyecto.push({"text": 'Empresa', "value": 'empresa', "align": 'start', "sortable": true});
                         me.pideempresa=true;
                     }
                 });
@@ -532,6 +1028,69 @@
                 clientesArray=response.data;
                 clientesArray.map(function(x){
                     me.clientes.push({ tarifadefault: x.tarifadefault, text: x.nombre, value:x.id});
+                });
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
+            axios.get('api/Tareas/Listar',configuracion).then(function(response){
+                tareasArray=response.data;
+                tareasArray.map(function(x){
+                    me.tareas.push({selected: false, value:x.id, nombre: x.nombre, relid: 0, 
+                    estimadohoras:0, estimadomonto:0, estimadotarifa:0, notas:''});
+                });
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
+            axios.get('api/Proyectotareas/Listar',configuracion).then(function(response){
+                proyectotareasArray=response.data;
+                proyectotareasArray.map(function(x){
+                    me.proyectotareas.push({tareaid: x.tareaid, proyectoid: x.proyectoid, estimadohoras: x.estimadohoras,
+                        estimadomonto: x.estimadomonto, estimadotarifa: (x.estimadomonto / x.estimadohoras).toFixed(2), 
+                        notas: x.notas, value:x.id});
+                });
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
+            axios.get('api/Proyectousuarios/Listar',configuracion).then(function(response){
+                proyectousuariosArray=response.data;
+                proyectousuariosArray.map(function(x){
+                    me.proyectousuarios.push({proyectoid: x.proyectoid, usuarioid: x.usuarioid, 
+                    tarifaproyectousuario: x.tarifaproyectousuario, costoproyectousuario: x.costoproyectousuario, 
+                    notas: x.notas, value:x.id});
+                });
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
+            axios.get('api/Grupos/Listar',configuracion).then(function(response){
+                gruposArray=response.data;
+                gruposArray.map(function(x){
+                    me.grupos.push({selected: false, nombre: x.nombre, relid: 0, 
+                    tarifaproyectogrupo:0, costoproyectogrupo:0, notas:'', value:x.id});
+                });
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
+            axios.get('api/Proyectogrupos/Listar',configuracion).then(function(response){
+                proyectogruposArray=response.data;
+                proyectogruposArray.map(function(x){
+                    me.proyectogrupos.push({grupoid: x.grupoid, proyectoid: x.proyectoid,
+                    tarifaproyectogrupo: x.tarifaproyectogrupo, costoproyectogrupo: x.costoproyectogrupo, 
+                    notas: x.notas, value:x.id});
                 });
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
@@ -562,6 +1121,7 @@
             this.fecumod = item.fecumod;
             this.activo = item.activo;                
             this.editedIndex = 1;
+            this.taskdialog = false;
             this.dialog = true
         },
         deleteItem (item) {
@@ -604,6 +1164,369 @@
             this.limpiar();
 
         },
+        tratarTareas(item){
+            var me=this;
+            let index = 0;
+            for (var l = 0; l < me.tareas.length; l++){
+                me.tareas[l].selected = false;
+                me.tareas[l].relid = 0;
+                me.tareas[l].estimadotarifa = 0;
+                me.tareas[l].estimadomonto = 0;
+                me.tareas[l].estimadohoras = 0;
+                me.tareas[l].notas = '';
+            };
+            for (var i = 0; i < me.proyectotareas.length; i++){
+                if (me.proyectotareas[i].proyectoid === item.id){
+                    index = me.tareas.findIndex(elemento => elemento.value === me.proyectotareas[i].tareaid );
+                    me.tareas[index].selected = true;
+                    me.tareas[index].relid = me.proyectotareas[i].value;
+                    me.tareas[index].estimadotarifa = (me.proyectotareas[i].estimadomonto / me.proyectotareas[i].estimadohoras).toFixed(2);
+                    me.tareas[index].estimadomonto = me.proyectotareas[i].estimadomonto;
+                    me.tareas[index].estimadohoras  = me.proyectotareas[i].estimadohoras;
+                    me.tareas[index].notas          = me.proyectotareas[i].notas;
+                }
+            };
+            me.workproyId = item.id;
+            me.taskheader = 'Tareas vinculadas a ' + item.nombre;
+            me.taskdialog=!me.taskdialog;
+        },
+        accionTarea(item){
+            var me=this;
+            let index = 0;
+            index = me.tareas.findIndex(elemento => elemento.value === item.value );
+            if (item.selected === true ) {
+                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuracion= {headers : header};
+                axios.post('api/Proyectotareas/Crear',{
+                    'tareaid':item.value,
+                    'proyectoid':this.workproyId,
+                    'estimadohoras':item.estimadohoras,
+                    'estimadomonto':item.estimadomonto,
+                    'notas':item.notas,
+                    'iduseralta': me.$store.state.usuario.idusuario                      
+                },configuracion)
+                .then(function(response){
+                    me.proyectotareas.push({tareaid: response.data.tareaid, proyectoid: response.data.proyectoid, estimadomonto: 0, estimadohoras: 0, estimadotarifa: 0, value: response.data.id});
+                    me.tareas[index].relid = response.data.id;
+                    //console.log(response);
+                    me.snacktext = 'Creacion exitosa';
+                    me.snackcolor = "success";
+                    me.snackbar = true;
+                }).catch(function(error){
+                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                    me.snackbar = true;
+                    me.snackcolor = 'error'
+                    console.log(error);
+                });
+            } else {
+                var indice = me.proyectotareas.find(x => item.value === x.tareaid && me.workproyId === x.proyectoid).value;
+                let header={"Authorization" : "Bearer " + me.$store.state.token};
+                let configuracion= {headers : header};
+                axios.delete('api/Proyectotareas/Eliminar/'+indice,configuracion).then( () => {
+                    me.proyectotareas = me.proyectotareas.filter(x => x.value != indice);
+                    me.tareas[index].relid = 0;
+                    me.tareas[index].estimadotarifa = 0;
+                    me.tareas[index].estimadohoras = 0;
+                    me.tareas[index].estimadomonto = 0;
+                    me.tareas[index].notas = '';
+                    me.snacktext = 'Eliminacion exitosa';
+                    me.snackcolor = "success";
+                    me.snackbar = true;
+                }).catch(function(error){
+                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                    me.snackcolor = "error";
+                    me.snackbar = true;
+                    console.log(error);
+                });
+            }
+        },
+        editTareas(item){
+            var me=this;
+            let index=0;
+            index = me.proyectotareas.findIndex(elemento => elemento.value === item.relid );
+            let header={"Authorization" : "Bearer " + this.$store.state.token};
+            let configuracion= {headers : header};
+
+            axios.put('api/Proyectotareas/Actualizar',{
+                'Id':item.relid,
+                'tareaid':item.value,
+                'proyectoid':this.workproyId,
+                'estimadohoras':item.estimadohoras,
+                'estimadomonto':item.estimadomonto,
+                'notas':item.notas,
+                'iduseralta': me.$store.state.usuario.idusuario                      
+            },configuracion).then( () => {
+                me.proyectotareas[index].estimadotarifa = (Number(item.estimadomonto) / Number(item.estimadohoras)).toFixed(2);
+                me.proyectotareas[index].estimadomonto = Number(item.estimadomonto);
+                me.proyectotareas[index].estimadohoras  = Number(item.estimadohoras);
+                me.proyectotareas[index].notas          = item.notas;
+                me.tareas[me.tareas.findIndex(elemento => elemento.value === me.proyectotareas[index].tareaid )].estimadotarifa = me.proyectotareas[index].estimadotarifa;
+                me.snacktext = 'Modificacion exitosa';
+                me.snackcolor = "success";
+                me.snackbar = true;
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackbar = true;
+                me.snackcolor = 'error'
+                console.log(error);
+            });
+        },
+        accionUsuario(item){
+            var me=this;
+            let index = 0;
+            index = me.usuarios.findIndex(elemento => elemento.value === item.value );
+            if (item.selected === true ) {
+                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuracion= {headers : header};
+                axios.post('api/Proyectousuarios/Crear',{
+                    'proyectoid':this.workgroupId,
+                    'usuarioid':item.value,
+                    'tarifaproyectousuario':item.tarifaproyectousuario,
+                    'costopropyectousuario':item.costoproyectousuario,
+                    'notas':item.notas,
+                    'iduseralta': me.$store.state.usuario.idusuario                      
+                },configuracion)
+                .then(function(response){
+                    me.proyectousuarios.push({proyectoid: response.data.proyectoid, usuarioid: response.data.usuarioid, value: response.data.id});
+                    me.usuarios[index].relid = response.data.id;
+                    //console.log(response);
+                    me.snacktext = 'Creacion exitosa';
+                    me.snackcolor = "success";
+                    me.snackbar = true;
+                }).catch(function(error){
+                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                    me.snackbar = true;
+                    me.snackcolor = 'error'
+                    console.log(error);
+                });
+            } else {
+                var indice = me.proyectousuarios.find(x => item.value === x.usuarioid && me.workproyId === x.proyectoid).value;
+                let header={"Authorization" : "Bearer " + me.$store.state.token};
+                let configuracion= {headers : header};
+                axios.delete('api/Proyectousuarios/Eliminar/'+indice,configuracion).then( () => {
+                    me.proyectousuarios = me.proyectousuarios.filter(x => x.value != indice); 
+                    me.usuarios[index].relid = 0;
+                    me.usuarios[index].tarifaproyectousuario = 0;
+                    me.usuarios[index].costoproyectousuario = 0;
+                    me.usuarios[index].notas = '';
+                    me.snacktext = 'Eliminacion exitosa';
+                    me.snackcolor = "success";
+                    me.snackbar = true;
+                }).catch(function(error){
+                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                    me.snackcolor = "error";
+                    me.snackbar = true;
+                    console.log(error);
+                });
+            }
+        },
+        tratarUsuarios(item){
+            var me=this;
+            let index = 0;
+            for (var l = 0; l < me.usuarios.length; l++){
+                me.usuarios[l].selected = false;
+                me.usuarios[l].relid = 0;
+                me.usuarios[l].tarifaproyectousuario = 0;
+                me.usuarios[l].costoproyectousuario = 0;
+                me.usuarios[l].notas = ''
+            };
+            for (let i = 0; i < me.proyectousuarios.length; i++){
+                if (me.proyectousuarios[i].proyectoid === item.id){
+                    index = me.usuarios.findIndex(elemento => elemento.value === me.proyectousuarios[i].usuarioid )
+                    me.usuarios[index].selected = true;
+                    me.usuarios[index].relid = me.proyectousuarios[i].value;
+                    me.usuarios[index].tarifaproyectousuario = me.proyectousuarios[i].tarifaproyectousuario;
+                    me.usuarios[index].costoproyectousuario = me.proyectousuarios[i].costoproyectousuario;
+                    me.usuarios[index].notas = me.proyectousuarios[i].notas;
+
+                }
+            };
+            me.workproyId = item.id;
+            me.userheader = 'Usuarios vinculados a ' + item.nombre;
+            me.userdialog=!me.userdialog;
+        },
+        editUsuario(item){
+            var me=this;
+            let index=0;
+            index = me.proyectousuarios.findIndex(elemento => elemento.value === item.relid );
+            let header={"Authorization" : "Bearer " + this.$store.state.token};
+            let configuracion= {headers : header};
+
+            axios.put('api/Proyectousuarios/Actualizar',{
+                'Id':item.relid,
+                'usuarioid':item.value,
+                'proyectoid':this.workproyId,
+                'tarifaproyectousuario':item.tarifaproyectousuario,
+                'costoproyectousuario':item.costoproyectousuario,
+                'notas':item.notas,
+                'iduseralta': me.$store.state.usuario.idusuario                      
+            },configuracion).then( () => {
+                me.proyectousuarios[index].tarifaproyectousuario = (Number(item.tarifaproyectousuario)).toFixed(2);
+                me.proyectousuarios[index].costoproyectousuario = Number(item.costoproyectousuario);
+                me.proyectousuarios[index].notas          = item.notas;
+                //me.proyectos[me.proyectos.findIndex(elemento => elemento.value === me.proyectousuarios[index].proyectoid )].estimadotarifa = me.proyectotareas[index].estimadotarifa;
+                me.snacktext = 'Modificacion exitosa';
+                me.snackcolor = "success";
+                me.snackbar = true;
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackbar = true;
+                me.snackcolor = 'error'
+                console.log(error);
+            });
+        },
+        agregarTarea(addtask){
+            let me=this;
+            if(addtask.length >= 3 && addtask.length <= 50 ){
+                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuracion= {headers : header};
+                axios.post('api/Tareas/Crear',{
+                    'nombre':addtask,
+                    'iduseralta': me.$store.state.usuario.idusuario                      
+                },configuracion)
+                .then(function(response){
+                    //console.log(response);
+                    me.tareas.push({selected: false, nombre: response.data.nombre, value: response.data.id});
+                    me.snacktext = 'Creacion exitosa';
+                    me.snackcolor = "success";
+                    me.snackbar = true;
+                    me.addtask = "";
+                }).catch(function(error){
+                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                    me.snackbar = true;
+                    me.snackcolor = 'error'
+                    console.log(error);
+                });
+            }
+        },
+        tratarGrupos(item){
+            var me=this;
+            let index = 0;
+            for (var l = 0; l < me.grupos.length; l++){
+                me.grupos[l].selected = false;
+                me.grupos[l].relid = 0;
+                me.grupos[l].tarifaproyectogrupo = 0;
+                me.grupos[l].costoproyectogrupo = 0;
+                me.grupos[l].notas = ''
+            };
+            for (let i = 0; i < me.proyectogrupos.length; i++){
+                if (me.proyectogrupos[i].proyectoid === item.id){
+                    index = me.grupos.findIndex(elemento => elemento.value === me.proyectogrupos[i].grupoid );
+                    me.grupos[index].selected = true;
+                    me.grupos[index].relid = me.proyectogrupos[i].value;
+                    me.grupos[index].tarifaproyectogrupo = me.proyectogrupos[i].tarifaproyectogrupo;
+                    me.grupos[index].costoproyectogrupo = me.proyectogrupos[i].costoproyectogrupo;
+                    me.grupos[index].notas = me.proyectogrupos[i].notas;
+                }
+            };
+            me.workgroupId = item.id;
+            me.groupheader = 'Grupos vinculados a ' + item.nombre;
+            me.groupdialog=!me.groupdialog;
+        },
+        accionGrupo(item){
+            var me=this;
+            let index = 0;
+            index = me.grupos.findIndex(elemento => elemento.value === item.value );
+            if (item.selected === true ) {
+                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuracion= {headers : header};
+                axios.post('api/Proyectogrupos/Crear',{
+                    'grupoid': item.value,
+                    'proyectoid': this.workgroupId,
+                    'tarifaproyectogrupo':item.tarifaproyectogrupo,
+                    'costopropyectogrupo':item.costoproyectogrupo,
+                    'notas':item.notas,
+                    'iduseralta': me.$store.state.usuario.idusuario                      
+                },configuracion)
+                .then(function(response){
+                    me.proyectogrupos.push({grupoid: response.data.grupoid, proyectoid: response.data.proyectoid, value: response.data.id});
+                    me.grupos[index].relid = response.data.id;
+                    //console.log(response);
+                    me.snacktext = 'Creacion exitosa';
+                    me.snackcolor = "success";
+                    me.snackbar = true;
+                }).catch(function(error){
+                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                    me.snackbar = true;
+                    me.snackcolor = 'error'
+                    console.log(error);
+                });
+            } else {
+                var indice = me.proyectogrupos.find(x => item.value === x.grupoid && me.workgroupId === x.proyectoid).value;
+                let header={"Authorization" : "Bearer " + me.$store.state.token};
+                let configuracion= {headers : header};
+                axios.delete('api/Proyectogrupos/Eliminar/'+indice,configuracion).then( () => {
+                    me.proyectogrupos = me.proyectogrupos.filter(x => x.value != indice);
+                    me.grupos[index].relid = 0;
+                    me.grupos[index].tarifaproyectogrupo = 0;
+                    me.grupos[index].costoproyectogrupo = 0;
+                    me.grupos[index].notas = '';
+                    me.snacktext = 'Eliminacion exitosa';
+                    me.snackcolor = "success";
+                    me.snackbar = true;
+                }).catch(function(error){
+                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                    me.snackcolor = "error";
+                    me.snackbar = true;
+                    console.log(error);
+                });
+            }
+        },
+        agregarGrupo(addgroup){
+            let me=this;
+            if(addgroup.length >= 3 && addgroup.length <= 50 ){
+                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuracion= {headers : header};
+                axios.post('api/Grupos/Crear',{
+                    'nombre':addgroup,
+                    'iduseralta': me.$store.state.usuario.idusuario                      
+                },configuracion)
+                .then(function(response){
+                    //console.log(response);
+                    me.grupos.push({selected: false, nombre: response.data.nombre, relid: 0, 
+                    tarifaproyectogrupo:0, costoproyectogrupo:0, notas:'', value: response.data.id});
+                    me.snacktext = 'Creacion exitosa';
+                    me.snackcolor = "success";
+                    me.snackbar = true;
+                    me.addgroup = "";
+                }).catch(function(error){
+                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                    me.snackbar = true;
+                    me.snackcolor = 'error'
+                    console.log(error);
+                });
+            }
+        },
+        editGrupo(item){
+            var me=this;
+            let index=0;
+            index = me.proyectogrupos.findIndex(elemento => elemento.value === item.relid );
+            let header={"Authorization" : "Bearer " + this.$store.state.token};
+            let configuracion= {headers : header};
+
+            axios.put('api/Proyectogrupos/Actualizar',{
+                'Id':item.relid,
+                'grupoid':item.value,
+                'proyectoid':this.workgroupId,
+                'tarifaproyectogrupo':item.tarifaproyectogrupo,
+                'costoproyectogrupo':item.costoproyectogrupo,
+                'notas':item.notas,
+                'iduseralta': me.$store.state.usuario.idusuario                      
+            },configuracion).then( () => {
+                me.proyectogrupos[index].tarifaproyectogrupo = (Number(item.tarifaproyectogrupo)).toFixed(2);
+                me.proyectogrupos[index].costoproyectogrupo = Number(item.costoproyectogrupo);
+                me.proyectogrupos[index].notas          = item.notas;
+                //me.proyectos[me.proyectos.findIndex(elemento => elemento.value === me.proyectousuarios[index].proyectoid )].estimadotarifa = me.proyectotareas[index].estimadotarifa;
+                me.snacktext = 'Modificacion exitosa';
+                me.snackcolor = "success";
+                me.snackbar = true;
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackbar = true;
+                me.snackcolor = 'error'
+                console.log(error);
+            });
+        },
         limpiar(){
             this.id = "";
             this.nombre = "";
@@ -632,7 +1555,6 @@
                 return;
             }
             let me=this;
-            var date = new Date();                
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
             if (this.editedIndex > -1) {
@@ -668,7 +1590,6 @@
                 });
             } else {
                 //Código para guardar
-                debugger;
                 axios.post('api/Proyectos/Crear',{
                     'nombre': me.nombre,
                     'empresaid': me.pideempresa ? me.empresaid : empresas[0].value,
@@ -701,13 +1622,6 @@
         validar(){
             this.valida=0;
             this.validaMensaje=[];
-
-            if (this.nombre.length<3 || this.nombre.length>50){
-                this.validaMensaje.push("El proyecto debe tener más de 3 caracteres y menos de 50 caracteres.");
-            }
-            if (this.notas.length > 256){
-                this.validaMensaje.push("La nota excede los 256 caracteres.");
-            }
             if (!this.tarifadefault){
                 this.validaMensaje.push("Ingrese una tarifa.");
             }

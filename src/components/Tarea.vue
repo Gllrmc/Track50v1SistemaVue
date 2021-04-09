@@ -265,6 +265,8 @@
                             large
                             cancel-text="Salir"
                             save-text="Grabar"
+                            @save="editProyecto(props.item)"
+                            @cancel="cancel"
                             persistent
                         >
                             {{ props.item.estimadomonto }}
@@ -277,7 +279,6 @@
                                 single-line
                                 counter
                                 clearable
-                                @change="editProyecto(props.item)"
                                 ></v-text-field>
                             </template>
                         </v-edit-dialog>
@@ -294,7 +295,7 @@
                             large
                             cancel-text="Salir"
                             save-text="Grabar"
-                            @save="save"
+                            @save="editProyecto(props.item)"
                             @cancel="cancel"
                             persistent
                         >
@@ -308,7 +309,6 @@
                                 single-line
                                 counter
                                 clearable
-                                @change="editProyecto(props.item)"
                                 ></v-text-field>
                             </template>
                         </v-edit-dialog>
@@ -320,6 +320,8 @@
                             large
                             cancel-text="Salir"
                             save-text="Grabar"
+                            @save="editProyecto(props.item)"
+                            @cancel="cancel"
                             persistent
                         >
                             {{ props.item.notas }}
@@ -331,7 +333,6 @@
                                 label="Editar"
                                 single-line
                                 clearable
-                                @change="editProyecto(props.item)"
                                 ></v-text-field>
                             </template>
                         </v-edit-dialog>

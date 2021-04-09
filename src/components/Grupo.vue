@@ -141,7 +141,7 @@
                             class="mr-2"
                             v-bind="attrs"
                             v-on="on"
-                            @click="tratarGrupos(item)"
+                            @click="tratarUsuarios(item)"
                             >
                             mdi-account-hard-hat
                             </v-icon>
@@ -340,6 +340,8 @@
                             large
                             cancel-text="Salir"
                             save-text="Grabar"
+                            @save="editProyecto(props.item)"
+                            @cancel="cancel"
                             persistent
                         >
                             {{ props.item.tarifaproyectogrupo }}
@@ -352,7 +354,6 @@
                                 single-line
                                 counter
                                 clearable
-                                @change="editProyecto(props.item)"
                                 ></v-text-field>
                             </template>
                         </v-edit-dialog>
@@ -364,7 +365,7 @@
                             large
                             cancel-text="Salir"
                             save-text="Grabar"
-                            @save="save"
+                            @save="editProyecto(props.item)"
                             @cancel="cancel"
                             persistent
                         >
@@ -378,7 +379,6 @@
                                 single-line
                                 counter
                                 clearable
-                                @change="editProyecto(props.item)"
                                 ></v-text-field>
                             </template>
                         </v-edit-dialog>
@@ -390,6 +390,8 @@
                             large
                             cancel-text="Salir"
                             save-text="Grabar"
+                            @save="editProyecto(props.item)"
+                            @cancel="cancel"
                             persistent
                         >
                             {{ props.item.notas }}
@@ -400,7 +402,6 @@
                                 counter="256"
                                 label="Editar"
                                 clearable
-                                @change="editProyecto(props.item)"
                                 ></v-text-field>
                             </template>
                         </v-edit-dialog>
@@ -707,7 +708,7 @@
             this.dialog = false
             this.limpiar();
         },
-        tratarGrupos(item){
+        tratarUsuarios(item){
             var me=this;
             for (var l = 0; l < me.usuarios.length; l++){
                 me.usuarios[l].selected = false;
@@ -743,7 +744,7 @@
                 }
             };
             me.workuserId = item.id;
-            me.proyheader = 'Proyectos vinculados a ' + item.iniciales + ' ' + item.email;
+            me.proyheader = 'Proyectos vinculados a ' + item.nombre;
             me.proydialog=!me.proydialog;
         },
         accionUsuario(item){

@@ -25,7 +25,7 @@
                 </template>
             </v-snackbar>
         </template>
-        <v-col cols="12" md="9" sm="12">
+        <v-col cols="12" md="10" sm="12">
             <v-data-table
             dense
             :headers="headersusuarios"
@@ -84,10 +84,8 @@
                                             </v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
-                                            <v-switch dense v-model="reservado"
-                                            flat
-                                            label="Visualiza privados?"
-                                            ></v-switch>                                    
+                                            <v-select dense v-model="primerahora" :items="primerahoras" label="Hora inicial">
+                                            </v-select>
                                         </v-col>
                                         <v-col cols=12 sm=6 md=6>
                                             <v-select dense v-model="lineaspag" :items="lineaspags" label="# lineas en tablas"></v-select>
@@ -125,6 +123,12 @@
                                                     mdi-delete
                                                 </v-icon>    
                                             </v-btn>
+                                        </v-col>
+                                        <v-col cols="12" sm="12" md="6">
+                                            <v-switch dense v-model="reservado"
+                                            flat
+                                            label="Visualiza privados?"
+                                            ></v-switch>                                    
                                         </v-col>
                                         <v-col cols="12" sm="12" md="6">
                                             <v-switch  densev-model="pxch" class="mx-2" label="Solicitar Password"></v-switch>
@@ -379,7 +383,7 @@
                         <v-simple-checkbox
                             v-model="item.selected"
                             :ripple="false"
-                            @click="accionUsuario(item)"
+                            @click="accionGrupo(item)"
                         ></v-simple-checkbox>
                     </template>
                     <template v-slot:no-data>
@@ -424,7 +428,6 @@
                             @click="accionProyecto(item)"
                         ></v-simple-checkbox>
                     </template>
-
                     <template v-slot:[`item.tarifaproyectousuario`]="props">
                         <v-edit-dialog
                             v-if="props.item.selected"  
@@ -432,6 +435,8 @@
                             large
                             cancel-text="Salir"
                             save-text="Grabar"
+                            @save="editProyecto(props.item)"
+                            @cancel="cancel"
                             persistent
                         >
                             {{ props.item.tarifaproyectousuario }}
@@ -444,7 +449,6 @@
                                 single-line
                                 counter
                                 clearable
-                                @change="editProyecto(props.item)"
                                 ></v-text-field>
                             </template>
                         </v-edit-dialog>
@@ -456,7 +460,7 @@
                             large
                             cancel-text="Salir"
                             save-text="Grabar"
-                            @save="save"
+                            @save="editProyecto(props.item)"
                             @cancel="cancel"
                             persistent
                         >
@@ -470,7 +474,6 @@
                                 single-line
                                 counter
                                 clearable
-                                @change="editProyecto(props.item)"
                                 ></v-text-field>
                             </template>
                         </v-edit-dialog>
@@ -482,6 +485,8 @@
                             large
                             cancel-text="Salir"
                             save-text="Grabar"
+                            @save="editProyecto(props.item)"
+                            @cancel="cancel"
                             persistent
                         >
                             {{ props.item.notas }}
@@ -493,7 +498,6 @@
                                 label="Editar"
                                 single-line
                                 clearable
-                                @change="editProyecto(props.item)"
                                 ></v-text-field>
                             </template>
                         </v-edit-dialog>
@@ -549,6 +553,16 @@
             {value: 15, text: "15"},
             {value: -1, text: "All"},
         ],
+        primerahoras: [
+            {value: 300, text: "05:00"},
+            {value: 360, text: "06:00"},
+            {value: 420, text: "07:00"},
+            {value: 480, text: "08:00"},
+            {value: 540, text: "09:00"},
+            {value: 600, text: "10:00"},
+            {value: 660, text: "11:00"},
+            {value: 720, text: "12:00"},
+        ],
         snackbar: false,
         snackcolor: '',
         snacktext: '',
@@ -575,6 +589,7 @@
             { text: 'Rol', value: 'rol', align: 'start', sortable: true },
             { text: 'Reservados?', value: 'reservado', align: 'start', sortable: true },
             { text: 'Iniciales', value: 'iniciales', align: 'start', sortable: true },
+            { text: 'Hora inicio', value: 'primerahora', align: 'start', sortable: true },
             { text: 'LinXPag', value: 'lineaspag', align: 'start', sortable: true },
             { text: 'Teléfono', value: 'telefono', align: 'start', sortable: true },
             { text: 'Estado', value: 'activo', align: 'center', sortable: true  },
@@ -619,6 +634,7 @@
         colfondo:'#000000',
         coltexto:'black',
         imgusuario:'',
+        primerahora: 0,
         lineaspag: 0,
         pxch:false,
         iduseralta:'',
@@ -806,6 +822,7 @@
             this.coltexto=item.coltexto;
             this.imgusuario=item.imgusuario;
             this.imageUrl=item.imgusuario;
+            this.primerahora=item.primerahora;
             this.lineaspag=item.lineaspag;
             this.pxch=item.pxch;
             this.iduseralta=item.iduseralta;
@@ -898,7 +915,7 @@
             me.proyheader = 'Proyectos vinculados a ' + item.iniciales + ' ' + item.email;
             me.proydialog=!me.proydialog;
         },
-        accionUsuario(item){
+        accionGrupo(item){
             var me=this;
             if (item.selected === true ) {
                 let header={"Authorization" : "Bearer " + this.$store.state.token};
@@ -1030,6 +1047,7 @@
                 this.coltexto="white";
                 this.imgusario="";
                 this.imageUrl="";
+                this.primerahora=0;
                 this.lineaspag=0;
                 this.pxch=false;
                 this.iduseralta = "";
@@ -1068,6 +1086,7 @@
                     'colfondo':me.colfondo,
                     'coltexto':me.coltexto,
                     'imgusuario':me.imgusuario,
+                    'primerahora':me.primerahora,
                     'lineaspag':me.lineaspag,
                     'pxch':me.pxch,
                     'iduseralta': me.iduseralta,
@@ -1102,6 +1121,7 @@
                     'colfondo':me.colfondo,
                     'coltexto':me.coltexto,
                     'imgusuario':me.imgusuario,
+                    'primerahora':me.primerahora,
                     'lineaspag':me.lineaspag,
                     'pxch':me.pxch,
                     'iduseralta': me.$store.state.usuario.idusuario                      

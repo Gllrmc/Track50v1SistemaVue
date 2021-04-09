@@ -25,7 +25,7 @@
                 </template>
             </v-snackbar>
         </template>
-        <v-col cols="12" md="9" sm="9">
+        <v-col cols="12" md="10" sm="12">
             <v-data-table
             dense
             :headers="headers"
@@ -87,15 +87,19 @@
                                         label="Es Privado por omision?"
                                         ></v-switch>                                    
                                     </v-col>
-                                    <v-col cols="12" sm="3" md="6">
+                                    <v-col cols="12" sm="12" md="4">
                                         <v-text-field v-model="tarifadefault" type="number" label="Tarifa por omision">
                                         </v-text-field>
                                     </v-col>
-                                    <v-col cols="12" sm="3" md="6">
+                                    <v-col cols="12" sm="12" md="4">
+                                        <v-text-field v-model="costodefault" type="number" label="Costo por omision">
+                                        </v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" sm="12" md="4">
                                         <v-select v-model="monedadefault" :items="monedas" attach label="Moneda">
                                         </v-select>
                                     </v-col>
-                                    <v-col cols="12" sm="2" md="2">
+                                    <v-col cols="12" sm="12" md="2">
                                         <v-layout column>
                                             <div class="ml-2" style="font-size : 12px">Logo</div>
                                             <v-avatar  size=40>
@@ -104,7 +108,7 @@
                                             <input v-show="false" ref="inputUpload1" type="file" @change="onFilePicked" >
                                         </v-layout>
                                     </v-col>
-                                    <v-col cols="12" sm="4" md="4">
+                                    <v-col cols="12" sm="12" md="4">
                                         <v-btn class="mx-2" small fab color="primary" @click="$refs.inputUpload1.click()">
                                             <v-icon dark>
                                                 mdi-plus
@@ -356,6 +360,7 @@
             { text: 'Facturable?', value: 'facturabledefault', align: 'start', sortable: true },
             { text: 'Privados?', value: 'reservadodefault', align: 'start', sortable: true },
             { text: 'Tarifa base', value: 'tarifadefault', align: 'start', sortable: true  },
+            { text: 'Costo base', value: 'costodefault', align: 'start', sortable: true  },
             { text: 'Moneda', value: 'monedadefault', align: 'start', sortable: true  },
             { text: 'Estado', value: 'activo', align: 'start', sortable: true  },
             //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
@@ -374,6 +379,7 @@
         facturabledefault: false,
         reservadodefault: false,
         tarifadefault: 0,
+        costodefault: 0,
         monedadefault: '',
         logo: '',
         iduseralta:'',
@@ -442,6 +448,7 @@
                     {title: "Facturable?", dataKey: "facturabledefault"}, 
                     {title: "Privados?", dataKey: "reservadodefault"},
                     {title: "Tarifa base", dataKey: "tarifadefault"}, 
+                    {title: "Costo base", dataKey: "costodefault"}, 
                     {title: "Moneda", dataKey: "monedadefault"}, 
                     {title: "Activo", dataKey: "activo"}
             ];
@@ -506,6 +513,7 @@
             this.facturabledefault = item.facturabledefault;
             this.reservadodefault = item.reservadodefault;
             this.tarifadefault = item.tarifadefault;
+            this.costodefault = item.costodefault;
             this.monedadefault = item.monedadefault;
             this.logo = item.logo;
             this.imageUrl = item.logo;
@@ -565,6 +573,7 @@
             this.facturabledefault = false;
             this.reservadodefault = false;
             this.tarifadefault = 0;
+            this.costodefault = 0;
             this.monedadefault = "";
             this.logo = "";
             this.imageUrl = "";
@@ -595,6 +604,7 @@
                     'facturabledefault': me.facturabledefault,
                     'reservadodefault': me.reservadodefault,
                     'tarifadefault': me.tarifadefault,
+                    'costodefault': me.costodefault,
                     'monedadefault': me.monedadefault,
                     'iduserumod': me.$store.state.usuario.idusuario,
                 },configuracion).then( () => {
@@ -621,6 +631,7 @@
                     'facturabledefault': me.facturabledefault,
                     'reservadodefault': me.reservadodefault,
                     'tarifadefault': me.tarifadefault,
+                    'costodefault': me.costodefault,
                     'monedadefault': me.monedadefault,
                     'iduseralta': me.$store.state.usuario.idusuario                           
                 },configuracion).then( () => {
@@ -650,6 +661,9 @@
             }
             if (!this.tarifadefault){
                 this.validaMensaje.push("Ingrese una tarifa.");
+            }
+            if (!this.costodefault){
+                this.validaMensaje.push("Ingrese un costo.");
             }
             if (this.validaMensaje.length){
                 this.valida=1;

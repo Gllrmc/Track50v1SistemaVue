@@ -13,6 +13,7 @@ import Appconfig from '../components/Appconfig.vue'
 import Empresa from '../components/Empresa.vue'
 import Pais from '../components/Pais.vue'
 import Provincia from '../components/Provincia.vue'
+import Timesheet from '../components/Timesheet.vue'
 import store from '../store'
 
 
@@ -44,6 +45,19 @@ const routes = [
     path: '/proyectos',
     name: 'proyectos',
     component: Proyecto,
+    meta: {
+      administrador: true,
+      jefeadministracion: true,
+      liderproyecto:true, 
+      consultor: true,
+      asistadministracion: true,
+      dataentry: true
+    }
+  },
+  {
+    path: '/timesheets',
+    name: 'timesheets',
+    component: Timesheet,
     meta: {
       administrador: true,
       jefeadministracion: true,

@@ -37,7 +37,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'regsemanal'}">
+            <v-list-item :to="{ name: 'timesheets'}">
               <v-list-item-action>
                 <v-icon color="primary">mdi-calendar-today</v-icon>
               </v-list-item-action>
@@ -272,17 +272,17 @@
       </v-toolbar-title>
       <v-spacer />
       <div class="mr-10" v-if="logueado">
-        <div v-if="this.$store.state.userInfo.imgusuario">
+        <div v-if="this.$store.state.userinfo.imgusuario">
             <v-avatar size=50>
-                <v-img :src="this.$store.state.userInfo.imgusuario" aspect-ratio="2" contain></v-img>
+                <v-img :src="this.$store.state.userinfo.imgusuario" aspect-ratio="2" contain></v-img>
             </v-avatar>
         </div>
         <div v-else>
-            <v-avatar v-if="this.$store.state.userInfo.coltexto=='black'" :color="this.$store.state.userInfo.colfondo" size=50>
-                <span style="color:black">{{ this.$store.state.userInfo.iniciales }}</span>
+            <v-avatar v-if="this.$store.state.userinfo.coltexto=='black'" :color="this.$store.state.userinfo.colfondo" size=50>
+                <span style="color:black">{{ this.$store.state.userinfo.iniciales }}</span>
             </v-avatar>
-            <v-avatar v-else :color="this.$store.state.userInfo.colfondo" size=50>
-                <span style="color:white">{{ this.$store.state.userInfo.iniciales }}</span>
+            <v-avatar v-else :color="this.$store.state.userinfo.colfondo" size=50>
+                <span style="color:white">{{ this.$store.state.userinfo.iniciales }}</span>
             </v-avatar>
         </div>
       </div>
@@ -323,7 +323,7 @@
 </template>
 
 <script>
-
+import axios from 'axios'
 export default {
   name: 'App',
 
@@ -359,10 +359,29 @@ export default {
   },
   created(){
     this.$store.dispatch("autoLogin");
+    this.buscarUserinfo();
   },
   methods:{
     salir(){
       this.$store.dispatch("salir");
+    },
+    buscarUserinfo(){
+        let me=this;
+        let header={"Authorization" : "Bearer " + me.$store.state.token};
+        let configuracion= {headers : header};
+        axios.get('api/Usuarios/Traer/'+me.$store.state.usuario.idusuario,configuracion)
+        .then(respuesta => {
+            return respuesta.data
+        })
+        .then(data => {
+            this.$store.dispatch("guardarUserinfo", data)
+        })
+        .catch(function(error){
+            me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+            me.snackcolor = 'error'
+            me.snackbar = true;
+            console.log(error);
+        });
     }
   }
 };
