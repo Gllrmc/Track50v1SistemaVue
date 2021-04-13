@@ -120,7 +120,8 @@
                         :return-value.sync="props.item.luhoras"
                         large
                         cancel-text="Salir"
-                        save-text="Grabar"
+                        save-text="Guardar"
+                        @save="editRegistro(props.item, 'lu')"
                         persistent
                     >
                         {{ props.item.luhoras }}
@@ -128,22 +129,92 @@
                             <v-text-field
                             dense
                             v-model="props.item.luhoras"
-                            append-icon="mdi-dots-vertical"
                             type="time"
                             label="Editar"
                             single-line
                             clearable
-                            @change="editProyecto(props.item)"
+                            prepend-icon="mdi-dots-vertical"
+                            @click:prepend="editRegistroFull(props.item, 'lu')"
                             ></v-text-field>
                         </template>
                     </v-edit-dialog>
+                    <v-dialog v-model="ludialog" max-width="400px">
+                        <v-card>
+                            <v-card-title>
+                                <span class="headline">{{formTitle}}</span>
+                            </v-card-title>
+                            <v-card-text>
+                                <v-container grid-list-md>
+                                    <v-row dense>
+                                        <v-col cols="12" sm="9" md="9">
+                                            <v-text-field 
+                                            dense
+                                            v-model="lufdesde"
+                                            type='date'
+                                            label="Fecha Desde"
+                                            disabled
+                                            >
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="3" md="3">
+                                            <v-text-field 
+                                            dense
+                                            v-model="luhdesde"
+                                            type='time'
+                                            label="Hora Desde"
+                                            @change="armaluhoras"
+                                            >
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="9" md="9">
+                                            <v-text-field 
+                                            dense
+                                            v-model="lufhasta"
+                                            type='date'
+                                            label="Fecha Hasta"
+                                            @change="armaluhoras"
+                                            >
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="3" md="3">
+                                            <v-text-field 
+                                            dense
+                                            v-model="luhhasta"
+                                            type='time'
+                                            label="Hora Hasta" 
+                                            @change="armaluhoras"
+                                            >
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="9" md="9"/>
+                                        <v-col cols="12" sm="3" md="3">
+                                            <v-text-field
+                                            dense 
+                                            v-model="luhoras"
+                                            label="Horas" 
+                                            type='time'
+                                            disabled
+                                            >
+                                            </v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="closelu">Cancelar</v-btn>
+                                <v-btn color="blue darken-1" text @click="confirmalu(props.item)">Confirmar</v-btn>
+                            </v-card-actions>
+                            </v-card>
+                    </v-dialog>
                 </template>
                 <template v-slot:[`item.mahoras`]="props">
                     <v-edit-dialog
                         :return-value.sync="props.item.mahoras"
                         large
                         cancel-text="Salir"
-                        save-text="Grabar"
+                        save-text="Guardar"
+                        @save="editRegistro(props.item, 'ma')"
                         persistent
                     >
                         {{ props.item.mahoras }}
@@ -151,133 +222,12 @@
                             <v-text-field
                             dense
                             v-model="props.item.mahoras"
-                            append-icon="mdi-dots-vertical"
                             type="time"
                             label="Editar"
                             single-line
-                            counter
                             clearable
-                            @change="editProyecto(props.item)"
-                            ></v-text-field>
-                        </template>
-                    </v-edit-dialog>
-                </template>
-                <template v-slot:[`item.mihoras`]="props">
-                    <v-edit-dialog
-                        :return-value.sync="props.item.mihoras"
-                        large
-                        cancel-text="Salir"
-                        save-text="Grabar"
-                        persistent
-                    >
-                        {{ props.item.mihoras }}
-                        <template v-slot:input>
-                            <v-text-field
-                            dense
-                            v-model="props.item.mihoras"
-                            append-icon="mdi-dots-vertical"
-                            type="time"
-                            label="Editar"
-                            single-line
-                            counter
-                            clearable
-                            @change="editProyecto(props.item)"
-                            ></v-text-field>
-                        </template>
-                    </v-edit-dialog>
-                </template>
-                <template v-slot:[`item.juhoras`]="props">
-                    <v-edit-dialog
-                        :return-value.sync="props.item.juhoras"
-                        large
-                        cancel-text="Salir"
-                        save-text="Grabar"
-                        persistent
-                    >
-                        {{ props.item.juhoras }}
-                        <template v-slot:input>
-                            <v-text-field
-                            dense
-                            v-model="props.item.juhoras"
-                            append-icon="mdi-dots-vertical"
-                            type="time"
-                            label="Editar"
-                            single-line
-                            counter
-                            clearable
-                            @change="editProyecto(props.item)"
-                            ></v-text-field>
-                        </template>
-                    </v-edit-dialog>
-                </template>
-                <template v-slot:[`item.vihoras`]="props">
-                    <v-edit-dialog
-                        :return-value.sync="props.item.vihoras"
-                        large
-                        cancel-text="Salir"
-                        save-text="Grabar"
-                        persistent
-                    >
-                        {{ props.item.vihoras }}
-                        <template v-slot:input>
-                            <v-text-field
-                            dense
-                            v-model="props.item.vihoras"
-                            append-icon="mdi-dots-vertical"
-                            type="time"
-                            label="Editar"
-                            single-line
-                            counter
-                            clearable
-                            @change="editProyecto(props.item)"
-                            ></v-text-field>
-                        </template>
-                    </v-edit-dialog>
-                </template>
-                <template v-slot:[`item.sahoras`]="props">
-                    <v-edit-dialog
-                        :return-value.sync="props.item.sahoras"
-                        large
-                        cancel-text="Salir"
-                        save-text="Grabar"
-                        persistent
-                    >
-                        {{ props.item.sahoras }}
-                        <template v-slot:input>
-                            <v-text-field
-                            dense
-                            v-model="props.item.sahoras"
-                            append-icon="mdi-dots-vertical"
-                            type="time"
-                            label="Editar"
-                            single-line
-                            counter
-                            clearable
-                            @change="editProyecto(props.item)"
-                            ></v-text-field>
-                        </template>
-                    </v-edit-dialog>
-                </template>
-                <template v-slot:[`item.dohoras`]="props">
-                    <v-edit-dialog
-                        :return-value.sync="props.item.dohoras"
-                        large
-                        cancel-text="Salir"
-                        save-text="Grabar"
-                        persistent
-                    >
-                        {{ props.item.dohoras }}
-                        <template v-slot:input>
-                            <v-text-field
-                            dense
-                            v-model="props.item.dohoras"
-                            append-icon="mdi-dots-vertical"
-                            type="time"
-                            label="Editar"
-                            single-line
-                            counter
-                            clearable
-                            @change="editProyecto(props.item)"
+                            prepend-icon="mdi-dots-vertical"
+                            @click:prepend="editRegistroFull(props.item, 'ma')"
                             ></v-text-field>
                         </template>
                     </v-edit-dialog>
@@ -322,10 +272,11 @@
         latitude:0,
         longitude:0,
         allowedStep: m => m % 15 === 0,
-        fdesde: new Date(),
-        fhasta: new Date(),
-        menu1: false,
-        max256chars: v => v.length <= 256 || 'Input too long!',
+        fdesde: new Date(), fhasta: new Date(),
+        menulu1: false, menuma1: false, menumi1: false, menuju1: false, menuvi1: false, menusa1: false, menudo1: false,
+        menulu2: false, menuma2: false, menumi2: false, menuju2: false, menuvi2: false, menusa2: false, menudo2: false,
+        ludialog: false, madialog: false, midialog: false, judialog: false, vidialog: false, sadialog: false, dodialog: false,
+        max256chars: v => v.length <= 256 || 'Demasiado largo!',
         up3:'AAA',
         colores: [
             {value: '#F44336', text: 'Rojo'},
@@ -354,6 +305,7 @@
             {value: 'white', text: 'Blanco'},
             {value: 'black', text: 'Negro'},
         ],
+        stlu:0,
         snackbar:false,
         snackcolor:'',
         snacktext: '',
@@ -369,6 +321,8 @@
         grupos:[],
         grupousuarios:[],
         proyectos:[],
+        empresas:[],
+        clientes:[],
         proyectousuarios:[],
         proyectogrupos:[],
         tareas:[],
@@ -378,47 +332,12 @@
         userheader: '',
         dialog: false,
         userdialog: false,
-        headersregistros: [
-            { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
-            { text: 'Proyecto', value: 'proyecto', align: 'start', sortable: true },
-            { text: 'Tarea', value: 'tarea', align: 'start', sortable: true },
-            { text: 'Hs.Lun.', value: 'luhoras', align: 'end', sortable: false, fecha: '' },
-            { text: 'Hs.Mar.', value: 'mahoras', align: 'end', sortable: false, fecha: '' },
-            { text: 'Hs.Mie.', value: 'mihoras', align: 'end', sortable: false, fecha: '' },
-            { text: 'Hs.Jue.', value: 'juhoras', align: 'end', sortable: false, fecha: '' },
-            { text: 'Hs.Vie.', value: 'vihoras', align: 'end', sortable: false, fecha: '' },
-            { text: 'Hs.Sab.', value: 'sahoras', align: 'end', sortable: false, fecha: '' },
-            { text: 'Hs.Dom.', value: 'dohoras', align: 'end', sortable: false, fecha: '' },
-            { text: 'Total', value: 'tohoras', align: 'end', sortable: true  },
-        ],
-        luhoras:'',
-        mahoras:'',
-        mihoras:'',
-        juhoras:'',
-        vihoras:'',
-        sahoras:'',
-        dohoras:'',
-        totalLun:'',
-        totalMar:'',
-        totalMie:'',
-        totalJue:'',
-        totalVie:'',
-        totalSab:'',
-        totalDom:'',
-        totalGral:'',
-        headersproyectos: [
-            { text: '#', value: 'selected', align: 'center', sortable: false },
-            { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
-            { text: 'Proyecto', value: 'proyecto', align: 'start', sortable: false },
-            { text: 'Tarea', value: 'tarea', align: 'end', sortable: true },
-            { text: 'Est.Tarifa', value: 'estimadotarifa', align: 'end', sortable: true },
-            { text: 'Est.Monto', value: 'estimadomonto', align: 'end', sortable: true },
-            { text: 'Notas', value: 'notas', align: 'start', sortable: true },
-            //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
-            //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
-            //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
-            //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
-        ],
+        lufdesde: '', mafdesde: '', mifdesde: '', jufdesde: '', vifdesde: '', safdesde: '', dofdesde: '',
+        luhdesde: '', mahdesde: '', mihdesde: '', juhdesde: '', vihdesde: '', sahdesde: '', dohdesde: '',
+        lufhasta: '', mafhasta: '', mifhasta: '', jufhasta: '', vifhasta: '', safhasta: '', dofhasta: '',
+        luhhasta: '', mahhasta: '', mihhasta: '', juhhasta: '', vihhasta: '', sahhasta: '', dohhasta: '',
+        luhoras:'', mahoras:'', mihoras:'', juhoras:'', vihoras:'', sahoras:'', dohoras:'',
+        totalLun:'', totalMar:'', totalMie:'', totalJue:'', totalVie:'', totalSab:'', totalDom:'', totalGral:'',
         searchg:'',
         searchu:'',
         editedIndex: -1,
@@ -446,153 +365,184 @@
     }),
 
     computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'Nueva tarea' : 'Actualizar tarea'
-      },
-      calcularStLu: function(){
-        var msec = 0;
-        var aux = 0;
-        for (let index = 0; index < this.registros.length; index++) {
-            aux = new Date(this.registros[index].lufhhasta).getTime() - new Date(this.registros[index].lufhdesde).getTime();
-            msec += aux?aux:0;
-        };
-        var mins = Math.floor(msec / 60000);
-        var hrs = Math.floor(mins / 60);
-        mins = mins % 60;
-        hrs = hrs % 24;
-
-        return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
-      },
-      calcularStMa: function(){
-        var msec = 0;
-        var aux = 0;
-        for (let index = 0; index < this.registros.length; index++) {
-            aux = new Date(this.registros[index].mafhhasta).getTime() - new Date(this.registros[index].mafhdesde).getTime();
-            msec += aux?aux:0;
-        };
-        var mins = Math.floor(msec / 60000);
-        var hrs = Math.floor(mins / 60);
-        mins = mins % 60;
-        hrs = hrs % 24;
-        return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
-      },
-      calcularStMi: function(){
-        var msec = 0;
-        var aux = 0;
-        for (let index = 0; index < this.registros.length; index++) {
-            aux = new Date(this.registros[index].mifhhasta).getTime() - new Date(this.registros[index].mifhdesde).getTime();
-            msec += aux?aux:0;
-        };
-        var mins = Math.floor(msec / 60000);
-        var hrs = Math.floor(mins / 60);
-        mins = mins % 60;
-        hrs = hrs % 24;
-        return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
-      },
-      calcularStJu: function(){
-        var msec = 0;
-        var aux = 0;
-        for (let index = 0; index < this.registros.length; index++) {
-            aux = new Date(this.registros[index].jufhhasta).getTime() - new Date(this.registros[index].jufhdesde).getTime();
-            msec += aux?aux:0;
-        };
-        var mins = Math.floor(msec / 60000);
-        var hrs = Math.floor(mins / 60);
-        mins = mins % 60;
-        hrs = hrs % 24;
-        return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
-      },
-      calcularStVi: function(){
-        var msec = 0;
-        var aux = 0;
-        for (let index = 0; index < this.registros.length; index++) {
-            aux = new Date(this.registros[index].vifhhasta).getTime() - new Date(this.registros[index].vifhdesde).getTime();
-            msec += aux?aux:0;
-        };
-        var mins = Math.floor(msec / 60000);
-        var hrs = Math.floor(mins / 60);
-        mins = mins % 60;
-        hrs = hrs % 24;
-        return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
-      },
-      calcularStSa: function(){
-        var msec = 0;
-        var aux = 0;
-        for (let index = 0; index < this.registros.length; index++) {
-            aux = new Date(this.registros[index].safhhasta).getTime() - new Date(this.registros[index].safhdesde).getTime();
-            msec += aux?aux:0;
-        };
-        var mins = Math.floor(msec / 60000);
-        var hrs = Math.floor(mins / 60);
-        mins = mins % 60;
-        hrs = hrs % 24;
-        return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
-      },
-      calcularStDo: function(){
-        var msec = 0;
-        var aux = 0;
-        for (let index = 0; index < this.registros.length; index++) {
-            aux = new Date(this.registros[index].dofhhasta).getTime() - new Date(this.registros[index].dofhdesde).getTime();
-            msec += aux?aux:0;
-        };
-        var mins = Math.floor(msec / 60000);
-        var hrs = Math.floor(mins / 60);
-        mins = mins % 60;
-        hrs = hrs % 24;
-        return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
-      },
-      calcularTot: function(){
-        var msec = 0;
-        var aux = 0;
-        for (let index = 0; index < this.registros.length; index++) {
-            aux = new Date(this.registros[index].lufhhasta).getTime() - new Date(this.registros[index].lufhdesde).getTime();
-            msec += aux?aux:0;
-            aux = new Date(this.registros[index].mafhhasta).getTime() - new Date(this.registros[index].mafhdesde).getTime();
-            msec += aux?aux:0;
-            aux = new Date(this.registros[index].mifhhasta).getTime() - new Date(this.registros[index].mifhdesde).getTime();
-            msec += aux?aux:0;
-            aux = new Date(this.registros[index].jufhhasta).getTime() - new Date(this.registros[index].jufhdesde).getTime();
-            msec += aux?aux:0;
-            aux = new Date(this.registros[index].vifhhasta).getTime() - new Date(this.registros[index].vifhdesde).getTime();
-            msec += aux?aux:0;
-            aux = new Date(this.registros[index].safhhasta).getTime() - new Date(this.registros[index].safhdesde).getTime();
-            msec += aux?aux:0;
-            aux = new Date(this.registros[index].dofhhasta).getTime() - new Date(this.registros[index].dofhdesde).getTime();
-            msec += aux?aux:0;
-        };
-        var mins = Math.floor(msec / 60000);
-        var hrs = Math.floor(mins / 60);
-        mins = mins % 60;
-        return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
-      },
-    },
-    watch: {
-        dialog (val) {
-            val || this.close()
+        headersregistros(){
+            return [
+                    { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
+                    { text: 'Proyecto', value: 'proyecto', align: 'start', sortable: true },
+                    { text: 'Tarea', value: 'tarea', align: 'start', sortable: true },
+                    { text: 'Hs.Lun.', value: 'luhoras', align: 'end', sortable: false, fecha: '' },
+                    { text: 'Hs.Mar.', value: 'mahoras', align: 'end', sortable: false, fecha: '' },
+                    { text: 'Hs.Mie.', value: 'mihoras', align: 'end', sortable: false, fecha: '' },
+                    { text: 'Hs.Jue.', value: 'juhoras', align: 'end', sortable: false, fecha: '' },
+                    { text: 'Hs.Vie.', value: 'vihoras', align: 'end', sortable: false, fecha: '' },
+                    { text: 'Hs.Sab.', value: 'sahoras', align: 'end', sortable: false, fecha: '' },
+                    { text: 'Hs.Dom.', value: 'dohoras', align: 'end', sortable: false, fecha: '' },
+                    { text: 'Total', value: 'tohoras', align: 'end', sortable: true  },
+                ]
         },
-    },
+        headersproyectos(){
+            return [
+                    { text: '#', value: 'selected', align: 'center', sortable: false },
+                    { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
+                    { text: 'Proyecto', value: 'proyecto', align: 'start', sortable: false },
+                    { text: 'Tarea', value: 'tarea', align: 'end', sortable: true },
+                    { text: 'Est.Tarifa', value: 'estimadotarifa', align: 'end', sortable: true },
+                    { text: 'Est.Monto', value: 'estimadomonto', align: 'end', sortable: true },
+                    { text: 'Notas', value: 'notas', align: 'start', sortable: true },
+                ]
+        },
+        formTitle () {
+            let me=this;
+            var title='';
+            switch (this.editedIndex){
+                case 1: {
+                    title = 'Detalle horario dia ' + me.headersregistros[3].text;
+                }
+            }
+            return title
+        },
+        calcularStLu: function(){
+            var msec = 0;
+            var aux = 0;
+            for (let index = 0; index < this.registros.length; index++) {
+                aux = new Date(new Date(this.registros[index].lufhhasta).getTime() - new Date(this.registros[index].lufhhasta).getTimezoneOffset() * 60000) 
+                    - new Date(new Date(this.registros[index].lufhdesde).getTime() - new Date(this.registros[index].lufhdesde).getTimezoneOffset() * 60000);
+                msec += aux?aux:0;
+            };
+            var mins = Math.floor(msec / 60000);
+            var hrs = Math.floor(mins / 60);
+            mins = mins % 60;
+            return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
+        },
+        calcularStMa: function(){
+            var msec = 0;
+            var aux = 0;
+            for (let index = 0; index < this.registros.length; index++) {
+                aux = new Date(this.registros[index].mafhhasta).getTime() - new Date(this.registros[index].mafhdesde).getTime();
+                msec += aux?aux:0;
+            };
+            var mins = Math.floor(msec / 60000);
+            var hrs = Math.floor(mins / 60);
+            mins = mins % 60;
+            return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
+        },
+        calcularStMi: function(){
+            var msec = 0;
+            var aux = 0;
+            for (let index = 0; index < this.registros.length; index++) {
+                aux = new Date(this.registros[index].mifhhasta).getTime() - new Date(this.registros[index].mifhdesde).getTime();
+                msec += aux?aux:0;
+            };
+            var mins = Math.floor(msec / 60000);
+            var hrs = Math.floor(mins / 60);
+            mins = mins % 60;
+            return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
+        },
+        calcularStJu: function(){
+            var msec = 0;
+            var aux = 0;
+            for (let index = 0; index < this.registros.length; index++) {
+                aux = new Date(this.registros[index].jufhhasta).getTime() - new Date(this.registros[index].jufhdesde).getTime();
+                msec += aux?aux:0;
+            };
+            var mins = Math.floor(msec / 60000);
+            var hrs = Math.floor(mins / 60);
+            mins = mins % 60;
+            return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
+        },
+        calcularStVi: function(){
+            var msec = 0;
+            var aux = 0;
+            for (let index = 0; index < this.registros.length; index++) {
+                aux = new Date(this.registros[index].vifhhasta).getTime() - new Date(this.registros[index].vifhdesde).getTime();
+                msec += aux?aux:0;
+            };
+            var mins = Math.floor(msec / 60000);
+            var hrs = Math.floor(mins / 60);
+            mins = mins % 60;
+            return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
+        },
+        calcularStSa: function(){
+            var msec = 0;
+            var aux = 0;
+            for (let index = 0; index < this.registros.length; index++) {
+                aux = new Date(this.registros[index].safhhasta).getTime() - new Date(this.registros[index].safhdesde).getTime();
+                msec += aux?aux:0;
+            };
+            var mins = Math.floor(msec / 60000);
+            var hrs = Math.floor(mins / 60);
+            mins = mins % 60;
+            return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
+        },
+        calcularStDo: function(){
+            var msec = 0;
+            var aux = 0;
+            for (let index = 0; index < this.registros.length; index++) {
+                aux = new Date(this.registros[index].dofhhasta).getTime() - new Date(this.registros[index].dofhdesde).getTime();
+                msec += aux?aux:0;
+            };
+            var mins = Math.floor(msec / 60000);
+            var hrs = Math.floor(mins / 60);
+            mins = mins % 60;
+            return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
+        },
+        calcularTot: function(){
+            var msec = 0;
+            var aux = 0;
+            for (let index = 0; index < this.registros.length; index++) {
+                aux = new Date(this.registros[index].lufhhasta).getTime() - new Date(this.registros[index].lufhdesde).getTime();
+                msec += aux?aux:0;
+                aux = new Date(this.registros[index].mafhhasta).getTime() - new Date(this.registros[index].mafhdesde).getTime();
+                msec += aux?aux:0;
+                aux = new Date(this.registros[index].mifhhasta).getTime() - new Date(this.registros[index].mifhdesde).getTime();
+                msec += aux?aux:0;
+                aux = new Date(this.registros[index].jufhhasta).getTime() - new Date(this.registros[index].jufhdesde).getTime();
+                msec += aux?aux:0;
+                aux = new Date(this.registros[index].vifhhasta).getTime() - new Date(this.registros[index].vifhdesde).getTime();
+                msec += aux?aux:0;
+                aux = new Date(this.registros[index].safhhasta).getTime() - new Date(this.registros[index].safhdesde).getTime();
+                msec += aux?aux:0;
+                aux = new Date(this.registros[index].dofhhasta).getTime() - new Date(this.registros[index].dofhdesde).getTime();
+                msec += aux?aux:0;
+            };
+            var mins = Math.floor(msec / 60000);
+            var hrs = Math.floor(mins / 60);
+            mins = mins % 60;
+            return ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2)
+        },
+        },
+        watch: {
+            dialog (val) {
+                val || this.close()
+            },
+        },
 
     created () {
+        this.calendario();
         this.listar();
         this.position();
-        this.calendario();
         this.select();
     },
     methods: {
         nextsem(){
-            (this.semana==this.semanas[this.semanas.length-1].value)?this.semana:this.semana++;
-            this.setHeaders(new Date(this.semanas[this.semanas.findIndex(x => x.value ==this.semana)].lun))
+            var index = this.semanas.findIndex(x => x.value == this.semana);
+            (index<this.semanas.length)?index++:index;
+            this.semana=this.semanas[index].value;
+            this.setHeaders(new Date(this.semanas[index].lun))
             this.setItems("Week");
         },
         prevsem(){
-            (this.semana==this.semanas[0].value)?this.semana:this.semana--;
-            this.setHeaders(new Date(this.semanas[this.semanas.findIndex(x => x.value ==this.semana)].lun))
+            var index = this.semanas.findIndex(x => x.value == this.semana);
+            (index>0)?index--:index;
+            this.semana=this.semanas[index].value;
+            this.setHeaders(new Date(this.semanas[index].lun))
             this.setItems("Week");
         },
         inputsem(){
-            this.setHeaders(new Date(this.semanas[this.semanas.findIndex(x => x.value ==this.semana)].lun))
+            var index = this.semanas.findIndex(x => x.value == this.semana);
+            this.semana=this.semanas[index].value;
+            this.setHeaders(new Date(this.semanas[index].lun))
             this.setItems("Week");
-
         },
         setHeaders(day){
             let me=this;
@@ -613,15 +563,20 @@
             me.registros=[];
             if (tipo == "Date"){
                 day = new Date(day.getTime() - day.getTimezoneOffset() * 60000).toISOString().substr(0,10);
-                var ii = 0;
-                var lun = new Date(), dom = new Date();
-                ii = me.fechas.findIndex(x => x.fecha.substr(0,10) === day);
-                lun = (me.fechas[ii].sini).substr(0,10);
-                dom = (me.fechas[ii].sfin).substr(0,10);
-            } else {
-                var lun = me.semanas[me.semanas.findIndex(x => x.value == me.semana)].lun
-                var dom = me.semanas[me.semanas.findIndex(x => x.value == me.semana)].dom
+                me.semana = me.fechas.find(x => x.fecha.substr(0,10) === day).snum;
             }
+            var lun = me.semanas[me.semanas.findIndex(x => x.value == me.semana)].lun
+            var mar = new Date(new Date(lun).setDate(new Date(lun).getDate()+1));
+            mar = new Date(mar.getTime() - mar.getTimezoneOffset() * 60000).toISOString().substr(0,19);
+            var mie = new Date(new Date(lun).setDate(new Date(lun).getDate()+2));
+            mie = new Date(mie.getTime() - mie.getTimezoneOffset() * 60000).toISOString().substr(0,19);
+            var jue = new Date(new Date(lun).setDate(new Date(lun).getDate()+3));
+            jue = new Date(jue.getTime() - jue.getTimezoneOffset() * 60000).toISOString().substr(0,19);
+            var vie = new Date(new Date(lun).setDate(new Date(lun).getDate()+4));
+            vie = new Date(vie.getTime() - vie.getTimezoneOffset() * 60000).toISOString().substr(0,19);
+            var sab = new Date(new Date(lun).setDate(new Date(lun).getDate()+5));
+            sab = new Date(sab.getTime() - sab.getTimezoneOffset() * 60000).toISOString().substr(0,19);
+            var dom = me.semanas[me.semanas.findIndex(x => x.value == me.semana)].dom
             var registrosArray=[];
             var aux = 0;
             registrosArray = me.registrosAll.filter(x => x.fecregistracion >= lun && x.fecregistracion <= dom && x.usuarioid == me.$store.state.usuario.idusuario)
@@ -634,7 +589,9 @@
                     index = me.registros.push({ 
                     usuarioid: registrosArray[i].usuarioid, proyectoid: registrosArray[i].proyectoid, tareaid: registrosArray[i].tareaid, 
                     proyecto: registrosArray[i].proyecto, tarea: registrosArray[i].tarea, 
-                    luhoras: '', mahoras: '', mihoras: '', juhoras: '', vihoras: '', sahoras: '', dohoras: ''
+                    luhoras: '', mahoras: '', mihoras: '', juhoras: '', vihoras: '', sahoras: '', dohoras: '',
+                    lufecregistracion: lun, mafecregistracion: mar, mifecregistracion: mie, jufecregistracion: jue, vifecregistracion: vie,
+                    safecregistracion: sab, dofecregistracion: dom
                     });
                     index--;
                     aux = 0;
@@ -655,8 +612,8 @@
                         me.registros[index].luactividad = registrosArray[i].actividad;
                         me.registros[index].lufacturable = registrosArray[i].facturable;
                         me.registros[index].luliquidable = registrosArray[i].liquidable;
-                        me.registros[index].lufhdesde =  registrosArray[i].fhdesde;
-                        me.registros[index].lufhhasta = registrosArray[i].fhhasta;
+                        me.registros[index].lufhdesde = new Date(new Date(registrosArray[i].fhdesde).getTime() - new Date(registrosArray[i].fhdesde).getTimezoneOffset() * 60000 ).toISOString();
+                        me.registros[index].lufhhasta = new Date(new Date(registrosArray[i].fhhasta).getTime() - new Date(registrosArray[i].fhhasta).getTimezoneOffset() * 60000 ).toISOString();
                         me.registros[index].luhoras = ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2);
                         me.registros[index].lulatdesde = registrosArray[i].latdesde;
                         me.registros[index].lulongdesde = registrosArray[i].longdesde;
@@ -763,7 +720,6 @@
                         break;
                 }
             }
-            console.log(me.registros)
         },
         buildWeek(){
             let me=this;
@@ -814,30 +770,6 @@
         pickFile () {
             this.$refs.image.click ()
         },
-        onFilePicked (e) {
-            const files = e.target.files
-            if (files[0] !== undefined) {
-                this.imageName = files[0].name
-                if (this.imageName.lastIndexOf('.') <= 0) {
-                return
-                }
-                const fr = new FileReader ()
-                fr.readAsDataURL(files[0])
-                fr.addEventListener('load', () => {
-                    this.imageUrl = fr.result
-                    this.imageFile = files[0] // this is an image file that can be sent to server...
-                    this.imgusuario = this.imageUrl;
-                })
-            } else {
-                this.imageName = ''
-                this.imageFile = ''
-                this.imageUrl = ''
-            }
-        },
-        clearImagen(){
-            this.imageUrl = ''
-            this.imgusuario = ''
-        },
         crearPDF(){
             var columns = [
                     {title: "Nombre tarea", dataKey: "nombre"},
@@ -875,6 +807,8 @@
         },
         select(){
             let me=this;
+            var empresasArray=[];
+            var clientesArray=[];
             var usuariosArray=[];
             var gruposArray=[];
             var grupousuariosArray=[];
@@ -885,6 +819,29 @@
             var proyectogrupoArray=[];
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
+            axios.get('api/Empresas/Listar',configuracion).then(function(response){
+                empresasArray=response.data;
+                empresasArray.map(function(x){
+                    me.empresas.push({costodefault: x.costodefault, tarifadefault: x.tarifadefault, nombre: x.nombre, value:x.id});
+                });
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
+            axios.get('api/Clientes/Listar',configuracion).then(function(response){
+                clientesArray=response.data;
+                clientesArray.map(function(x){
+                    me.clientes.push({tarifadefault: x.tarifadefault, nombre: x.nombre,
+                    value:x.id});
+                });
+            }).catch(function(error){
+                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                me.snackcolor = 'error'
+                me.snackbar = true;
+                console.log(error);
+            });
             axios.get('api/Usuarios/Listar',configuracion).then(function(response){
                 usuariosArray=response.data;
                 usuariosArray.map(function(x){
@@ -901,7 +858,8 @@
             axios.get('api/Proyectos/Listar',configuracion).then(function(response){
                 proyectosArray=response.data;
                 proyectosArray.map(function(x){
-                    me.proyectos.push({value:x.id, nombre: x.nombre, relid: 0, estimadohoras: 0, estimadomonto: 0, estimadotarifa: 0, notas: ''});
+                    me.proyectos.push({value:x.id, text: x.nombre, tarifadefault: x.tarifadefault, clienteid:x.clienteid, empresaid:x.empresaid, 
+                    facturable: x.facturable, reservado:x.reservado});
                 });
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
@@ -909,6 +867,7 @@
                 me.snackbar = true;
                 console.log(error);
             });
+
             axios.get('api/Tareas/Listar',configuracion).then(function(response){
                 tareasArray=response.data;
                 tareasArray.map(function(x){
@@ -1046,116 +1005,332 @@
             this.fecumod='';
             this.recordInfo = false;
         },
-        close () {
-            this.dialog = false
-            this.limpiar();
-        },
-        tratarProyectos(item){
+        editRegistro(item, dia){
             var me=this;
-            let index = 0;
-            for (var l = 0; l < me.proyectos.length; l++){
-                me.proyectos[l].selected = false;
-                me.proyectos[l].relid = 0;
-                me.proyectos[l].estimadotarifa = 0;
-                me.proyectos[l].estimadomonto = 0;
-                me.proyectos[l].estimadohoras = 0;
-                me.proyectos[l].notas = '';
-            };
-            for (var i = 0; i < me.proyectotareas.length; i++){
-                if (me.proyectotareas[i].tareaid === item.id){
-                    index = me.proyectos.findIndex(elemento => elemento.value === me.proyectotareas[i].proyectoid );
-                    me.proyectos[index].selected = true;
-                    me.proyectos[index].relid = me.proyectotareas[i].value;
-                    me.proyectos[index].estimadotarifa = (me.proyectotareas[i].estimadomonto / me.proyectotareas[i].estimadohoras).toFixed(2);
-                    me.proyectos[index].estimadomonto = me.proyectotareas[i].estimadomonto;
-                    me.proyectos[index].estimadohoras  = me.proyectotareas[i].estimadohoras;
-                    me.proyectos[index].notas          = me.proyectotareas[i].notas;
+            let header={"Authorization" : "Bearer " + me.$store.state.token};
+            let configuracion= {headers : header};
+            debugger
+            switch(dia){
+                case 'lu' : {
+                    if (!item.luhoras){
+                        var indice = item.luid;
+                        axios.delete('api/Registros/Eliminar/'+indice,configuracion).then( () => {
+                            let itemIndex = me.registros.indexOf(item);
+                            me.registros[itemIndex].luhoras = '';
+                            var fhaux = new Date(item.lufecregistracion).toISOString();
+                            me.registros[itemIndex].lufhdesde = fhaux;
+                            me.registros[itemIndex].lufhhasta = fhaux;
+                            me.registros[itemIndex].lutarifa = 0;
+                            me.registros[itemIndex].lucosto = 0;
+                            me.registros[itemIndex].luid = '';
+                            me.registrosAll = me.registrosAll.filter(x => x.id != indice);
+                            let editedItem = me.registros[itemIndex];
+                            me.registros.splice(itemIndex, 1, editedItem);
+                            me.snacktext = 'Eliminacion exitosa';
+                            me.snackcolor = "success";
+                            me.snackbar = true;
+                            me.setItems("Week");
+                        }).catch(function(error){
+                            me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                            me.snackcolor = "error";
+                            me.snackbar = true;
+                            console.log(error);
+                        });
+
+                    } else if (item.luid){
+                        var index = '';
+                        var a = item.luhoras.split(':')
+                        var luminutos = (+a[0] * 60 + (+a[1]));
+                        debugger
+                        item.lufhhasta = new Date(new Date(item.lufhdesde).getTime() 
+                                                + luminutos * 60000).toISOString();
+                        item.lulathasta = me.latitude;
+                        item.lulonghasta = me.longitude;
+                        axios.put('api/Registros/Actualizarhoras',{
+                            'Id':item.luid,
+                            'fhdesde':item.lufhdesde,
+                            'fhhasta':item.lufhhasta,
+                            'minutos':luminutos,
+                            'latdesde':item.lulatdesde,
+                            'longdesde':item.lulongdesde,
+                            'lathasta':item.lulathasta,
+                            'longhasta':item.lulonghasta,
+                            'iduserumod': me.$store.state.usuario.idusuario
+                        },configuracion).then( () => {
+                            index = me.registrosAll.findIndex(x => x.id == item.luid);
+                            me.registrosAll[index].fhdesde = item.lufhdesde;
+                            me.registrosAll[index].fhhasta = item.lufhhasta;
+                            me.registrosAll[index].minutos = luminutos;
+                            let itemIndex = me.registros.indexOf(item);
+                            let editedItem = me.registros[itemIndex];
+                            me.registros.splice(itemIndex, 1, editedItem);
+                            me.snacktext = 'Modificacion exitosa';
+                            me.snackcolor = "success";
+                            me.snackbar = true;
+                            me.setItems("Week");
+                        }).catch(function(error){
+                            me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                            me.snackbar = true;
+                            me.snackcolor = 'error'
+                            console.log(error);
+                        });
+                    } else {
+                        item.lufhdesde = new Date(new Date(item.lufecregistracion).getTime() + me.$store.state.userinfo.primerahora * 60000 - new Date(item.lufecregistracion).getTimezoneOffset() * 60000).toISOString();
+                        item.lulatdesde = me.latitude;
+                        item.lulongdesde = me.longitude; 
+                        item.lulathasta = me.latitude;
+                        item.lulonghasta = me.longitude;
+                        var a = item.luhoras.split(':')
+                        var luminutos = (+a[0] * 60 + (+a[1]));
+                        item.lufhhasta = new Date(new Date(item.lufhdesde).getTime() + luminutos * 60000 - new Date(item.lufhdesde).getTimezoneOffset() * 60000).toISOString();
+                        var tarifa = me.determinaTarifa(item.proyectoid, item.usuarioid);
+                        var costo = me.determinaCosto(item.proyectoid, item.usuarioid);
+                        axios.post('api/Registros/Crear',{
+                            'actividad': '',
+                            'usuarioid': item.usuarioid,
+                            'proyectoid': item.proyectoid,
+                            'tareaid': item.tareaid,
+                            'fecregistracion': item.lufecregistracion.substr(0,10),
+                            'facturable': me.proyectos.find(x => x.value == item.proyectoid).facturable,
+                            'liquidable': true,
+                            'fhdesde': item.lufhdesde,
+                            'fhhasta': item.lufhhasta,
+                            'minutos':luminutos,
+                            'latdesde':item.lulatdesde,
+                            'longdesde':item.lulongdesde,
+                            'lathasta':item.lulathasta,
+                            'longhasta':item.lulonghasta,
+                            'tarifa': tarifa,
+                            'costo': costo,
+                            'facturado': false,
+                            'iduserfact': '',
+                            'fhfact': '',
+                            'liquidado': false,
+                            'iduserliqui': '',
+                            'fhliqui': '',
+                            'iduseralta': me.$store.state.usuario.idusuario
+                        },configuracion).then( function(response) {
+                            me.registrosAll.push(response.data);
+                            var index = me.registros.findIndex(x => x.usuarioid === item.usuarioid &&
+                                                                x.proyectoid == item.proyectoid &&
+                                                                x.tareaid == item.tareaid);
+                            me.registros[index].lufacturable = me.proyectos.find(x => x.value == item.proyectoid).facturable;
+                            me.registros[index].luliquidable = true;
+                            me.registros[index].lufhdesde = item.lufhdesde;
+                            me.registros[index].lufhhasta = item.lufhhasta;
+                            me.registros[index].luhoras = item.luhoras;
+                            me.registros[index].luid = response.data.id;
+                            me.registros[index].lulatdesde = item.lulatdesde;
+                            me.registros[index].lulongdesde = item.lulongdesde;
+                            me.registros[index].lulathasta = item.lulathasta;
+                            me.registros[index].lulonghasta = item.lulonghasta;
+                            me.registros[index].luliquidable = item.luliquidable;
+                            me.registros[index].lutarifa = item.lutarifa;
+                            let itemIndex = me.registros.indexOf(item);
+                            let editedItem = me.registros[itemIndex];
+                            me.registros.splice(itemIndex, 1, editedItem);
+                            me.snacktext = 'Creacion exitosa';
+                            me.snackcolor = "success";
+                            me.snackbar = true;
+                            me.setItems("Week");
+                        }).catch(function(error){
+                            me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                            me.snackbar = true;
+                            me.snackcolor = 'error'
+                            console.log(error);
+                        });
+                    }
+                    break
                 }
-            };
-            me.workgroupId = item.id;
-            me.userheader = 'Proyectos vinculados a ' + item.nombre;
-            me.userdialog=!me.userdialog;
-        },
-        accionProyecto(item){
-            var me=this;
-            let index = 0;
-            index = me.proyectos.findIndex(elemento => elemento.value === item.value );
-            if (item.selected === true ) {
-                let header={"Authorization" : "Bearer " + this.$store.state.token};
-                let configuracion= {headers : header};
-                axios.post('api/Proyectotareas/Crear',{
-                    'tareaid':this.workgroupId,
-                    'proyectoid':item.value,
-                    'estimadohoras':item.estimadohoras,
-                    'estimadomonto':item.estimadomonto,
-                    'notas':item.notas,
-                    'iduseralta': me.$store.state.usuario.idusuario                      
-                },configuracion)
-                .then(function(response){
-                    me.proyectotareas.push({tareaid: response.data.tareaid, proyectoid: response.data.proyectoid, estimadomonto: 0, estimadohoras: 0, estimadotarifa: 0, value: response.data.id});
-                    me.proyectos[index].relid = response.data.id;
-                    //console.log(response);
-                    me.snacktext = 'Creacion exitosa';
-                    me.snackcolor = "success";
-                    me.snackbar = true;
-                }).catch(function(error){
-                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                    me.snackbar = true;
-                    me.snackcolor = 'error'
-                    console.log(error);
-                });
-            } else {
-                var indice = me.proyectotareas.find(x => item.value === x.proyectoid && me.workgroupId === x.tareaid).value;
-                let header={"Authorization" : "Bearer " + me.$store.state.token};
-                let configuracion= {headers : header};
-                axios.delete('api/Proyectotareas/Eliminar/'+indice,configuracion).then( () => {
-                    me.proyectotareas = me.proyectotareas.filter(x => x.value != indice);
-                    me.proyectos[index].relid = 0;
-                    me.proyectos[index].estimadotarifa = 0;
-                    me.proyectos[index].estimadohoras = 0;
-                    me.proyectos[index].estimadomonto = 0;
-                    me.proyectos[index].notas = '';
-                    me.snacktext = 'Eliminacion exitosa';
-                    me.snackcolor = "success";
-                    me.snackbar = true;
-                }).catch(function(error){
-                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                    me.snackcolor = "error";
-                    me.snackbar = true;
-                    console.log(error);
-                });
+                case 'ma' : {
+                    if (item.maid){
+                        var a = item.mahoras.split(':')
+                        var maminutos = (+a[0] * 60 + (+a[1]));
+                        item.mafhhasta = new Date(new Date(item.mafhdesde).getTime() + maminutos * 60000 - new Date(item.mafhdesde).getTimezoneOffset() * 60000);
+                        item.malathasta = me.latitude;
+                        item.malonghasta = me.longitude; 
+                        axios.put('api/Registros/Actualizarhoras',{
+                            'Id':item.maid,
+                            'fhdesde':item.mafhdesde,
+                            'fhhasta':item.mafhhasta,
+                            'minutos':maminutos,
+                            'latdesde':item.malatdesde,
+                            'longdesde':item.malongdesde,
+                            'lathasta':item.malathasta,
+                            'longhasta':item.malonghasta,
+                            'iduserumod': me.$store.state.usuario.idusuario
+                        },configuracion).then( () => {
+                            me.snacktext = 'Modificacion exitosa';
+                            me.snackcolor = "success";
+                            me.snackbar = true;
+                            me.close();
+                            me.listar();
+                            me.limpiar();                        
+                        }).catch(function(error){
+                            me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                            me.snackbar = true;
+                            me.snackcolor = 'error'
+                            console.log(error);
+                        });
+                    } else {
+                        item.malatdesde = me.latitude;
+                        item.malongdesde = me.longitude; 
+                        item.mafhdesde = new Date(new Date(item.mafecregistracion).getTime() + me.$store.state.userinfo.primerahora * 60000 - new Date(item.mafecregistracion).getTimezoneOffset() * 60000 ).toISOString();
+                        var a = item.mahoras.split(':')
+                        var maminutos = (+a[0] * 60 + (+a[1]));
+                        item.mafhhasta = new Date(new Date(item.mafhdesde).getTime() + maminutos * 60000 - new Date(item.mafhdesde).getTimezoneOffset() * 60000 ).toISOString();
+                        item.malathasta = me.latitude;
+                        item.malonghasta = me.longitude;
+                        var tarifa = this.determinaTarifa(item.proyectoid, item.usuarioid);
+                        var costo = this.determinaCosto(item.proyectoid, item.usuarioid);
+                        axios.post('api/Registros/Crear',{
+                            'actividad': '',
+                            'usuarioid': item.usuarioid,
+                            'proyectoid': item.proyectoid,
+                            'tareaid': item.tareaid,
+                            'fecregistracion': item.mafecregistracion.substr(0,10),
+                            'facturable': this.proyectos.find(x => x.value == item.proyectoid).facturable,
+                            'liquidable': true,
+                            'fhdesde':new Date(item.mafhdesde),
+                            'fhhasta': new Date(item.mafhhasta),
+                            'minutos':maminutos,
+                            'latdesde':item.malatdesde,
+                            'longdesde':item.malongdesde,
+                            'lathasta':item.malathasta,
+                            'longhasta':item.malonghasta,
+                            'tarifa': tarifa,
+                            'costo': costo,
+                            'facturado': false,
+                            'iduserfact': '',
+                            'fhfact': '',
+                            'liquidado': false,
+                            'iduserliqui': '',
+                            'fhliqui': '',
+                            'iduseralta': me.$store.state.usuario.idusuario
+                        },configuracion).then( () => {
+                            me.snacktext = 'Creacion exitosa';
+                            me.snackcolor = "success";
+                            me.snackbar = true;
+                        }).catch(function(error){
+                            me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                            me.snackbar = true;
+                            me.snackcolor = 'error'
+                            console.log(error);
+                        });
+
+                    }
+                    break
+                }
             }
         },
-        editProyecto(item){
+        armaluhoras(){
+            let me=this;
+            var msec = 0, mins = 0, hrs = 0;
+            if (me.lufhasta < me.lufdesde) {
+                me.lufhasta = me.lufdesde;
+            }
+            if (me.lufhasta == me.lufdesde) {
+                if (me.luhhasta < me.luhdesde) {
+                    me.luhhasta = me.luhdesde;
+                }
+            }
+            if (me.lufhasta > me.lufdesde) {
+                me.lufhasta = new Date(new Date(me.lufdesde).getTime()
+                            + 24 * 60 * 60 * 1000).toISOString().substr(0,10);
+                if (me.luhhasta > me.luhdesde) {
+                    me.luhhasta = new Date(new Date(me.lufhasta + ' ' + me.luhdesde).getTime() 
+                            - new Date(me.lufhasta + ' ' + me.luhdesde).getTimezoneOffset() * 60000
+                            - 1 * 60 * 1000).toISOString().substr(11,5);
+                }
+            }
+            msec = new Date(me.lufhasta + ' '+ me.luhhasta).getTime() - new Date(me.lufdesde + ' ' + me.luhdesde).getTime();
+            mins = Math.floor(msec / 60000);
+            hrs = Math.floor(mins / 60);
+            mins = mins % 60;
+            if (hrs >= 24) {
+                me.luhhasta = me.luhdesde;
+                lu.horas = "24:00";
+            } 
+            me.luhoras = ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2);
+        },
+        confirmalu(item){
+            let me=this;
+            item.lufhdesde = me.lufdesde + 'T' + me.luhdesde;
+            item.lufhhasta = me.lufhasta + 'T' + me.luhhasta;
+            item.luhoras = me.luhoras;
+            this.closelu();
+        },
+        closelu () {
+            this.ludialog = false
+        },
+        editRegistroFull(item,dia){
             var me=this;
-            let index=0;
-            index = me.proyectotareas.findIndex(elemento => elemento.value === item.relid );
-            let header={"Authorization" : "Bearer " + this.$store.state.token};
-            let configuracion= {headers : header};
-
-            axios.put('api/Proyectotareas/Actualizar',{
-                'Id':item.relid,
-                'tareaid':this.workgroupId,
-                'proyectoid':item.value,
-                'estimadohoras':item.estimadohoras,
-                'estimadomonto':item.estimadomonto,
-                'notas':item.notas,
-                'iduseralta': me.$store.state.usuario.idusuario
-            },configuracion).then( () => {
-                me.proyectotareas[index].estimadotarifa = (Number(item.estimadomonto) / Number(item.estimadohoras)).toFixed(2);
-                me.proyectotareas[index].estimadomonto = Number(item.estimadomonto);
-                me.proyectotareas[index].estimadohoras  = Number(item.estimadohoras);
-                me.proyectotareas[index].notas          = item.notas;
-                me.proyectos[me.proyectos.findIndex(elemento => elemento.value === me.proyectotareas[index].proyectoid )].estimadotarifa = me.proyectotareas[index].estimadotarifa;
-                me.snacktext = 'Modificacion exitosa';
-                me.snackcolor = "success";
-                me.snackbar = true;
-            }).catch(function(error){
-                me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
-                me.snackbar = true;
-                me.snackcolor = 'error'
-                console.log(error);
-            });
+            switch (dia){
+                case 'lu' : {
+                    me.lufdesde=item.lufhdesde.substr(0,10);
+                    me.luhdesde=item.lufhdesde.substr(11,5);
+                    me.lufhasta=item.lufhhasta.substr(0,10);
+                    me.luhhasta=item.lufhhasta.substr(11,5);
+                    me.luhoras=item.luhoras;
+                    me.ludialog=true;
+                    me.editedIndex=1;
+                    break
+                }
+            }
+        },
+        determinaTarifa(proid,usuid){
+            var index1 = this.proyectos.findIndex(x => x.value == proid);
+            var auxtarifa = this.empresas.find(x => x.value == this.proyectos[index1].empresaid).tarifadefault;
+            var tarifa = auxtarifa>0?auxtarifa:0;
+            var index2 = this.clientes.findIndex(x => x.value == this.proyectos[index1].clienteid);
+            if (index2>-1){
+                auxtarifa = this.clientes.find(x => x.value == this.proyectos[index1].clienteid).tarifadefault;
+                tarifa = auxtarifa>0?auxtarifa:tarifa;
+            } 
+            if (this.proyectos[index1].tarifadefault > 0 ){
+                auxtarifa = this.proyectos[index1].tarifadefault;
+                tarifa = auxtarifa>0?auxtarifa:tarifa;
+            }
+            var proygrupArray = this.proyectogrupos.find(x => x.proyectoid == proid);
+            for (var i=0; i<proygrupArray.length;i++){
+                var grupusuArray = this.grupousuarios.find(x => x.grupoid == proygrupArray[i].grupoid && x.usuarioid == usuid);
+                for (var ii=0; ii<grupusuArray.length; ii++){
+                    if (grupusuArray[ii].usuarioid == proygrupArray[i].usuarioid) {
+                        if (this.proyectogrupos[i].tarifaproyectogrupo>0 && this.proyectogrupos[i].tarifaproyectogrupo > tarifa){    
+                            auxtarifa = this.proyectogrupos[i].tarifaproyectogrupo;
+                            tarifa = auxtarifa>0?auxtarifa:tarifa;
+                        }
+                    } 
+                }
+            }
+            var index2 = this.proyectousuarios.findIndex(x => x.usuarioid == usuid && x.proyectoid == proid);
+            if (index2 > -1 && this.proyectousuarios[index2].tarifadefault > 0){
+                auxtarifa = this.proyectousuarios[index2].tarifadefault;
+                tarifa = auxtarifa>0?auxtarifa:tarifa;
+            }
+            return(tarifa)
+        },
+        determinaCosto(proid,usuid){
+            var index1 = this.proyectos.findIndex(x => x.value == proid);
+            var auxcosto = this.empresas.find(x => x.value == this.proyectos[index1].empresaid).costodefault;
+            var costo = auxcosto>0?auxcosto:0;
+            var proygrupArray = this.proyectogrupos.find(x => x.proyectoid == proid);
+            for (var i=0; i<proygrupArray.length;i++){
+                var grupusuArray = this.grupousuarios.find(x => x.grupoid == proygrupArray[i].grupoid && x.usuarioid == usuid);
+                for (var ii=0; ii<grupusuArray.length; ii++){
+                    if (grupusuArray[ii].usuarioid == proygrupArray[i].usuarioid) {
+                        if (this.proyectogrupos[i].costoproyectogrupo>0 && this.proyectogrupos[i].costoproyectogrupo > costo){    
+                            auxcosto = this.proyectogrupos[i].costoproyectogrupo;
+                            costo = auxcosto>0?auxcosto:costo;
+                        }
+                    } 
+                }
+            }
+            var index2 = this.proyectousuarios.findIndex(x => x.usuarioid == usuid && x.proyectoid == proid);
+            if (index2 > -1 && this.proyectousuarios[index2].costodefault > 0){
+                costo = this.proyectousuarios[index2].costodefault;
+            }
+            return(costo)
         },
         limpiar(){
                 this.id="";
@@ -1169,9 +1344,6 @@
                 this.editedIndex=-1;
         },
         guardar () {
-            if (this.validar()){
-                return;
-            }
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
             if (this.editedIndex > -1) {
@@ -1217,19 +1389,7 @@
                     console.log(error);
                 });
             }
-        },
-        validar(){
-            this.valida=0;
-            this.validaMensaje=[];
-
-            if (this.nombre.length<3 || this.nombre.length>50){
-                this.validaMensaje.push("El nombre debe tener más de 3 caracteres y menos de 50 caracteres.");
-            }
-            if (this.validaMensaje.length){
-                this.valida=1;
-            }
-            return this.valida;
-        },
+        }
    },
   }
 </script>

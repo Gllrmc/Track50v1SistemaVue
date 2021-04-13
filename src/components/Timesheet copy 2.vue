@@ -40,28 +40,28 @@
                             <div v-if="i == 0">
                                 <strong>Total</strong>
                             </div>
-                            <div v-if="i == 2" style="float:right">
+                            <div v-if="i == 3" style="float:right">
                                 <strong>{{calcularStLu}}</strong>
                             </div>
-                            <div v-if="i == 3" style="float:right">
+                            <div v-if="i == 4" style="float:right">
                                 <strong>{{calcularStMa}}</strong>
                             </div>
-                            <div v-if="i == 4" style="float:right">
+                            <div v-if="i == 5" style="float:right">
                                 <strong>{{calcularStMi}}</strong>
                             </div>
-                            <div v-if="i == 5" style="float:right">
+                            <div v-if="i == 6" style="float:right">
                                 <strong>{{calcularStJu}}</strong>
                             </div>
-                            <div v-if="i == 6" style="float:right">
+                            <div v-if="i == 7" style="float:right">
                                 <strong>{{calcularStVi}}</strong>
                             </div>
-                            <div v-if="i == 7" style="float:right">
+                            <div v-if="i == 8" style="float:right">
                                 <strong>{{calcularStSa}}</strong>
                             </div>
-                            <div v-if="i == 8" style="float:right">
+                            <div v-if="i == 9" style="float:right">
                                 <strong>{{calcularStDo}}</strong>
                             </div>
-                            <div v-if="i == 9" style="float:right">
+                            <div v-if="i == 10" style="float:right">
                                 <strong>{{calcularTot}}</strong>
                             </div>
                             <div v-else>
@@ -111,43 +111,7 @@
                                 </v-col>
                                 <v-spacer/>
                             </v-row>
-                            <v-dialog v-model="dialog" max-width="600px">
-                                <template v-slot:activator="{ on }">
-                                <v-btn color="primary" dark class="mb-2" v-on="on">Nuevo</v-btn>
-                                </template>
-                                <v-card>
-                                <v-card-title>
-                                    <span class="headline">{{ formTitle }}</span>
-                                </v-card-title>
-                                <v-card-text>
-                                    <v-container grid-list-md>
-                                        <v-row dense>
-                                            <v-col cols="12" sm="12" md="12">
-                                                <v-select v-model="proyectoid"
-                                                :items = "proyectos"
-                                                @change="armaTareas(proyectoid)"
-                                                label = "Proyecto"
-                                                >
-                                                </v-select>
-                                            </v-col>                                
-                                            <v-col cols="12" sm="12" md="12">
-                                                <v-select v-model="tareaid" 
-                                                label="Tarea" 
-                                                :items = 'tareasf'
-                                                clearable
-                                                counter="0">
-                                                </v-select>
-                                            </v-col>
-                                        </v-row>
-                                    </v-container>
-                                </v-card-text>
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
-                                    <v-btn color="blue darken-1" text @click="guardar">Guardar</v-btn>
-                                </v-card-actions>
-                                </v-card>
-                            </v-dialog>
+                            <v-btn color="primary" dark class="mb-2">Nuevo</v-btn>
                         </v-card-actions>
                     </v-card>
                 </template>
@@ -173,96 +137,105 @@
                             persistent
                             @click:prepend="editLuRegistroFull(props.item)"
                             ></v-text-field>
-                            <v-dialog v-model="ludialog" max-width="400px">
-                                <v-card>
-                                    <v-card-title>
-                                        <span class="headline">{{formTitle}}</span>
-                                    </v-card-title>
-                                    <v-card-text>
-                                        <v-container grid-list-md>
-                                            <v-row dense>
-                                                <v-col cols="12" sm="9" md="9">
-                                                    <v-text-field 
-                                                    dense
-                                                    v-model="lufdesde"
-                                                    type='date'
-                                                    label="Fecha Desde"
-                                                    disabled
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" sm="3" md="3">
-                                                    <v-text-field 
-                                                    dense
-                                                    v-model="luhdesde"
-                                                    type='time'
-                                                    label="Hora Desde"
-                                                    @change="armaluhoras(props.item)"
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" sm="9" md="9">
-                                                    <v-text-field 
-                                                    dense
-                                                    v-model="lufhasta"
-                                                    type='date'
-                                                    label="Fecha Hasta"
-                                                    @change="armaluhoras(props.item)"
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" sm="3" md="3">
-                                                    <v-text-field 
-                                                    dense
-                                                    v-model="luhhasta"
-                                                    type='time'
-                                                    label="Hora Hasta" 
-                                                    @change="armaluhoras(props.item)"
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                                <v-col cols="12" sm="9" md="9"/>
-                                                <v-col cols="12" sm="3" md="3">
-                                                    <v-text-field
-                                                    dense 
-                                                    v-model="luhoras"
-                                                    label="Horas" 
-                                                    type='time'
-                                                    disabled
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                            </v-row>
-                                        </v-container>
-                                    </v-card-text>
-                                    <v-card-actions>
-                                        <v-spacer></v-spacer>
-                                        <v-btn color="blue darken-1" text @click="closelu">Cancelar</v-btn>
-                                        <v-btn color="blue darken-1" text @click="confirmaluhoras(props.item)">Confirmar</v-btn>
-                                    </v-card-actions>
-                                    </v-card>
-                            </v-dialog>
                         </template>
                     </v-edit-dialog>
+                    <v-dialog v-model="ludialog" max-width="400px">
+                        <v-card>
+                            <v-card-title>
+                                <span class="headline">{{formTitle}}</span>
+                            </v-card-title>
+                            <v-card-text>
+                                <v-container grid-list-md>
+                                    <v-row dense>
+                                        <v-col cols="12" sm="9" md="9">
+                                            <v-text-field 
+                                            dense
+                                            v-model="lufdesde"
+                                            type='date'
+                                            label="Fecha Desde"
+                                            disabled
+                                            >
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="3" md="3">
+                                            <v-text-field 
+                                            dense
+                                            v-model="luhdesde"
+                                            type='time'
+                                            label="Hora Desde"
+                                            @change="armaluhoras"
+                                            >
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="9" md="9">
+                                            <v-text-field 
+                                            dense
+                                            v-model="lufhasta"
+                                            type='date'
+                                            label="Fecha Hasta"
+                                            @change="armaluhoras"
+                                            >
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="3" md="3">
+                                            <v-text-field 
+                                            dense
+                                            v-model="luhhasta"
+                                            type='time'
+                                            label="Hora Hasta" 
+                                            @change="armaluhoras"
+                                            >
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" sm="9" md="9"/>
+                                        <v-col cols="12" sm="3" md="3">
+                                            <v-text-field
+                                            dense 
+                                            v-model="luhoras"
+                                            label="Horas" 
+                                            type='time'
+                                            disabled
+                                            >
+                                            </v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="closelu">Cancelar</v-btn>
+                                <v-btn color="blue darken-1" text @click="confirmaluhoras(props.item)">Confirmar</v-btn>
+                            </v-card-actions>
+                            </v-card>
+                    </v-dialog>
                 </template>
                 <template v-slot:[`item.actions`]="{ item }">
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            v-bind="attrs"
+                            v-on="on"
+                            class="mr-2"
+                            @click="editItem(item)"
+                            >
+                            mdi-pencil
+                            </v-icon>
+                        </template>
+                        <span>Editar</span>
+                    </v-tooltip>
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
                             <v-icon
                             class="mr-2"
                             v-bind="attrs"
                             v-on="on"
-                            @click="infoItem(item)"
-                            small
+                            @click="deleteItem(item)"
                             >
-                            mdi-information-outline
+                            mdi-delete
                             </v-icon>
                         </template>
-                        <span>Info</span>
+                        <span>Borrar</span>
                     </v-tooltip>
-                </template>
-                <template v-slot:[`item.proyecto`]="{ item }">
-                    <v-chip class="ma-2" :text-color="item.coltexto" :color="item.colfondo">{{item.proyecto}}</v-chip>
                 </template>
             </v-data-table>
         </v-col>
@@ -315,6 +288,7 @@
         snackcolor:'',
         snacktext: '',
         timeout: 2000,
+        todaysdate: '',
         recordInfo:0,
         semana:0,
         semanas:[],
@@ -330,11 +304,10 @@
         proyectousuarios:[],
         proyectogrupos:[],
         tareas:[],
-        tareasf:[],
-        userid:'',
-        proyectoid:'',
-        tareaid:'',
         proyectotareas:[],
+        workgroupId:'',
+        imageUrl:'',
+        userheader: '',
         dialog: false,
         userdialog: false,
         lufdesde: '', mafdesde: '', mifdesde: '', jufdesde: '', vifdesde: '', safdesde: '', dofdesde: '',
@@ -372,6 +345,7 @@
     computed: {
         headersregistros(){
             return [
+                    { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
                     { text: 'Proyecto', value: 'proyecto', align: 'start', sortable: true },
                     { text: 'Tarea', value: 'tarea', align: 'start', sortable: true },
                     { text: 'Hs.Lun.', value: 'luhoras', align: 'end', sortable: false, fecha: '' },
@@ -399,13 +373,8 @@
             let me=this;
             var title='';
             switch (this.editedIndex){
-                case -1:{
-                    title = 'Nuevo Registro'
-                    break
-                }
                 case 1: {
                     title = 'Detalle horario dia ' + me.headersregistros[3].text;
-                    break
                 }
             }
             return title
@@ -527,9 +496,10 @@
         },
 
     created () {
+        this.calendario();
+        this.listar();
         this.position();
         this.select();
-        this.listar();
     },
     methods: {
         listar(){
@@ -539,9 +509,6 @@
             axios.get('api/Registros/Listaractivos',configuracion).then(function(response){
                 //console.log(response);
                 me.registrosAll=response.data;
-                me.$nextTick(function(){
-                    this.calendario();
-                })
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
                 me.snackbar = true;
@@ -602,8 +569,7 @@
             axios.get('api/Proyectos/Listar',configuracion).then(function(response){
                 proyectosArray=response.data;
                 proyectosArray.map(function(x){
-                    me.proyectos.push({value:x.id, text: x.nombre, tarifadefault: x.tarifadefault, clienteid:x.clienteid, 
-                    empresaid:x.empresaid, coltexto: x.coltexto, colfondo: x.colfondo,
+                    me.proyectos.push({value:x.id, text: x.nombre, tarifadefault: x.tarifadefault, clienteid:x.clienteid, empresaid:x.empresaid, 
                     facturable: x.facturable, reservado:x.reservado});
                 });
             }).catch(function(error){
@@ -616,7 +582,7 @@
             axios.get('api/Tareas/Listar',configuracion).then(function(response){
                 tareasArray=response.data;
                 tareasArray.map(function(x){
-                    me.tareas.push({value:x.id, nombre: x.nombre, text: x.nombre});
+                    me.tareas.push({value:x.id, nombre: x.nombre});
                 });
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
@@ -693,8 +659,7 @@
             let configuracion= {headers : header};
             await axios.get('api/Calendarios/Listarfechas/'+me.fdesde+'/'+me.fhasta,configuracion).then(function(response){
                 me.fechas=response.data;
-            })
-            .catch(function(error){
+            }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
                 me.snackcolor = 'error'
                 me.snackbar = true;
@@ -703,6 +668,53 @@
             this.setHeaders(new Date());
             this.buildWeek();
             this.setItems("Date",new Date());
+        },
+        editItem (item) {
+            this.id=item.id;
+            this.nombre=item.nombre;
+            this.iduseralta=item.iduseralta;
+            this.fecalta=item.fecalta;
+            this.iduserumod=item.iduserumod;
+            this.fecumod=item.fecumod;
+            this.activo=item.activo;
+            this.editedIndex=1;
+            this.userdialog = false;
+            this.dialog = true
+        },
+        deleteItem (item) {
+            var me=this;
+            var resulta = confirm('Esta seguro de querer borrar el registro?');
+            if (resulta) {
+                let header={"Authorization" : "Bearer " + me.$store.state.token};
+                let configuracion= {headers : header};
+                axios.delete('api/Registros/Eliminar/'+item.id,configuracion).then( () => {
+                    me.snacktext = 'Eliminacion exitosa';
+                    me.snackcolor = "success";
+                    me.snackbar = true;
+                    me.close();
+                    me.listar();
+                }).catch(function(error){
+                    me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
+                    me.snackbar = true;
+                    me.snackcolor = 'error'
+                    console.log(error);
+                });
+            }
+        },
+        infoItem(item){
+            var index = this.usuarios.findIndex(x => x.iduseralta === item.iduseralta);
+            this.iduseralta=this.usuarios[index].email + ' ' + this.usuarios[index].iniciales +' '+ this.usuarios[index].userid;
+            this.fecalta=item.fecalta;
+            this.iduserumod=this.usuarios[index].email + ' ' + this.usuarios[index].iniciales +' '+ this.usuarios[index].userid;
+            this.fecumod=item.fecumod;
+            this.recordInfo = true;
+        },
+        closeInfo(){
+            this.iduseralta='';
+            this.fecalta='';
+            this.iduserumod='';
+            this.fecumod='';
+            this.recordInfo = false;
         },
         editRegistro(item, dia){
             var me=this;
@@ -794,7 +806,7 @@
                             'tareaid': item.tareaid,
                             'fecregistracion': item.lufecregistracion.substr(0,10),
                             'facturable': me.proyectos.find(x => x.value == item.proyectoid).facturable,
-                            'liquidable': me.proyectos.find(x => x.value == item.proyectoid).liquidable,
+                            'liquidable': true,
                             'fhdesde': item.lufhdesde,
                             'fhhasta': item.lufhhasta,
                             'minutos':luminutos,
@@ -812,21 +824,12 @@
                             'fhliqui': '',
                             'iduseralta': me.$store.state.usuario.idusuario
                         },configuracion).then( function(response) {
-                            var index = 0;
-                            var auxpro = '';
-                            var auxtar = '';
-                            var auxusu = '';
-                            index = me.registrosAll.push(response.data);
-                            auxusu = +me.$store.state.usuario.idusuario;
-                            auxpro = me.registrosAll[index-1].proyectoid;
-                            auxtar = me.registrosAll[index-1].tareaid;
-                            me.registrosAll[index-1].proyecto = me.proyectos.find(x => x.value === auxpro).text;
-                            me.registrosAll[index-1].tarea = auxtar?me.tareas.find(x => x.value === auxtar).text:'';
-                            index = me.registros.findIndex(x => x.usuarioid === auxusu &&
-                                                                x.proyectoid == auxpro &&
-                                                                x.tareaid == auxtar);
-                            me.registros[index].lufacturable = me.proyectos.find(x => x.value == auxpro).facturable;
-                            me.registros[index].luliquidable = me.proyectos.find(x => x.value == auxpro).liquidable;
+                            me.registrosAll.push(response.data);
+                            var index = me.registros.findIndex(x => x.usuarioid === item.usuarioid &&
+                                                                x.proyectoid == item.proyectoid &&
+                                                                x.tareaid == item.tareaid);
+                            me.registros[index].lufacturable = me.proyectos.find(x => x.value == item.proyectoid).facturable;
+                            me.registros[index].luliquidable = true;
                             me.registros[index].lufhdesde = new Date(item.lufhdesde).toISOString().substr(0,19);
                             me.registros[index].lufhhasta = new Date(item.lufhhasta).toISOString().substr(0,19);
                             me.registros[index].luhoras = item.luhoras;
@@ -835,6 +838,7 @@
                             me.registros[index].lulongdesde = item.lulongdesde;
                             me.registros[index].lulathasta = item.lulathasta;
                             me.registros[index].lulonghasta = item.lulonghasta;
+                            me.registros[index].luliquidable = item.luliquidable;
                             me.registros[index].lutarifa = item.lutarifa;
                             let itemIndex = me.registros.indexOf(item);
                             let editedItem = me.registros[itemIndex];
@@ -856,28 +860,33 @@
         },
         editLuRegistroFull(item){
             var me=this;
+            debugger
             me.usuarioid = item.usuarioid;
             me.proyectoid = item.proyectoid;
             me.tareaid = item.tareaid;
             me.fecregistracion = item.fecregistracion;
             if (!item.lufhdesde){
-                item.luhoras=item.luhoras?item.luhoras:"00:00";
-                var a = item.luhoras.split(':')
-                var luminutos = (+a[0] * 60 + (+a[1]));
-                item.lufhdesde = new Date(new Date(item.lufecregistracion).getTime() + me.$store.state.userinfo.primerahora * 60000 - new Date(item.lufecregistracion).getTimezoneOffset() * 60000).toISOString();
-                item.lufhhasta = new Date(new Date(item.lufecregistracion).getTime() + me.$store.state.userinfo.primerahora * 60000 - new Date(item.lufecregistracion).getTimezoneOffset() * 60000 + luminutos * 60000).toISOString();
+                me.lufhdesde = new Date(new Date(item.lufecregistracion).getTime() + me.$store.state.userinfo.primerahora * 60000 - new Date(item.lufecregistracion).getTimezoneOffset() * 60000).toISOString();
+                me.lufhhasta = new Date(new Date(item.lufecregistracion).getTime() + me.$store.state.userinfo.primerahora * 60000 - new Date(item.lufecregistracion).getTimezoneOffset() * 60000 + luminutos * 60000).toISOString();
+                me.lufdesde=new Date(new Date(me.lufhdesde).getTime() + new Date(me.lufhdesde).getTimezoneOffset() * 60000).toISOString().substr(0,10);
+                me.luhdesde=new Date(new Date(me.lufhdesde).getTime() + new Date(me.lufhdesde).getTimezoneOffset() * 60000).toISOString().substr(11,5);
+                me.lufhasta=new Date(new Date(me.lufhhasta).getTime() + new Date(me.lufhhasta).getTimezoneOffset() * 60000).toISOString().substr(0,10);
+                me.luhhasta=new Date(new Date(me.lufhhasta).getTime() + new Date(me.lufhhasta).getTimezoneOffset() * 60000).toISOString().substr(11,5);
+                me.luhoras="00:00";
+            } else {
+                me.lufdesde=new Date(new Date(item.lufhdesde).getTime() + new Date(item.lufhdesde).getTimezoneOffset() * 60000).toISOString().substr(0,10);
+                me.luhdesde=new Date(new Date(item.lufhdesde).getTime() + new Date(item.lufhdesde).getTimezoneOffset() * 60000).toISOString().substr(11,5);
+                me.lufhasta=new Date(new Date(item.lufhhasta).getTime() + new Date(item.lufhhasta).getTimezoneOffset() * 60000).toISOString().substr(0,10);
+                me.luhhasta=new Date(new Date(item.lufhhasta).getTime() + new Date(item.lufhhasta).getTimezoneOffset() * 60000).toISOString().substr(11,5);
+                me.luhoras=item.luhoras;
             }
-            me.lufdesde=new Date(new Date(item.lufhdesde).getTime() + new Date(item.lufhdesde).getTimezoneOffset() * 60000).toISOString().substr(0,10);
-            me.luhdesde=new Date(new Date(item.lufhdesde).getTime() + new Date(item.lufhdesde).getTimezoneOffset() * 60000).toISOString().substr(11,5);
-            me.lufhasta=new Date(new Date(item.lufhhasta).getTime() + new Date(item.lufhhasta).getTimezoneOffset() * 60000).toISOString().substr(0,10);
-            me.luhhasta=new Date(new Date(item.lufhhasta).getTime() + new Date(item.lufhhasta).getTimezoneOffset() * 60000).toISOString().substr(11,5);
-            me.luhoras=item.luhoras;
             me.ludialog=true;
             me.editedIndex=1;
         },
-        armaluhoras(item){
+        armaluhoras(){
             let me=this;
             var msec = 0, mins = 0, hrs = 0, a = [], lumindesde = 0, luminhasta = 0;
+            //debugger
             if (me.lufhasta < me.lufdesde) {
                 me.lufhasta = me.lufdesde;
             }
@@ -908,6 +917,7 @@
         },
         confirmaluhoras(item){
             let me=this;
+            debugger;
             var a = me.luhdesde.split(':')
             var lumindesde = (+a[0] * 60 + (+a[1]));
             var a = me.luhhasta.split(':')
@@ -1014,14 +1024,15 @@
             lun = (me.fechas[ii].sini).substr(0,10);
             ii = me.fechas.findIndex(x => x.fecha.substr(0,10) === lun);
             for (var i = 0; i < 7; i++){
-                me.headersregistros[ i + 2 ].text = me.fechas[ ii + i ].dtext;
-                me.headersregistros[ i + 2 ].fecha = me.fechas[ ii + i ].fecha;
+                me.headersregistros[ i + 3 ].text = me.fechas[ ii + i ].dtext;
+                me.headersregistros[ i + 3 ].fecha = me.fechas[ ii + i ].fecha;
             }
         },
         setItems(tipo,day){
             let me=this;
-            var index = 0;
-            me.registros=[];
+
+
+
             if (tipo == "Date"){
                 day = new Date(day.getTime() - day.getTimezoneOffset() * 60000).toISOString().substr(0,10);
                 me.semana = me.fechas.find(x => x.fecha.substr(0,10) === day).snum;
@@ -1038,8 +1049,9 @@
             var sab = new Date(new Date(lun).setDate(new Date(lun).getDate()+5));
             sab = new Date(sab.getTime() - sab.getTimezoneOffset() * 60000).toISOString().substr(0,19);
             var dom = me.semanas[me.semanas.findIndex(x => x.value == me.semana)].dom
-            var aux = 0;
+            me.registros=[];
             var registrosArray=[];
+            var aux = 0;
             registrosArray = me.registrosAll.filter(x => x.fecregistracion >= lun && x.fecregistracion <= dom && x.usuarioid == me.$store.state.usuario.idusuario)
             for (var i = 0; i < registrosArray.length; i++){
                 var index = me.registros.findIndex(x => x.usuarioid === registrosArray[i].usuarioid 
@@ -1050,7 +1062,6 @@
                     index = me.registros.push({
                     usuarioid: registrosArray[i].usuarioid, proyectoid: registrosArray[i].proyectoid, tareaid: registrosArray[i].tareaid, 
                     proyecto: registrosArray[i].proyecto, tarea: registrosArray[i].tarea, 
-                    coltexto: me.proyectos.find(x => x.value === registrosArray[i].proyectoid).coltexto, colfondo: me.proyectos.find(x => x.value === registrosArray[i].proyectoid).colfondo,
                     luhoras: '', mahoras: '', mihoras: '', juhoras: '', vihoras: '', sahoras: '', dohoras: '',
                     lufecregistracion: lun, mafecregistracion: mar, mifecregistracion: mie, jufecregistracion: jue, vifecregistracion: vie,
                     safecregistracion: sab, dofecregistracion: dom
@@ -1182,9 +1193,169 @@
                         break;
                 }
             }
-            if (me.registros.length>0){
-                let editedItem = me.registros[0];
-                me.registros.splice(0, 1, editedItem);
+        },
+
+        setItems2(tipo,day){
+            let me=this;
+            if (tipo == "Date"){
+                day = new Date(day.getTime() - day.getTimezoneOffset() * 60000).toISOString().substr(0,10);
+                me.semana = me.fechas.find(x => x.fecha.substr(0,10) === day).snum;
+            }
+            var lun = me.semanas[me.semanas.findIndex(x => x.value == me.semana)].lun
+            var mar = new Date(new Date(lun).setDate(new Date(lun).getDate()+1));
+            mar = new Date(mar.getTime() - mar.getTimezoneOffset() * 60000).toISOString().substr(0,19);
+            var mie = new Date(new Date(lun).setDate(new Date(lun).getDate()+2));
+            mie = new Date(mie.getTime() - mie.getTimezoneOffset() * 60000).toISOString().substr(0,19);
+            var jue = new Date(new Date(lun).setDate(new Date(lun).getDate()+3));
+            jue = new Date(jue.getTime() - jue.getTimezoneOffset() * 60000).toISOString().substr(0,19);
+            var vie = new Date(new Date(lun).setDate(new Date(lun).getDate()+4));
+            vie = new Date(vie.getTime() - vie.getTimezoneOffset() * 60000).toISOString().substr(0,19);
+            var sab = new Date(new Date(lun).setDate(new Date(lun).getDate()+5));
+            sab = new Date(sab.getTime() - sab.getTimezoneOffset() * 60000).toISOString().substr(0,19);
+            var dom = me.semanas[me.semanas.findIndex(x => x.value == me.semana)].dom
+            me.registros=[];
+            var registrosArray=[];
+            var aux = 0;
+            registrosArray = me.registrosAll.filter(x => x.fecregistracion >= lun && x.fecregistracion <= dom && x.usuarioid == me.$store.state.usuario.idusuario)
+            for (var i = 0; i < registrosArray.length; i++){
+                var index = me.registros.findIndex(x => x.usuarioid === registrosArray[i].usuarioid 
+                    && x.proyectoid === registrosArray[i].proyectoid 
+                    && x.tareaid === registrosArray[i].tareaid
+                );
+                if ( index == -1){
+                    index = me.registros.push({
+                    usuarioid: registrosArray[i].usuarioid, proyectoid: registrosArray[i].proyectoid, tareaid: registrosArray[i].tareaid, 
+                    proyecto: registrosArray[i].proyecto, tarea: registrosArray[i].tarea, 
+                    luhoras: '', mahoras: '', mihoras: '', juhoras: '', vihoras: '', sahoras: '', dohoras: '',
+                    lufecregistracion: lun, mafecregistracion: mar, mifecregistracion: mie, jufecregistracion: jue, vifecregistracion: vie,
+                    safecregistracion: sab, dofecregistracion: dom
+                    });
+                    index--;
+                    aux = 0;
+                }
+                var msec = new Date(registrosArray[i].fhhasta).getTime() - new Date(registrosArray[i].fhdesde).getTime();
+                aux += msec?msec:0;
+                mins = Math.floor(aux / 60000);
+                hrs = Math.floor(mins / 60);
+                mins = mins % 60;
+                me.registros[index].tohoras = ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2);
+                var mins = Math.floor(msec / 60000);
+                var hrs = Math.floor(mins / 60);
+                mins = mins % 60;
+                switch( new Date(registrosArray[i].fecregistracion).getDay() ){
+                    case 1:
+                        me.registros[index].lufecregistracion =  registrosArray[i].fecregistracion;
+                        me.registros[index].luid = registrosArray[i].id;
+                        me.registros[index].luactividad = registrosArray[i].actividad;
+                        me.registros[index].lufacturable = registrosArray[i].facturable;
+                        me.registros[index].luliquidable = registrosArray[i].liquidable;
+                        me.registros[index].lufhdesde = new Date(new Date(registrosArray[i].fhdesde).getTime() - new Date(registrosArray[i].fhdesde).getTimezoneOffset() * 60000 ).toISOString();
+                        me.registros[index].lufhhasta = new Date(new Date(registrosArray[i].fhhasta).getTime() - new Date(registrosArray[i].fhhasta).getTimezoneOffset() * 60000 ).toISOString();
+                        me.registros[index].luhoras = ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2);
+                        me.registros[index].lulatdesde = registrosArray[i].latdesde;
+                        me.registros[index].lulongdesde = registrosArray[i].longdesde;
+                        me.registros[index].lulathasta = registrosArray[i].lathasta
+                        me.registros[index].lulonghasta = registrosArray[i].longhasta;
+                        me.registros[index].lutarifa = registrosArray[i].tarifa;
+                        me.registros[index].lucosto = registrosArray[i].costo;
+                        break;
+                    case 2:
+                        me.registros[index].mafecregistracion =  registrosArray[i].fecregistracion;
+                        me.registros[index].maid = registrosArray[i].id;
+                        me.registros[index].maactividad = registrosArray[i].actividad;
+                        me.registros[index].mafacturable = registrosArray[i].facturable;
+                        me.registros[index].maliquidable = registrosArray[i].liquidable;
+                        me.registros[index].mafhdesde =  registrosArray[i].fhdesde;
+                        me.registros[index].mafhhasta = registrosArray[i].fhhasta;
+                        me.registros[index].mahoras = ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2);
+                        me.registros[index].malatdesde = registrosArray[i].latdesde;
+                        me.registros[index].malongdesde = registrosArray[i].longdesde;
+                        me.registros[index].malathasta = registrosArray[i].lathasta
+                        me.registros[index].malonghasta = registrosArray[i].longhasta;
+                        me.registros[index].matarifa = registrosArray[i].tarifa;
+                        me.registros[index].macosto = registrosArray[i].costo;
+                        break;
+                    case 3:
+                        me.registros[index].mifecregistracion =  registrosArray[i].fecregistracion;
+                        me.registros[index].miid = registrosArray[i].id;
+                        me.registros[index].miactividad = registrosArray[i].actividad;
+                        me.registros[index].mifacturable = registrosArray[i].facturable;
+                        me.registros[index].miliquidable = registrosArray[i].liquidable;
+                        me.registros[index].mifhdesde =  registrosArray[i].fhdesde;
+                        me.registros[index].mifhhasta = registrosArray[i].fhhasta;
+                        me.registros[index].mihoras = ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2);
+                        me.registros[index].milatdesde = registrosArray[i].latdesde;
+                        me.registros[index].milongdesde = registrosArray[i].longdesde;
+                        me.registros[index].milathasta = registrosArray[i].lathasta
+                        me.registros[index].milonghasta = registrosArray[i].longhasta;
+                        me.registros[index].mitarifa = registrosArray[i].tarifa;
+                        me.registros[index].micosto = registrosArray[i].costo;
+                        break;
+                    case 4:
+                        me.registros[index].jufecregistracion =  registrosArray[i].fecregistracion;
+                        me.registros[index].juid = registrosArray[i].id;
+                        me.registros[index].juactividad = registrosArray[i].actividad;
+                        me.registros[index].jufacturable = registrosArray[i].facturable;
+                        me.registros[index].juliquidable = registrosArray[i].liquidable;
+                        me.registros[index].jufhdesde =  registrosArray[i].fhdesde;
+                        me.registros[index].jufhhasta = registrosArray[i].fhhasta;
+                        me.registros[index].juhoras = ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2);
+                        me.registros[index].julatdesde = registrosArray[i].latdesde;
+                        me.registros[index].julongdesde = registrosArray[i].longdesde;
+                        me.registros[index].julathasta = registrosArray[i].lathasta
+                        me.registros[index].julonghasta = registrosArray[i].longhasta;
+                        me.registros[index].jutarifa = registrosArray[i].tarifa;
+                        me.registros[index].jucosto = registrosArray[i].costo;
+                        break;
+                    case 5:
+                        me.registros[index].vifecregistracion =  registrosArray[i].fecregistracion;
+                        me.registros[index].viid = registrosArray[i].id;
+                        me.registros[index].viactividad = registrosArray[i].actividad;
+                        me.registros[index].vifacturable = registrosArray[i].facturable;
+                        me.registros[index].viliquidable = registrosArray[i].liquidable;
+                        me.registros[index].vifhdesde =  registrosArray[i].fhdesde;
+                        me.registros[index].vifhhasta = registrosArray[i].fhhasta;
+                        me.registros[index].vihoras = ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2);
+                        me.registros[index].vilatdesde = registrosArray[i].latdesde;
+                        me.registros[index].vilongdesde = registrosArray[i].longdesde;
+                        me.registros[index].vilathasta = registrosArray[i].lathasta
+                        me.registros[index].vilonghasta = registrosArray[i].longhasta;
+                        me.registros[index].vitarifa = registrosArray[i].tarifa;
+                        me.registros[index].vicosto = registrosArray[i].costo;
+                        break;
+                    case 6:
+                        me.registros[index].safecregistracion =  registrosArray[i].fecregistracion;
+                        me.registros[index].said = registrosArray[i].id;
+                        me.registros[index].saactividad = registrosArray[i].actividad;
+                        me.registros[index].safacturable = registrosArray[i].facturable;
+                        me.registros[index].saliquidable = registrosArray[i].liquidable;
+                        me.registros[index].safhdesde =  registrosArray[i].fhdesde;
+                        me.registros[index].safhhasta = registrosArray[i].fhhasta;
+                        me.registros[index].sahoras = ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2);
+                        me.registros[index].salatdesde = registrosArray[i].latdesde;
+                        me.registros[index].salongdesde = registrosArray[i].longdesde;
+                        me.registros[index].salathasta = registrosArray[i].lathasta
+                        me.registros[index].salonghasta = registrosArray[i].longhasta;
+                        me.registros[index].satarifa = registrosArray[i].tarifa;
+                        me.registros[index].sacosto = registrosArray[i].costo;
+                        break;
+                    case 7:
+                        me.registros[index].dofecregistracion =  registrosArray[i].fecregistracion;
+                        me.registros[index].doid = registrosArray[i].id;
+                        me.registros[index].doactividad = registrosArray[i].actividad;
+                        me.registros[index].dofacturable = registrosArray[i].facturable;
+                        me.registros[index].doliquidable = registrosArray[i].liquidable;
+                        me.registros[index].dofhdesde =  registrosArray[i].fhdesde;
+                        me.registros[index].dofhhasta = registrosArray[i].fhhasta;
+                        me.registros[index].dohoras = ('0'+hrs).slice(-2) + ":" + ('0' + mins).slice(-2);
+                        me.registros[index].dolatdesde = registrosArray[i].latdesde;
+                        me.registros[index].dolongdesde = registrosArray[i].longdesde;
+                        me.registros[index].dolathasta = registrosArray[i].lathasta
+                        me.registros[index].dolonghasta = registrosArray[i].longhasta;
+                        me.registros[index].dotarifa = registrosArray[i].tarifa;
+                        me.registros[index].docosto = registrosArray[i].costo;
+                        break;
+                }
             }
         },
         buildWeek(){
@@ -1244,81 +1415,6 @@
             });
             doc.save('Registros.pdf');
         },
-        close () {
-            this.dialog = false
-            this.limpiar();
-
-        },
-        limpiar(){
-            this.id="";
-            this.proyectoid="";
-            this.tareaid="";
-            this.iduseralta = "";
-            this.fecalta = "";
-            this.iduserumod = "";
-            this.fecumod = "";
-            this.activo = false;
-            this.editedIndex=-1;
-        },
-        armaTareas(proid){
-            let me=this;
-            me.tareaid='';
-            var tareaIds = [];
-            tareaIds = me.proyectotareas.filter(x => x.proyectoid === proid).map(x => x.tareaid);
-            me.tareasf = me.tareas.filter(function(dato){
-                return (tareaIds.indexOf(dato.value) === -1);
-            });
-        },
-        guardar(){
-            let me=this;
-            if (me.proyectoid) {
-                var lun = me.semanas[me.semanas.findIndex(x => x.value == me.semana)].lun
-                var mar = new Date(new Date(lun).setDate(new Date(lun).getDate()+1));
-                mar = new Date(mar.getTime() - mar.getTimezoneOffset() * 60000).toISOString().substr(0,19);
-                var mie = new Date(new Date(lun).setDate(new Date(lun).getDate()+2));
-                mie = new Date(mie.getTime() - mie.getTimezoneOffset() * 60000).toISOString().substr(0,19);
-                var jue = new Date(new Date(lun).setDate(new Date(lun).getDate()+3));
-                jue = new Date(jue.getTime() - jue.getTimezoneOffset() * 60000).toISOString().substr(0,19);
-                var vie = new Date(new Date(lun).setDate(new Date(lun).getDate()+4));
-                vie = new Date(vie.getTime() - vie.getTimezoneOffset() * 60000).toISOString().substr(0,19);
-                var sab = new Date(new Date(lun).setDate(new Date(lun).getDate()+5));
-                sab = new Date(sab.getTime() - sab.getTimezoneOffset() * 60000).toISOString().substr(0,19);
-                var dom = me.semanas[me.semanas.findIndex(x => x.value == me.semana)].dom
-                var auxusu = +(me.$store.state.usuario.idusuario);
-                var auxpro = me.proyectoid;
-                var auxtar = me.tareaid==''?null:me.tareaid;
-                var index = me.registros.findIndex(x => x.usuarioid == auxusu
-                        && x.proyectoid == auxpro
-                        && x.tareaid == auxtar
-                    );
-                if ( index == -1){
-                    var protext = me.proyectos.find(x => x.value === me.proyectoid).text;
-                    var coltext = me.proyectos.find(x => x.value === me.proyectoid).coltexto;
-                    var colfond = me.proyectos.find(x => x.value === me.proyectoid).colfondo;
-                    var tartext = auxtar?me.tareas.find(x => x.value === auxtar).text:'';
-                    index = me.registros.push({
-                        usuarioid: auxusu, proyectoid: auxpro, tareaid: auxtar, 
-                        proyecto: protext, tarea: tartext, 
-                        coltexto: coltext, colfondo: colfond,
-                        luhoras: '', mahoras: '', mihoras: '', juhoras: '', vihoras: '', sahoras: '', dohoras: '',
-                        lufecregistracion: lun, mafecregistracion: mar, mifecregistracion: mie, jufecregistracion: jue, vifecregistracion: vie,
-                        safecregistracion: sab, dofecregistracion: dom
-                    });
-                    me.snacktext = 'Creacion exitosa';
-                    me.snackcolor = "success";
-                    me.snackbar = true;
-                    me.dialog = false;
-                } else {
-                    me.snacktext = 'No se pudo crear la combinacion';
-                    me.snackcolor = 'error'
-                    me.snackbar = true;
-                }
-            } else {
-                    me.snacktext = 'Debe seleccionar Proyecto';
-                    me.snackcolor = 'error'
-                    me.snackbar = true;
-            }
-        }
    },
   }
 </script>

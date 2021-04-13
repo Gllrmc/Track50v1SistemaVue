@@ -141,13 +141,19 @@
                                     <v-col cols=12 sm=6 md=6>
                                         <v-select dense v-model="colfondo" :items="colores" label="Color fondo"></v-select>
                                     </v-col>
-                                    <v-col cols="12" sm="6" md="6">
+                                    <v-col cols="12" sm="4" md="4">
                                         <v-switch dense v-model="facturable"
                                         flat
                                         label="Facturable?"
                                         ></v-switch>                                    
                                     </v-col>
-                                    <v-col cols="12" sm="6" md="6">
+                                    <v-col cols="12" sm="4" md="4">
+                                        <v-switch dense v-model="liquidable"
+                                        flat
+                                        label="Liquidable?"
+                                        ></v-switch>                                    
+                                    </v-col>
+                                    <v-col cols="12" sm="4" md="4">
                                         <v-switch dense v-model="reservado"
                                         flat
                                         label="Privado?"
@@ -330,7 +336,7 @@
                 <v-chip class="ma-2">{{item.empresa}}</v-chip>
             </template>
             <template v-slot:[`item.nombre`]="{ item }">
-                <div class="ma-2">{{item.nombre}}</div>
+                <v-chip class="ma-2" :text-color="item.coltexto" :color="item.colfondo">{{item.nombre}}</v-chip>
             </template>
             <template v-slot:[`item.cliente`]="{ item }">
                 <v-chip class="ma-2">{{item.cliente}}</v-chip>
@@ -338,6 +344,16 @@
             <template v-slot:[`item.facturable`]="{ item }">
                 <td>
                     <div v-if="item.facturable">
+                        <v-chip class="ma-2" color="primary" text-color="white">Si</v-chip>
+                    </div>
+                    <div v-else>
+                        <v-chip class="ma-2">No</v-chip>
+                    </div>
+                </td>
+            </template>
+            <template v-slot:[`item.liquidable`]="{ item }">
+                <td>
+                    <div v-if="item.liquidable">
                         <v-chip class="ma-2" color="primary" text-color="white">Si</v-chip>
                     </div>
                     <div v-else>
@@ -840,6 +856,7 @@
             { text: 'Proyecto', value: 'nombre', align: 'start', sortable: true },
             { text: 'Cliente', value: 'cliente', align: 'start', sortable: true },
             { text: 'Facturable?', value: 'facturable', align: 'start', sortable: true },
+            { text: 'Liquidable?', value: 'liquidable', align: 'start', sortable: true },
             { text: 'Tarifa default', value: 'tarifadefault', align: 'start', sortable: true },
             { text: 'Reservado?', value: 'reservado', align: 'start', sortable: true },
             { text: 'Cargas desde', value: 'fecregdesde', align: 'start', sortable: true },
@@ -897,6 +914,7 @@
         clienteid: '',
         cliente: '',
         facturable: true,
+        liquidable: true,
         tarifadefault: 0,
         notas: '',
         reservado: false,
@@ -1011,9 +1029,10 @@
             axios.get('api/Empresas/Listar',configuracion).then(function(response){
                 empresasArray=response.data;
                 empresasArray.map(function(x){
-                    me.empresas.push({iduseralta: x.iduseralta, iduserumod: x.iduserumod,monedadefault: x.monedadefault, tarifadefault: x.tarifadefault, reservadodefaultcolfondo: x.reservadodefault, facturabledefault: x.facturabledefault, 
-                    aceptacargatiempos: x.aceptacargatiempos, aceptacargalapsos: x.aceptacargalapsos, text: x.nombre, value:x.id});
-                    if (me.empresas.length > 1){
+                    me.empresas.push({iduseralta: x.iduseralta, iduserumod: x.iduserumod,monedadefault: x.monedadefault, tarifadefault: x.tarifadefault, reservadodefaultcolfondo: x.reservadodefault, 
+                                facturabledefault: x.facturabledefault, 
+                                aceptacargatiempos: x.aceptacargatiempos, aceptacargalapsos: x.aceptacargalapsos, text: x.nombre, value:x.id});
+                                if (me.empresas.length > 1){
                         me.headersproyecto.push({"text": 'Empresa', "value": 'empresa', "align": 'start', "sortable": true});
                         me.pideempresa=true;
                     }
@@ -1107,6 +1126,7 @@
             this.clienteid = item.clienteid;
             this.cliente = item.cliente;
             this.facturable = item.facturable;
+            this.liquidable = item.liquidable;
             this.tarifadefault = item.tarifadefault;
             this.notas = item.notas;
             this.reservado = item.reservado;
@@ -1535,6 +1555,7 @@
             this.clienteid = "";
             this.cliente = "";
             this.facturable = true;
+            this.liquidable = true;
             this.tarifadefault = 0;
             this.notas = "";
             this.reservado = false;
@@ -1566,6 +1587,7 @@
                     'empresaid': me.empresaid,
                     'clienteid': me.clienteid,
                     'facturable': me.facturable,
+                    'liquidable': me.liquidable,
                     'tarifadefault': me.tarifadefault,
                     'notas': me.notas,
                     'reservado': me.reservado,
@@ -1595,6 +1617,7 @@
                     'empresaid': me.pideempresa ? me.empresaid : empresas[0].value,
                     'clienteid': me.clienteid,
                     'facturable': me.facturable,
+                    'liquidable': me.liquidable,
                     'tarifadefault': me.tarifadefault,
                     'notas': me.notas,
                     'reservado': me.reservado,
