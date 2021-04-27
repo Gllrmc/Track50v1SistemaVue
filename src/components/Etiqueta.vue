@@ -28,8 +28,8 @@
         <v-col cols="12" md="4" sm="3">
             <v-data-table
             dense
-            :headers="headerstareas"
-            :items="tareas"
+            :headers="headersetiquetas"
+            :items="etiquetas"
             :search="searchg"
             class="elevation-1"
             no-data-text="Nada para mostrar"
@@ -48,7 +48,7 @@
                         <v-spacer></v-spacer>
                         <v-text-field dense label="Búsqueda" outlined v-model="searchg" append-icon="search" single-line hide-details clearable ></v-text-field>
                         <v-spacer></v-spacer>
-                        <v-dialog v-model="dialog" max-width="600px">
+                        <v-dialog v-model="dialog" max-width="350px">
                             <template v-slot:activator="{ on }">
                             <v-btn color="primary" dark class="mb-2" v-on="on">Nuevo</v-btn>
                             </template>
@@ -59,7 +59,7 @@
                             <v-card-text>
                                 <v-container grid-list-md>
                                     <v-row dense>
-                                        <v-col cols="12" sm="6" md="6">
+                                        <v-col cols="12" sm="12" md="12">
                                             <v-text-field v-model="nombre" label="Nombre Etiqueta" counter="50">
                                             </v-text-field>
                                         </v-col>
@@ -221,25 +221,25 @@
             </v-data-table>
         </v-col>
         <v-col cols="12" md="6" sm="3">
-            <v-dialog v-model="userdialog" max-width="750px">
+            <v-dialog v-model="tagdialog" max-width="750px">
                 <v-data-table
                 dense
-                :headers="headersproyectos"
-                :items="proyectos"
-                :search="searchu"
+                :headers="headersregistros"
+                :items="registros"
+                :search="searchr"
                 class="elevation-1"
                 no-data-text="Nada para mostrar"
                 >
                     <template v-slot:top>
                         <v-card flat color="white">
-                            <v-card-title>{{userheader}}</v-card-title>
+                            <v-card-title>{{tagheader}}</v-card-title>
                             <v-card-actions>
                                 <v-row>
                                     <v-col cols="12" md="12" sm="12">
                                         <v-text-field label="Búsqueda" class="ma-2" 
                                         outlined 
                                         dense 
-                                        v-model="searchu" 
+                                        v-model="searchr" 
                                         append-icon="search" 
                                         single-line 
                                         hide-details
@@ -247,7 +247,7 @@
                                         ></v-text-field>
                                     </v-col>
                                 </v-row>
-                                <v-btn color="primary" dense dark class="ma-2" @click.native="userdialog=false">Salir</v-btn>
+                                <v-btn color="primary" dense dark class="ma-2" @click.native="tagdialog=false">Salir</v-btn>
                             </v-card-actions>
                         </v-card>
                     </template>
@@ -258,22 +258,9 @@
                             @click="accionregistracion(item)"
                         ></v-simple-checkbox>
                     </template>
-                    <template v-slot:[`item.imgusuario`]="{ item }">
-                        <td>
-                            <div v-if="item.imgusuario">
-                                <v-avatar size=40>
-                                    <v-img :src="item.imgusuario" aspect-ratio="2" contain></v-img>
-                                </v-avatar>
-                            </div>
-                            <div v-else>
-                                <v-avatar v-if="item.coltexto=='black'" :color="item.colfondo" size=40>
-                                    <span style="color:black">{{ item.iniciales }}</span>
-                                </v-avatar>
-                                <v-avatar v-else :color="item.colfondo" size=40>
-                                    <span style="color:white">{{ item.iniciales }}</span>
-                                </v-avatar>
-                            </div>
-                        </td>
+
+                    <template v-slot:[`item.fecregistracion`]="{ item }">
+                        <td>{{ item.fecregistracion.substr(0, 10) }}</td>
                     </template>
                     <template v-slot:no-data>
                         <v-btn color="primary" @click="listar">Resetear</v-btn>
@@ -321,36 +308,17 @@
         snacktext: '',
         timeout: 2000,
         recordInfo:0,
-        tareas:[],
+        etiquetas:[],
         usuarios:[],
-        proyectos:[],
+        registros:[],
         etiquetaregistro:[],
-        workgroupId:'',
+        worktagId:'',
         imageUrl:'',
-        userheader: '',
+        tagheader: '',
         dialog: false,
-        userdialog: false,
-        headerstareas: [
-            { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
-            { text: 'Nombre tarea', value: 'nombre', align: 'start', sortable: true },
-            { text: 'Estado', value: 'activo', align: 'start', sortable: true  },
-            //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
-            //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
-            //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
-            //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
-        ],
-        headersproyectos: [
-            { text: '#', value: 'selected', align: 'center', sortable: false },
-            { text: 'Avatar', value: 'imgusuario', align: 'center', sortable: false },
-            { text: 'Userid', value: 'userid', align: 'start', sortable: true },
-            { text: 'email', value: 'email', align: 'start', sortable: true },
-            //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
-            //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
-            //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
-            //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
-        ],
+        tagdialog: false,
         searchg:'',
-        searchu:'',
+        searchr:'',
         editedIndex: -1,
         id: '',
         nombre:'',
@@ -375,9 +343,26 @@
     }),
 
     computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'Nueva tarea' : 'Actualizar tarea'
-      },
+        headersetiquetas(){
+            return [
+                { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
+                { text: 'Nombre etiqueta', value: 'nombre', align: 'start', sortable: true },
+                { text: 'Estado', value: 'activo', align: 'start', sortable: true  },
+            ]
+        },
+        headersregistros(){
+            return [
+                { text: '#', value: 'selected', align: 'center', sortable: true },
+                { text: 'Fecha', value: 'fecregistracion', align: 'start', sortable: true },
+                { text: 'Email', value: 'email', align: 'center', sortable: false },
+                { text: 'Persona', value: 'userid', align: 'center', sortable: false },
+                { text: 'Proyecto', value: 'proyecto', align: 'start', sortable: true },
+                { text: 'Tarea', value: 'tarea', align: 'start', sortable: true },
+            ]
+        },
+        formTitle () {
+            return this.editedIndex === -1 ? 'Nueva etiqueta' : 'Actualizar etiqueta'
+        },
     },
 
     watch: {
@@ -392,41 +377,14 @@
     },
 
     methods: {
-        pickFile () {
-            this.$refs.image.click ()
-        },
-        onFilePicked (e) {
-            const files = e.target.files
-            if (files[0] !== undefined) {
-                this.imageName = files[0].name
-                if (this.imageName.lastIndexOf('.') <= 0) {
-                return
-                }
-                const fr = new FileReader ()
-                fr.readAsDataURL(files[0])
-                fr.addEventListener('load', () => {
-                    this.imageUrl = fr.result
-                    this.imageFile = files[0] // this is an image file that can be sent to server...
-                    this.imgusuario = this.imageUrl;
-                })
-            } else {
-                this.imageName = ''
-                this.imageFile = ''
-                this.imageUrl = ''
-            }
-        },
-        clearImagen(){
-            this.imageUrl = ''
-            this.imgusuario = ''
-        },
         crearPDF(){
             var columns = [
-                    {title: "Nombre tarea", dataKey: "nombre"},
+                    {title: "Nombre etiqueta", dataKey: "nombre"},
                     {title: "Activo", dataKey: "activo"}
             ];
             var rows = [];
 
-            this.tareas.map(function(x){
+            this.etiquetas.map(function(x){
                     rows.push({nombre:x.nombre,activo:x.activo});
             });
 
@@ -446,7 +404,7 @@
             let configuracion= {headers : header};
             axios.get('api/Etiquetas/Listar',configuracion).then(function(response){
                 //console.log(response);
-                me.tareas=response.data;
+                me.etiquetas=response.data;
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
                 me.snackbar = true;
@@ -457,8 +415,8 @@
         select(){
             let me=this;
             var usuariosArray=[];
-            var proyectosArray=[];
-            var etiquetaproyectoArray=[];
+            var registrosArray=[];
+            var etiquetaregistroArray=[];
             let header={"Authorization" : "Bearer " + this.$store.state.token};
             let configuracion= {headers : header};
             axios.get('api/Usuarios/Listar',configuracion).then(function(response){
@@ -474,12 +432,12 @@
                 me.snackbar = true;
                 console.log(error);
             });
-            axios.get('api/Usuarios/Listar',configuracion).then(function(response){
-                proyectosArray=response.data;
-                proyectosArray.map(function(x){
-                    me.proyectos.push({selected: false,iduseralta: x.iduseralta, iduserumod: x.iduserumod,
-                    imgusuario: x.imgusuario, colfondo: x.colfondo, coltexto: x.coltexto, 
-                    email: x.email, iniciales: x.iniciales, userid: x.userid, value:x.id});
+            axios.get('api/Registros/Listar',configuracion).then(function(response){
+                registrosArray=response.data;
+                registrosArray.map(function(x){
+                    me.registros.push({selected: false,iduseralta: x.iduseralta, iduserumod: x.iduserumod,
+                    userid: x.userid, email: x.email, proyectoid: x.proyectoid, proyecto: x.proyecto,
+                    tareaid: x.tareaid, tarea: x.tarea, fecregistracion: x.fecregistracion, value:x.id});
                 });
             }).catch(function(error){
                 me.snacktext = 'Se detectó un error. Código: '+ error.response.status;
@@ -488,8 +446,8 @@
                 console.log(error);
             });
             axios.get('api/Etiquetaregistros/Listar',configuracion).then(function(response){
-                etiquetaproyectoArray=response.data;
-                etiquetaproyectoArray.map(function(x){
+                etiquetaregistroArray=response.data;
+                etiquetaregistroArray.map(function(x){
                     me.etiquetaregistro.push({etiquetaid: x.etiquetaid, registroid: x.registroid, value:x.id});
                 });
             }).catch(function(error){
@@ -508,7 +466,7 @@
             this.fecumod=item.fecumod;
             this.activo=item.activo;
             this.editedIndex=1;
-            this.userdialog = false;
+            this.tagdialog = false;
             this.dialog = true
         },
         deleteItem (item) {
@@ -552,17 +510,17 @@
         },
         tratarEtiquetas(item){
             var me=this;
-            for (var l = 0; l < me.proyectos.length; l++){
-                me.proyectos[l].selected = false;
+            for (var l = 0; l < me.registros.length; l++){
+                me.registros[l].selected = false;
             };
             for (let i = 0; i < me.etiquetaregistro.length; i++){
                 if (me.etiquetaregistro[i].etiquetaid === item.id){
-                    me.proyectos[me.proyectos.findIndex(elemento => elemento.value === me.etiquetaregistro[i].registroid )].selected = true;
+                    me.registros[me.registros.findIndex(elemento => elemento.value === me.etiquetaregistro[i].registroid )].selected = true;
                 }
             };
-            me.workgroupId = item.id;
-            me.userheader = 'Miembros de ' + item.nombre;
-            me.userdialog=!me.userdialog;
+            me.worktagId = item.id;
+            me.tagheader = 'Vinculados a ' + item.nombre;
+            me.tagdialog=!me.tagdialog;
         },
         accionregistracion(item){
             var me=this;
@@ -570,7 +528,7 @@
                 let header={"Authorization" : "Bearer " + this.$store.state.token};
                 let configuracion= {headers : header};
                 axios.post('api/Etiquetaregistros/Crear',{
-                    'etiquetaid':this.workgroupId,
+                    'etiquetaid':this.worktagId,
                     'registroid':item.value,
                     'iduseralta': me.$store.state.usuario.idusuario                      
                 },configuracion)
@@ -587,7 +545,7 @@
                     console.log(error);
                 });
             } else {
-                var indice = me.etiquetaregistro.find(x => item.value === x.registroid && me.workgroupId === x.etiquetaid).value;
+                var indice = me.etiquetaregistro.find(x => item.value === x.registroid && me.worktagId === x.etiquetaid).value;
                 let header={"Authorization" : "Bearer " + me.$store.state.token};
                 let configuracion= {headers : header};
                 axios.delete('api/Etiquetaregistros/Eliminar/'+indice,configuracion).then( () => {
@@ -611,7 +569,7 @@
                 this.iduserumod = "";
                 this.fecumod = "";
                 this.activo = false;
-                this.userdialog = false;
+                this.tagdialog = false;
                 this.editedIndex=-1;
         },
         guardar () {

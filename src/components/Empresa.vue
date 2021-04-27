@@ -39,7 +39,7 @@
                     <div class="ma-2">
                         <v-btn small @click="crearPDF()"><v-icon>print</v-icon></v-btn>
                     </div>
-                    <v-toolbar-title>Empresas</v-toolbar-title>
+                    <v-toolbar-title>Unidades de Negocio</v-toolbar-title>
                     <v-divider
                         class="mx-4"
                         inset
@@ -60,7 +60,7 @@
                             <v-container grid-list-md>
                                 <v-row dense>
                                     <v-col cols="12" sm="12" md="12">
-                                        <v-text-field v-model="nombre" label="Empresa" counter="50">
+                                        <v-text-field v-model="nombre" label="Unidad de Negocio" counter="50">
                                         </v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
@@ -136,13 +136,13 @@
                     </v-dialog>
                     <v-dialog v-model="adModal" max-width="390">
                         <v-card>
-                            <v-card-title class="headline" v-if="adAccion==1">¿Activar Empresa?</v-card-title>
-                            <v-card-title class="headline" v-if="adAccion==2">Bloquear Empresa?</v-card-title>
+                            <v-card-title class="headline" v-if="adAccion==1">¿Activar Unidad?</v-card-title>
+                            <v-card-title class="headline" v-if="adAccion==2">Bloquear Unidad?</v-card-title>
                             <v-card-text>
                                 Estás a punto de 
                                 <span v-if="adAccion==1">Activar </span>
                                 <span v-if="adAccion==2">Bloquear </span>
-                                la Empresa: {{ adNombre }}
+                                la Unidad: {{ adNombre }}
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer/>
@@ -464,10 +464,10 @@
             autoTable(columns, rows, {
                 margin: {top: 60},
                 addPageContent: () =>  {
-                    doc.text("Listado de Empresas", 40, 30);
+                    doc.text("Listado de Unidads", 40, 30);
                 }
             });
-            doc.save('Empresas.pdf');
+            doc.save('Unidads.pdf');
         },
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')

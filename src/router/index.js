@@ -8,12 +8,15 @@ import Grupo from '../components/Grupo.vue'
 import Proyecto from '../components/Proyecto.vue'
 import Cliente from '../components/Cliente.vue'
 import Tarea from '../components/Tarea.vue'
+import Concepto from '../components/Concepto.vue'
 import Etiqueta from '../components/Etiqueta.vue'
 import Appconfig from '../components/Appconfig.vue'
 import Empresa from '../components/Empresa.vue'
 import Pais from '../components/Pais.vue'
 import Provincia from '../components/Provincia.vue'
 import Timesheet from '../components/Timesheet.vue'
+import Actividad from '../components/Actividad.vue'
+import Gasto from '../components/Gasto.vue'
 import store from '../store'
 
 
@@ -55,9 +58,35 @@ const routes = [
     }
   },
   {
+    path: '/actividades',
+    name: 'actividades',
+    component: Actividad,
+    meta: {
+      administrador: true,
+      jefeadministracion: true,
+      liderproyecto:true, 
+      consultor: true,
+      asistadministracion: true,
+      dataentry: true
+    }
+  },
+  {
     path: '/timesheets',
     name: 'timesheets',
     component: Timesheet,
+    meta: {
+      administrador: true,
+      jefeadministracion: true,
+      liderproyecto:true, 
+      consultor: true,
+      asistadministracion: true,
+      dataentry: true
+    }
+  },
+  {
+    path: '/gastos',
+    name: 'gastos',
+    component: Gasto,
     meta: {
       administrador: true,
       jefeadministracion: true,
@@ -84,6 +113,19 @@ const routes = [
     path: '/tareas',
     name: 'tareas',
     component: Tarea,
+    meta: {
+      administrador: true,
+      jefeadministracion: true,
+      liderproyecto:true, 
+      consultor: true,
+      asistadministracion: true,
+      dataentry: true
+    }
+  },
+  {
+    path: '/concceptos',
+    name: 'conceptos',
+    component: Concepto,
     meta: {
       administrador: true,
       jefeadministracion: true,

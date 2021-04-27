@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app> 
     <v-navigation-drawer
       fixed
       :clipped="$vuetify.breakpoint.mdAndUp"
@@ -27,13 +27,13 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'regdiario'}">
+            <v-list-item :to="{ name: 'actividades'}">
               <v-list-item-action>
                 <v-icon color="primary">mdi-timelapse</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  Registrar Lapso
+                  Diaria
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -43,17 +43,17 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  Registrar Dias
+                  Semanal
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'regsemanal'}">
+            <v-list-item :to="{ name: 'gastos'}">
               <v-list-item-action>
                 <v-icon color="primary">mdi-receipt</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  Registro Gastos
+                  Gasto
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -68,7 +68,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'regdiario'}">
+            <v-list-item :to="{ name: 'dashboard'}">
               <v-list-item-action>
                 <v-icon color="primary">mdi-view-dashboard</v-icon>
               </v-list-item-action>
@@ -78,7 +78,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'regsemanal'}">
+            <v-list-item :to="{ name: 'pivotal'}">
               <v-list-item-action>
                 <v-icon color="primary">mdi-cube</v-icon>
               </v-list-item-action>
@@ -129,23 +129,13 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item :to="{ name: 'regdiario'}">
+            <v-list-item :to="{ name: 'conceptos'}">
               <v-list-item-action>
                 <v-icon color="primary">mdi-food-fork-drink</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  Conceptos Generales
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item :to="{ name: 'regdiario'}">
-              <v-list-item-action>
-                <v-icon color="primary">mdi-wallet-travel</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  Conceptos Especiales
+                  Conceptos Gasto
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -156,6 +146,16 @@
               <v-list-item-content>
                 <v-list-item-title>
                   Etiquetas
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item :to="{ name: 'empresas'}">
+              <v-list-item-action>
+                <v-icon color="primary">mdi-folder-table</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Unidad de Negocio
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -200,27 +200,27 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item :to="{ name: 'appconfigs'}">
+              <v-list-item-action>
+                <v-icon color="primary">mdi-tune</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Parametros
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list-group>
         </template>
         <template v-if="esAdministrador || esJefeAdministracion || esAsistAdministracion">
-          <v-list-group>
+          <!-- <v-list-group>
             <v-list-item slot="activator">
               <v-list-item-content>
                 <v-list-item-title>
                   Configuracion
                 </v-list-item-title>
               </v-list-item-content>
-            </v-list-item>
-            <v-list-item :to="{ name: 'empresas'}">
-              <v-list-item-action>
-                <v-icon color="primary">mdi-folder-table</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  Empresas
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
+            </v-list-item> -->
             <!-- <v-list-item :to="{ name: 'paises'}">
               <v-list-item-action>
                 <v-icon color="primary">mdi-google-maps</v-icon>
@@ -241,17 +241,7 @@
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item> -->
-            <v-list-item :to="{ name: 'appconfigs'}">
-              <v-list-item-action>
-                <v-icon color="primary">mdi-tune</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  Parametros
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-group>  
+          <!-- </v-list-group>   -->
         </template>
       </v-list>
     </v-navigation-drawer>

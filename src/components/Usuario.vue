@@ -581,44 +581,6 @@
         dialog: false,
         groupdialog: false,
         proydialog: false,
-        headersusuarios: [
-            { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
-            { text: 'Avatar', value: 'imgusuario', align: 'center', sortable: false },
-            { text: 'Userid', value: 'userid', align: 'start', sortable: true },
-            { text: 'email', value: 'email', align: 'start', sortable: true },
-            { text: 'Rol', value: 'rol', align: 'start', sortable: true },
-            { text: 'Reservados?', value: 'reservado', align: 'start', sortable: true },
-            { text: 'Iniciales', value: 'iniciales', align: 'start', sortable: true },
-            { text: 'Hora inicio', value: 'primerahora', align: 'start', sortable: true },
-            { text: 'LinXPag', value: 'lineaspag', align: 'start', sortable: true },
-            { text: 'Teléfono', value: 'telefono', align: 'start', sortable: true },
-            { text: 'Estado', value: 'activo', align: 'center', sortable: true  },
-            //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
-            //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
-            //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
-            //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
-        ],
-        headersgrupos: [
-            { text: '#', value: 'selected', align: 'center', sortable: false },
-            { text: 'Nombre grupo', value: 'nombre', align: 'start', sortable: true },
-            //{ text: 'Estado', value: 'activo', align: 'start', sortable: true  },
-            //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
-            //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
-            //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
-            //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
-        ],
-        headersproyectos: [
-            { text: '#', value: 'selected', align: 'center', sortable: false },
-            { text: 'Proyecto', value: 'nombre', align: 'start', sortable: true },
-            { text: 'Tarifa', value: 'tarifaproyectousuario', align: 'end', sortable: true },
-            { text: 'Costo', value: 'costoproyectousuario', align: 'end', sortable: true },
-            { text: 'Notas', value: 'notas', align: 'start', sortable: true },
-            //{ text: 'Estado', value: 'activo', align: 'start', sortable: true  },
-            //{ text: 'Creador Id', value: 'iduseralta', align: 'center', sortable: true },
-            //{ text: 'Fecha Hora Creación', value: 'fecalta', align: 'start', sortable: true },
-            //{ text: 'Mod. Id', value: 'iduserumod', align: 'center', sortable: true },
-            //{ text: 'Fecha Hora Ult.Mod.', value: 'fecumod', align: 'start', sortable: true }                   
-        ],
         searchg: '',
         searchu: '',
         searchp: '',
@@ -655,9 +617,39 @@
     }),
 
     computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'Nuevo miembro' : 'Actualizar miembro'
-      },
+        headersusuarios(){
+            return [
+                { text: '[Opciones]', value: 'actions', align: 'center', sortable: false },
+                { text: 'Avatar', value: 'imgusuario', align: 'center', sortable: false },
+                { text: 'Userid', value: 'userid', align: 'start', sortable: true },
+                { text: 'email', value: 'email', align: 'start', sortable: true },
+                { text: 'Rol', value: 'rol', align: 'start', sortable: true },
+                { text: 'Reservados?', value: 'reservado', align: 'start', sortable: true },
+                { text: 'Iniciales', value: 'iniciales', align: 'start', sortable: true },
+                { text: 'Hora inicio', value: 'primerahora', align: 'start', sortable: true },
+                { text: 'LinXPag', value: 'lineaspag', align: 'start', sortable: true },
+                { text: 'Teléfono', value: 'telefono', align: 'start', sortable: true },
+                { text: 'Estado', value: 'activo', align: 'center', sortable: true  },
+            ]
+        },
+        headersgrupos(){
+            return [
+                { text: '#', value: 'selected', align: 'center', sortable: false },
+                { text: 'Nombre grupo', value: 'nombre', align: 'start', sortable: true },
+            ]
+        },
+        headersproyectos(){
+            return [
+                { text: '#', value: 'selected', align: 'center', sortable: false },
+                { text: 'Proyecto', value: 'nombre', align: 'start', sortable: true },
+                { text: 'Tarifa', value: 'tarifaproyectousuario', align: 'end', sortable: true },
+                { text: 'Costo', value: 'costoproyectousuario', align: 'end', sortable: true },
+                { text: 'Notas', value: 'notas', align: 'start', sortable: true },
+            ]
+        },
+        formTitle () {
+            return this.editedIndex === -1 ? 'Nuevo miembro' : 'Actualizar miembro'
+        },
     },
 
     watch: {

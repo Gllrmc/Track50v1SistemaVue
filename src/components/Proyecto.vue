@@ -1,5 +1,5 @@
 <template>
-    <v-row align="start">
+    <v-row align="start" style="overflow: auto">
         <template>
             <v-snackbar
                 v-model="snackbar"
@@ -1713,3 +1713,8 @@
     },
   }
 </script>
+<style>
+.v-data-table {
+    white-space: nowrap;
+}
+</style>
